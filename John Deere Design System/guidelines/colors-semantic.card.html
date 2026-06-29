@@ -1,0 +1,35 @@
+<!-- @dsCard group="Colors" viewport="700x130" name="Semantic Colors" subtitle="Success · Warning · Error · Info" -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{padding:16px;font-family:'Barlow',sans-serif;background:#fff;display:flex;gap:10px}
+  .group{flex:1;display:flex;flex-direction:column;gap:6px}
+  .chip{height:32px;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+  .bg-chip{height:28px;border-radius:6px;display:flex;align-items:center;padding:0 10px;font-size:11px;font-weight:500}
+  .label{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#9A9897}
+</style>
+</head><body>
+  <div class="group">
+    <div class="label">Success</div>
+    <div class="chip" style="background:var(--color-success);color:#fff">Active</div>
+    <div class="bg-chip" style="background:var(--color-success-light);color:var(--color-success);border:1px solid var(--color-success-border)">Complete</div>
+  </div>
+  <div class="group">
+    <div class="label">Warning</div>
+    <div class="chip" style="background:#FFDE00;color:#27251F">Caution</div>
+    <div class="bg-chip" style="background:var(--color-warning-bg);color:var(--color-warning);border:1px solid var(--color-warning-border)">Scheduled</div>
+  </div>
+  <div class="group">
+    <div class="label">Error</div>
+    <div class="chip" style="background:var(--color-error);color:#fff">Error</div>
+    <div class="bg-chip" style="background:var(--color-error-bg);color:var(--color-error);border:1px solid var(--color-error-border)">Disconnected</div>
+  </div>
+  <div class="group">
+    <div class="label">Info</div>
+    <div class="chip" style="background:var(--color-info);color:#fff">Connected</div>
+    <div class="bg-chip" style="background:var(--color-info-bg);color:var(--color-info);border:1px solid var(--color-info-border)">In Progress</div>
+  </div>
+</body></html>

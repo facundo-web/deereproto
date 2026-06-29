@@ -1,0 +1,10 @@
+/* John Deere Design System — Global Styles
+ * Entry point for all design tokens. Import this file in any consumer.
+ * Do NOT add inline rules here — use @import only.
+ */
+@import './tokens/fonts.css';
+@import './tokens/colors.css';
+@import './tokens/typography.css';
+@import './tokens/spacing.css';
+@import './tokens/shadows.css';
+@import './tokens/borders.css';

@@ -1,0 +1,13 @@
+/* John Deere Design System — Fonts
+ *
+ * ⚠️  FONT SUBSTITUTION in effect.
+ * John Deere digital products use a proprietary typeface (believed to be a custom
+ * grotesque sans-serif). Barlow + Barlow Condensed are used here as the closest
+ * publicly-available alternatives. Replace with licensed JD fonts when supplied
+ * by the brand team.
+ *
+ *   Display / headlines → Barlow Condensed 700 / 800  (sub for Trade Gothic Bold Ext.)
+ *   Body / UI copy      → Barlow 400 / 500 / 600 / 700
+ *   Monospace / data    → JetBrains Mono 400 / 500
+ */
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');

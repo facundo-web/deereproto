@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>JD Operations Support · Brasil</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@0.263.1/dist/umd/lucide.js"></script>
+  <style>
+    :root {
+      --jd-green-50:#EDF7EA;--jd-green-100:#D1EBCA;--jd-green-200:#A3D698;
+      --jd-green-500:#3F8F31;--jd-green-600:#367C2B;--jd-green-700:#2A6122;
+      --jd-green-800:#1E4718;
+      --jd-yellow-400:#FFDE00;--jd-yellow-200:#FFEA66;
+      --neutral-0:#FFFFFF;--neutral-50:#F8F7F5;--neutral-100:#F0EFED;
+      --neutral-200:#DEDEDC;--neutral-300:#C4C3C1;--neutral-400:#9A9897;
+      --neutral-500:#767471;--neutral-600:#595754;--neutral-700:#3D3C38;
+      --neutral-800:#27251F;--neutral-900:#1A1A18;
+      --surface-page:#F8F7F5;--surface-sidebar:#1A1A18;
+      --border-subtle:#DEDEDC;--border-default:#C4C3C1;
+      --shadow-sm:0 1px 3px rgba(0,0,0,.10),0 1px 2px rgba(0,0,0,.06);
+      --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+      --shadow-lg:0 10px 15px rgba(0,0,0,.10),0 4px 6px rgba(0,0,0,.05);
+      --wa-bg:#E5DDD5;--wa-head:#128C7E;--wa-head2:#075E54;
+      --wa-out:#DCF8C6;--wa-in:#FFFFFF;--wa-read:#53BDEB;
+      --wa-bar:#F0F2EB;--wa-chip:#25D366;
+      --header-h:56px;--subtitle-h:36px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,html,body{height:100%;margin:0;padding:0;overflow:hidden}body{font-size:15px}
+    #root{height:100%;display:flex;flex-direction:column;overflow:hidden}
+    body{font-family:'Barlow',system-ui,sans-serif;background:var(--surface-page);color:var(--neutral-800);-webkit-font-smoothing:antialiased;overflow:hidden}
+    @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+    @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+    @keyframes slidein{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+    @keyframes fadein{from{opacity:0}to{opacity:1}}
+    @keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(54,124,43,.4)}70%{box-shadow:0 0 0 6px rgba(54,124,43,0)}100%{box-shadow:0 0 0 0 rgba(54,124,43,0)}}
+    .dot{width:8px;height:8px;border-radius:50%;background:#8d9d8b;display:inline-block;margin:0 2px;animation:blink 1.4s infinite both}
+    ::-webkit-scrollbar{width:4px;height:4px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:var(--neutral-300);border-radius:4px}
+    /* WA wallpaper pattern */
+    .wa-bg{background-color:var(--wa-bg);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath fill='%23c7bab0' fill-opacity='0.08' d='M0 40 Q20 0 40 40 Q60 80 80 40 Q60 0 40 40 Q20 80 0 40Z'/%3E%3C/svg%3E")}
+    /* JD Brand overrides */
+    .jd-btn{display:inline-flex;align-items:center;gap:6px;background:var(--jd-green-600);color:#fff;border:none;border-radius:6px;padding:8px 16px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background 150ms ease-out,transform 150ms ease-out}
+    .jd-btn:hover{background:var(--jd-green-700)}
+    .jd-btn:active{transform:scale(.98)}
+    .jd-btn-ghost{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--neutral-700);border:1px solid var(--border-subtle);border-radius:6px;padding:7px 14px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 150ms ease-out}
+    .jd-btn-ghost:hover{border-color:var(--jd-green-600);color:var(--jd-green-700);background:var(--jd-green-50)}
+    .jd-btn-ghost:active{transform:scale(.98)}
+
+    /* ── Navbar responsive ── */
+    .tab-btn{color:#fff;border:none;border-bottom:2px solid transparent;background:transparent;padding:18px 14px 15px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;transition:all 150ms;letter-spacing:.01em;flex-shrink:0}
+    .tab-btn:hover{background:rgba(255,255,255,.08)}
+    .tab-btn.on{font-weight:700;border-bottom-color:var(--jd-yellow-400);background:rgba(255,255,255,.12)}
+    /* At 1200px: shrink slightly but keep labels */
+    @media(max-width:1200px){
+      .tab-btn{padding:18px 10px 15px;font-size:12px;gap:5px}
+      .nav-vez{display:none!important}
+    }
+    /* At 1000px: also shrink but still show icons+labels */
+    @media(max-width:1000px){
+      .tab-btn{padding:16px 8px 13px;font-size:11px;gap:4px}
+    }
+    /* At 900px: hide labels, icon-only tabs */
+    @media(max-width:900px){
+      .tab-label{display:none}
+      .tab-btn{padding:16px 10px 13px;gap:0}
+    }
+    @media(max-width:850px){
+      .tab-btn{padding:14px 8px 11px}
+      .header-logo-text{display:none}
+    }
+
+    .nav-item{width:100%;display:flex;align-items:center;gap:10px;border:none;border-left:3px solid transparent;background:transparent;color:var(--neutral-600);padding:10px 14px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;cursor:pointer;text-align:left;transition:all 150ms}
+    .nav-item:hover{background:#F0EFED;color:var(--neutral-800)}
+    .nav-item.on{background:var(--jd-green-50);color:var(--jd-green-700);border-left-color:var(--jd-green-600);font-weight:700}
+    .opt-btn:hover{background:var(--jd-green-50)!important;border-color:var(--jd-green-600)!important}
+    .row-hover:hover{background:#EDF7EA}
+    button{font-family:'Barlow',sans-serif}
+
+    /* ── Responsive KPI grid ── */
+    .kpi-grid{display:grid;gap:12px;grid-template-columns:repeat(4,1fr)}
+    @media(max-width:1200px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.kpi-grid{grid-template-columns:1fr}}
+
+    /* ── Dealer Painel 2-col ── */
+    .dealer-panel{display:flex;gap:14px;flex:1;min-height:0;overflow:hidden}
+    .dealer-panel-main{flex:1 1 420px;min-width:300px;border:1px solid var(--border-subtle);border-radius:8px;overflow:hidden;background:#fff;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;min-height:0}
+    .dealer-panel-side::-webkit-scrollbar{width:4px}.dealer-panel-side::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px}.field-panel-side::-webkit-scrollbar{width:4px}.field-panel-side::-webkit-scrollbar-thumb{background:#ccc;border-radius:4px}
+    .dealer-panel-side{flex:0 0 360px;min-width:290px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;padding-right:4px;padding-bottom:24px;overscroll-behavior:contain}
+    @media(max-width:900px){
+      .dealer-panel{flex-direction:column;height:auto}
+      .dealer-panel-side{flex:none;width:100%;min-width:0;overflow-y:visible;max-height:none}
+    }
+
+    /* ── Field Painel 2-col ── */
+    .field-panel{display:flex;gap:14px;flex:1;min-height:0;overflow:hidden}
+    .field-panel-side{flex:0 0 340px;min-width:280px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;padding-right:4px;padding-bottom:24px;overscroll-behavior:contain}
+    .field-panel-main{flex:1 1 380px;min-width:300px;border:1px solid var(--border-subtle);border-radius:8px;overflow:hidden;background:#fff;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;min-height:0}
+    @media(max-width:900px){
+      .field-panel{flex-direction:column;height:auto}
+      .field-panel-side{flex:none;width:100%;min-width:0;overflow-y:visible}
+    }
+
+    /* ── Fluxo viewport lock ── */
+    .fluxo-wrap{display:flex;flex-direction:column;height:calc(100vh - var(--header-h) - var(--subtitle-h) - 60px);min-height:500px}
+    .fluxo-map-area{flex:0 0 58%;overflow:hidden;display:flex;flex-direction:column}
+    .fluxo-ctx-area{flex:1;overflow-y:auto;border-top:1px solid var(--border-subtle)}
+    @media(max-height:700px){.fluxo-wrap{height:auto;min-height:auto}.fluxo-map-area{flex:none}}
+
+    /* ── Fluxo step states ── */
+    .step-done{border-color:var(--jd-green-600)!important;background:var(--jd-green-50)!important}
+    .step-current{border-color:var(--jd-green-600)!important;background:var(--jd-green-50)!important;animation:pulse-ring 2s ease-out infinite}
+    .step-future{opacity:.3}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+/* ─── Lucide shim ─────────────────────────────────────── */
+function LI({ name, size=16, style:st, className }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current || !window.lucide) return;
+    const key = name.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    const fn = lucide[key] || lucide.Circle;
+    ref.current.innerHTML = '';
+    const svg = lucide.createElement(fn);
+    svg.setAttribute('width', size); svg.setAttribute('height', size);
+    svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke-width', '2'); svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    ref.current.appendChild(svg);
+  }, [name, size]);
+  return <span ref={ref} style={{display:'inline-flex',alignItems:'center',flexShrink:0,...st}} className={className}/>;
+}
+const IC = n => p => <LI name={n} {...p}/>;
+const MessageCircle=IC('MessageCircle'), Bot=IC('Bot'), Wrench=IC('Wrench'),
+  ShieldCheck=IC('ShieldCheck'), Send=IC('Send'), Check=IC('Check'),
+  CheckCheck=IC('CheckCheck'), Clock=IC('Clock'), AlertTriangle=IC('AlertTriangle'),
+  Star=IC('Star'), Calendar=IC('Calendar'), RefreshCw=IC('RefreshCw'),
+  ChevronRight=IC('ChevronRight'), ChevronLeft=IC('ChevronLeft'),
+  Activity=IC('Activity'), Zap=IC('Zap'), Sparkles=IC('Sparkles'),
+  MapPin=IC('MapPin'), UserCog=IC('UserCog'), TrendingUp=IC('TrendingUp'),
+  Paperclip=IC('Paperclip'), RotateCcw=IC('RotateCcw'), Phone=IC('Phone'),
+  Lock=IC('Lock'), Users=IC('Users'), Radio=IC('Radio'), LayoutGrid=IC('LayoutGrid'),
+  Inbox=IC('Inbox'), Server=IC('Server'), CheckCircle=IC('CheckCircle'),
+  XCircle=IC('XCircle'), Bell=IC('Bell'), Building2=IC('Building2'),
+  Smartphone=IC('Smartphone'), Monitor=IC('Monitor'),
+  Play=IC('Play'), Pause=IC('Pause'), Search=IC('Search'), MoreVertical=IC('MoreVertical'),
+  Camera=IC('Camera'), Mic=IC('Mic'), Smile=IC('Smile'), Video=IC('Video'),
+  ArrowLeft=IC('ArrowLeft'), Signal=IC('Signal'), Wifi=IC('Wifi'), Battery=IC('Battery'),
+  ChevronDown=IC('ChevronDown'), Info=IC('Info'), GitBranch=IC('GitBranch'),
+  ExternalLink=IC('ExternalLink'), ArrowRight=IC('ArrowRight');
+
+/* ─── JD Badge SVG ────────────────────────────────────── */
+const JDBadge = ({ size=28 }) => (
+  <svg width={size} height={size} viewBox="0 0 100.6 91.5" xmlns="http://www.w3.org/2000/svg">
+    <path fill="#367C2B" d="M93.5,9.9C80.6,3.6,65.8,0,50.3,0C34.8,0,20,3.6,7.1,9.9C2.5,21,0,33.1,0,45.7c0,12.6,2.5,24.7,7.1,35.8c12.9,6.4,27.7,9.9,43.2,9.9c15.4,0,30.3-3.6,43.2-9.9c4.6-11.1,7.1-23.2,7.1-35.8C100.6,33.1,98.1,21,93.5,9.9"/>
+    <path fill="#FFDE00" d="M90.4,12.6c-12-5.7-25.8-8.8-40.1-8.8c-14.3,0-28.1,3.2-40.1,8.9C6.1,22.9,3.9,34.1,3.9,45.8c0,11.6,2.2,22.8,6.3,33.1c12.1,5.7,25.8,8.9,40.2,8.9c14.3,0,28.1-3.2,40.1-8.9c4.1-10.3,6.3-21.4,6.3-33.1C96.7,34.1,94.5,22.9,90.4,12.6 M36.6,35.4c-2.1,4.1-3.5,8.8-4.1,14.1l-1.2,0.1c-4.3,0.4-8.8,0.7-13.2,2.4l0.3,1.8c7.1,8.8,17.8,14.1,17.9,14.2l0.3-0.3l-2.3-3.7c-0.6-0.4-2-0.7-2.1-0.8c-4.8-1.6-8.2-7.9-8.8-9c4,0,7.5,1.1,10.9,2.3c2.2,0.7,4.3,1.4,6.5,1.8c3.8,0.6,7.8-0.1,11.5-0.6c2.9-0.3,5.8-0.3,8.6-0.2c0.3,0.4,3.3,4,6.2,5.5c3.6,1.9,13.9,5,14.5,5.1c0.2,0.2,4.2,4.2,6.7,8.9c-11.6,5.4-24.7,8.2-37.8,8.2c-13.2,0-26.3-2.9-38-8.3C8.5,67,6.5,56.5,6.5,45.7c0-10.7,2-21.2,5.8-31.2c11.7-5.4,24.8-8.3,38-8.3c13.2,0,26.3,2.8,37.9,8.2c3.9,10,5.8,20.5,5.8,31.3c0,9.8-1.6,19.5-4.9,28.6C85.5,67.9,84,66,84,66s-5.2-2.7-6.5-3.8c-1-0.9-1.5-2.7-2.1-4.8c-0.8-2.9-1.8-6.5-4.6-9.4l3.1-1.3c-0.9-6-8-9.9-8.1-10l-0.4,0.2c2.7,3.4,3.5,6.3,3.5,8.1c0,0.9-0.1,1.5-0.2,1.7c-0.8-0.3-6.1-2-18.1-1.5c-1.8,0.1-4.3,0-5.8-1.5c-0.9-0.8-1.3-2-1.3-3.5v0c0-4.2,1.8-9.8,2-10.5l3.1,0.4c3.7-2.1,5.2-3.8,5.4-4.1L54,25.7c-3.2,0.4-7.3,1.2-7.3,1.2c0.3-0.7,1.1-3.1,1.1-5.8c0-2.9-1-6.2-4.7-8.1l-0.4,0.2c0,0,2.2,2.4,2.2,5.5c0,0.9-0.2,1.8-0.6,2.8c-1.2-0.5-1.7-0.6-3.2-0.6c-0.7-2.5-2.9-4.6-5.8-5.7l-0.4,0.2c0,0,3.2,2.2,3.3,5.5c-1.6,0.1-2.3,0.3-4.2,0.9c-0.8-1.4-2.7-2.3-5-2.6l-0.3,0.2c0,0,2.8,1,3.4,3.1c-1.7,0.8-3.5,2-4.7,3l0.1,0.5c7.1-2.8,13.8-3.6,15.5-1.6c0.3,0.3,0.4,0.7,0.4,1.2c0,0.6-0.2,1.3-0.7,2.1c-3.5,0.8-8.8,2.3-13.2,3.9l0.6,1.8c0,0,4.4,0.9,6,1.2C36.3,34.6,36.9,34.7,36.6,35.4"/>
+  </svg>
+);
+
+/* ─── Design tokens ───────────────────────────────────── */
+const C = {
+  green:'#367C2B', greenD:'#1E4718', greenL:'#EDF7EA', green5:'#3F8F31',
+  yellow:'#FFDE00', yellowD:'#27251F',
+  ink:'#27251F', ink2:'#595754', ink3:'#767471', ink4:'#9A9897',
+  line:'#DEDEDC', line2:'#F0EFED', page:'#F8F7F5', card:'#FFFFFF',
+  side:'#1A1A18',
+  ok:'#367C2B', okBg:'#EDF7EA', warn:'#854D0E', warnBg:'#FFFBEB',
+  crit:'#B91C1C', critBg:'#FEE2E2',
+  wa:'#25D366', waHead:'#128C7E', waHead2:'#075E54', waBg:'#E5DDD5',
+  waOut:'#DCF8C6', waIn:'#FFFFFF', waRead:'#53BDEB', waBar:'#F0F2EB',
+};
+
+const bGhost = {display:'inline-flex',alignItems:'center',gap:6,background:C.card,color:C.ink2,border:'1px solid '+C.line,borderRadius:6,padding:'7px 14px',fontSize:12.5,fontWeight:600,cursor:'pointer',transition:'all 150ms ease-out'};
+
+/* ─── Data ────────────────────────────────────────────── */
+const PROF = {
+  produtor:    {name:'João Mendes',            c:'#4A4540', avatar:'JM', bg:'#D6D0C8'},
+  bot:         {name:'Assistente Digital',      c:C.green5,  avatar:'AB', bg:C.green},
+  csc:         {name:'Carlos · AgroBaggio',     c:C.green,   avatar:'CA', bg:C.green},
+  especialista:{name:'Esp. Remoto · AgroBaggio',c:C.green,   avatar:'ER', bg:'#2A6122'},
+  field:       {name:'Diego · Field Trainer',   c:'#5E6B40', avatar:'DM', bg:'#7A8C52'},
+  dealer:      {name:'AgroBaggio',              c:C.green,   avatar:'AB', bg:C.green},
+  deere:       {name:'John Deere',              c:C.side,    avatar:'JD', bg:C.side},
+  system:      {name:'Sistema',                 c:C.ink3,    avatar:'⚙',  bg:C.line},
+};
+const ROLE_NAME = {produtor:'Produtor',dealer:'Dealer',field:'Field Trainer',deere:'Deere'};
+
+/* Journey steps — producer INITIATES */
+const STEPS = {
+  s0:{
+    enter:[], /* EMPTY — producer goes first */
+    opts:[
+      {role:'produtor',label:'Problema com maquinaria 🚜',next:'sMaq',
+        say:[{f:'produtor',t:'Tenho um problema com maquinaria 🚜',time:'08:11',out:true}]},
+      {role:'produtor',label:'Problema de software / tecnologia 💻',next:'sSoft',
+        say:[{f:'produtor',t:'Tenho um problema de software ou tecnologia 💻',time:'08:11',out:true}]},
+      {role:'produtor',label:'Dúvida administrativa 📋',next:'sAdmin',
+        say:[{f:'produtor',t:'Tenho uma dúvida administrativa 📋',time:'08:11',out:true}]},
+    ],
+    chips:['Problema com maquinaria 🚜','Problema de software 💻','Dúvida administrativa 📋'],
+  },
+
+  /* ── Maquinaria path (main demo) ─────────────────── */
+  sMaq:{
+    enter:[
+      {f:'bot',t:'Encontrei seus equipamentos registrados no sistema:\n\n🚜 X9 2024 — AutoTrac + AutoPath\n🌾 S770 2023 — AutoPath\n\nQual está com problema?',time:'08:12'},
+      {f:'produtor',t:'X9 2024 — AutoTrac não engata de jeito nenhum',time:'08:13',out:true},
+      {f:'bot',t:'Entendido. Pode me mandar uma foto do painel da máquina ou descrever quando começou? Isso ajuda a abrir o caso já com o diagnóstico correto 📷',time:'08:13'},
+      {f:'produtor',t:'Já tentei reiniciar. Acontece desde ontem depois da chuva.',time:'08:13',out:true,k:'media'},
+      {f:'bot',t:'Obrigado! Caso #BR-4471 aberto: AutoTrac não engata na X9 — Ramo 4 · prioridade Alta. Como quer seguir?',time:'08:14'},
+      {k:'milestone',icon:'🎫',label:'Caso #BR-4471 aberto',detail:'Ramo 4 · AutoTrac X9 · prioridade Alta',time:'08:14'},
+      {f:'system',t:'Triagem automática · Ramo 4 · prioridade ALTA · cliente ativo · X9 2024',n:true},
+    ],
+    opts:[
+      {role:'produtor',label:'Tentar resolver agora (guia rápido)',next:'s2',
+        say:[{f:'produtor',t:'Quero tentar resolver agora mesmo',time:'08:15',out:true}]},
+      {role:'produtor',label:'Falar com um especialista',next:'sHum',
+        say:[{f:'produtor',t:'Prefiro falar com um especialista',time:'08:15',out:true}]},
+      {role:'produtor',label:'Agendar visita técnica',next:'sAgenda',
+        say:[{f:'produtor',t:'Pode mandar alguém aqui na fazenda?',time:'08:15',out:true}]},
+    ],
+  },
+
+  /* ── Software / tecnologia path ──────────────────── */
+  sSoft:{
+    enter:[
+      {f:'bot',t:'Entendido! É com OpsCenter, AutoPath, licença, JDLink ou outro software?',time:'08:12'},
+      {f:'produtor',t:'OpsCenter não está sincronizando com a máquina',time:'08:13',out:true},
+      {f:'bot',t:'Recebi. Caso #BR-4465 aberto: OpsCenter sem sync · X9 2024 · prioridade Média. Vou verificar o JDLink remotamente. Qual o modelo da sua máquina?',time:'08:13'},
+      {f:'produtor',t:'X9 2024',time:'08:14',out:true},
+      {k:'milestone',icon:'🎫',label:'Caso #BR-4465 aberto',detail:'Software · OpsCenter · X9 2024',time:'08:14'},
+      {f:'system',t:'Caso software aberto · equipe técnica notificada',n:true},
+    ],
+    opts:[
+      {role:'dealer',label:'Verificar remotamente via JDLink',next:'sHum',
+        say:[{f:'csc',t:'João, consegui acessar o JDLink da sua X9. Vou checar a conexão agora.',time:'08:20'}]},
+    ],
+  },
+
+  /* ── Administrativo path ──────────────────────────── */
+  sAdmin:{
+    enter:[
+      {f:'bot',t:'Para dúvidas administrativas (fatura, contrato, renovação de licença), seu dealer AgroBaggio é o ponto de contato. Conecto você com o Carlos agora?',time:'08:12'},
+    ],
+    opts:[
+      {role:'produtor',label:'Sim, falar com o dealer',next:'sHum',
+        say:[{f:'produtor',t:'Sim, quero falar com o dealer',time:'08:13',out:true}]},
+      {role:'produtor',label:'É sobre renovação de licença',next:'sLic',
+        say:[{f:'produtor',t:'É sobre renovação de licença',time:'08:13',out:true}]},
+    ],
+  },
+
+  s2:{
+    enter:[
+      {f:'bot',t:'Vamos resolver juntos. Siga estes passos:\n1️⃣ Confirme a licença AutoTrac ativa no CommandCenter\n2️⃣ Verifique o sinal StarFire — precisa de 3+ barras',time:'08:15'},
+      {f:'bot',t:'Me fala: o AutoTrac engatou depois disso?',time:'08:16',k:'card'},
+    ],
+    opts:[
+      {role:'produtor',label:'Resolveu! 🎉',next:'sCsat',do:{resolved:'remoto'},
+        say:[{f:'produtor',t:'Funcionou! Era a licença mesmo. Obrigado! 🎉',time:'08:25',out:true}]},
+      {role:'produtor',label:'Não resolveu',next:'sHum',
+        say:[{f:'produtor',t:'Segui os passos mas continua sem engatar',time:'08:25',out:true}]},
+      {role:'produtor',label:'Não consigo agora (estou na colheita)',next:'sPausa',
+        say:[{f:'produtor',t:'Tô na colheita, não consigo testar agora',time:'08:25',out:true}]},
+    ],
+  },
+  sHum:{
+    enter:[
+      {f:'system',t:'Escalado para atendimento humano · fila CSC AgroBaggio',n:true},
+      {k:'milestone',icon:'👨‍💼',label:'Especialista humano entrou no caso',detail:'Carlos · AgroBaggio · CSC',time:'08:17'},
+      {f:'csc',t:'Oi João, aqui é o Carlos da AgroBaggio. Já tô olhando seu caso do AutoTrac. Um segundo.',time:'08:17'},
+      {f:'system',t:'Especialista remoto acessou telemetria do equipamento',n:true},
+      {f:'especialista',t:'Sinal StarFire fraco no talhão (2/5 barras). Provável obstrução ou posição da antena.',n:true},
+      {f:'csc',t:'João, nosso especialista identificou o sinal StarFire fraco. Posso te mandar um guia rápido pra reposicionar a antena, ou mando o Diego (nosso Field Trainer) aí. O que prefere?',time:'08:21'},
+    ],
+    opts:[
+      {role:'dealer',label:'Enviar guia de reposicionamento (tentar remoto)',next:'sRemoto',
+        say:[{f:'csc',t:'Vou te mandar o guia agora. Faz uma passada de teste depois e me fala? 👇',time:'08:22',k:'card'}]},
+      {role:'dealer',label:'Propor visita do Field Trainer',next:'sAgenda',
+        say:[{f:'csc',t:'Acho melhor o Diego ir aí resolver in loco. Posso agendar uma visita pra amanhã?',time:'08:22'}]},
+      {role:'dealer',label:'Pedir mais detalhes',next:'sInfo',
+        say:[{f:'csc',t:'Pra entender melhor: em qual talhão você está e faz quanto tempo aparece o problema?',time:'08:22'}]},
+      {role:'produtor',label:'Prefiro que venham aqui',next:'sAgenda',
+        say:[{f:'produtor',t:'Prefiro que alguém venha aqui mesmo',time:'08:22',out:true}]},
+    ],
+  },
+  sRemoto:{
+    enter:[],
+    opts:[
+      {role:'produtor',label:'Funcionou! ✅',next:'sCsat',do:{resolved:'remoto'},
+        say:[{f:'produtor',t:'Reposicionei e funcionou! ✅',time:'08:40',out:true}]},
+      {role:'produtor',label:'Continua igual',next:'sAgenda',
+        say:[{f:'produtor',t:'Fiz tudo mas continua sem engatar',time:'08:40',out:true}]},
+    ],
+  },
+  sInfo:{
+    enter:[
+      {f:'produtor',t:'Talhão norte. Começou ontem depois da chuva.',time:'08:23',out:true},
+      {f:'csc',t:'Perfeito, isso ajuda muito. Com chuva pode ser interferência na antena. Recomendo a visita do Diego pra recalibrar com mais segurança.',time:'08:24'},
+    ],
+    opts:[
+      {role:'dealer',label:'Propor visita do Field Trainer',next:'sAgenda',
+        say:[{f:'csc',t:'Vou agendar o Diego pra ir aí. Posso confirmar amanhã?',time:'08:24'}]},
+    ],
+  },
+  sAgenda:{
+    enter:[
+      {f:'csc',t:'Consultei a agenda do Diego (Field Trainer). Slots disponíveis para a sua fazenda:',time:'08:25'},
+      {k:'milestone',icon:'📅',label:'Agenda do Field Trainer — disponível',detail:'3 slots próximos disponíveis',time:'08:25'},
+    ],
+    opts:[
+      {role:'produtor',label:'✅ Amanhã às 9h (talhão norte)',next:'sConfirmado',do:{agenda:'amanhã 9h'},
+        say:[{f:'produtor',t:'Perfeito! Amanhã às 9h tá ótimo ✅',time:'08:26',out:true}]},
+      {role:'produtor',label:'🕙 Amanhã às 11h',next:'sConfirmado',do:{agenda:'amanhã 11h'},
+        say:[{f:'produtor',t:'Prefiro amanhã às 11h 👍',time:'08:26',out:true}]},
+      {role:'produtor',label:'📆 Terça às 8h30',next:'sConfirmado',do:{agenda:'terça 8h30'},
+        say:[{f:'produtor',t:'Terça às 8h30 funciona para mim',time:'08:26',out:true}]},
+      {role:'produtor',label:'Adiar — estou na colheita',next:'sPausa',
+        say:[{f:'produtor',t:'Deixa pra depois da colheita',time:'08:26',out:true}]},
+    ],
+  },
+  sReagenda:{
+    enter:[{f:'csc',t:'Sem problema! O Diego também tem disponibilidade terça às 8h30 ou amanhã às 11h. Qual prefere?',time:'08:27'}],
+    opts:[
+      {role:'produtor',label:'🕗 Terça 8h30 — confirmo 👍',next:'sConfirmado',do:{agenda:'terça 8h30'},
+        say:[{f:'produtor',t:'Terça 8h30 perfeito, obrigado! 👍',time:'08:28',out:true}]},
+      {role:'produtor',label:'🕙 Amanhã às 11h',next:'sConfirmado',do:{agenda:'amanhã 11h'},
+        say:[{f:'produtor',t:'Amanhã às 11h, pode confirmar',time:'08:28',out:true}]},
+      {role:'produtor',label:'Deixar pra depois',next:'sPausa',
+        say:[{f:'produtor',t:'Melhor deixar pra depois',time:'08:28',out:true}]},
+    ],
+  },
+  sConfirmado:{
+    enter:[
+      {f:'system',t:'Visita agendada · Field Trainer Diego · backlog confirmado',n:true},
+      {k:'milestone',icon:'📅',label:'Visita agendada',detail:'Diego · Field Trainer · amanhã 9h · talhão norte',time:'08:29'},
+      {f:'csc',t:'Ótimo! Visita confirmada ✅ O Diego vai te avisar quando estiver a caminho. Qualquer coisa é só chamar aqui.',time:'08:29'},
+    ],
+    opts:[
+      {role:'field',label:'Avisar: estou a caminho',next:'sCaminho',
+        say:[{f:'field',t:'Oi João, aqui é o Diego, Field Trainer da AgroBaggio. Estou saindo agora, chego em aproximadamente 1 hora 🚙',time:'09:00'}]},
+    ],
+  },
+  sCaminho:{
+    enter:[],
+    opts:[
+      {role:'produtor',label:'Ok, te espero no talhão norte 👍',next:'sEmCampo',
+        say:[{f:'produtor',t:'Ótimo Diego! Te espero no talhão norte 👍',time:'09:02',out:true}]},
+      {role:'field',label:'Cheguei na porteira',next:'sEmCampo',
+        say:[{f:'field',t:'Cheguei na fazenda, indo direto pro talhão norte.',time:'10:05'}]},
+    ],
+  },
+  sEmCampo:{
+    enter:[
+      {f:'system',t:'Field Trainer no local · verificando antena e sinal StarFire',n:true},
+      {k:'milestone',icon:'🔧',label:'Field Trainer chegou ao talhão',detail:'Diego verificando antena e sinal StarFire',time:'10:12'},
+      {f:'field',t:'João, to aqui no talhão. Vou checar a antena e o receptor. Te aviso em breve.',time:'10:12'},
+    ],
+    opts:[
+      {role:'field',label:'Recalibrado e validado ✅',next:'sResolvido',do:{resolved:'campo'},
+        say:[{f:'field',t:'Pronto! Reposicionei a antena, recalibrei o receptor e fiz uma passada de validação. AutoTrac engatando 100% 🌱 Tirei uma foto do setup correto.',time:'10:48',k:'media'}]},
+    ],
+  },
+  sResolvido:{
+    enter:[
+      {f:'system',t:'Visita concluída · AutoTrac validado · caso encaminhado para fechamento',n:true},
+      {k:'milestone',icon:'✅',label:'AutoTrac funcionando 100%',detail:'Caso resolvido · antena recalibrada pelo Field Trainer',time:'11:00'},
+      {f:'csc',t:'João, o Diego concluiu a visita com sucesso! Tá tudo certo com o AutoTrac?',time:'11:00'},
+    ],
+    opts:[
+      {role:'produtor',label:'Tudo certo! Muito obrigado! 🙏',next:'sCsat',
+        say:[{f:'produtor',t:'Tudo certo! Muito obrigado a todos! 🙏',time:'11:02',out:true}]},
+    ],
+  },
+  sLic:{
+    enter:[
+      {f:'bot',t:'Claro! Vi aqui que sua licença AutoPath vence em 30 dias. Posso preparar a renovação agora e passar pro consultor finalizar. Pode ser?',time:'08:12'},
+    ],
+    opts:[
+      {role:'produtor',label:'Sim, pode preparar',next:'sLicOk',
+        say:[{f:'produtor',t:'Pode sim, obrigado!',time:'08:13',out:true}]},
+      {role:'produtor',label:'Quero entender os planos primeiro',next:'sHum',
+        say:[{f:'produtor',t:'Antes quero entender os planos disponíveis',time:'08:13',out:true}]},
+    ],
+  },
+  sLicOk:{
+    enter:[
+      {f:'system',t:'Renovação AutoPath gerada · consultor notificado',n:true},
+      {f:'csc',t:'Oi João! Preparamos sua renovação do AutoPath ✅ Te enviei o link de pagamento no e-mail cadastrado. Qualquer dúvida estou aqui!',time:'08:15'},
+    ],
+    opts:[],
+  },
+  sCsat:{
+    enter:[
+      {f:'bot',t:'Que ótimo! Fico feliz que resolvemos. Como você avalia o atendimento de hoje?',time:'11:03',k:'csat'},
+    ],
+    opts:[
+      {role:'produtor',label:'⭐⭐⭐⭐⭐  Excelente!',next:'sFim',do:{csat:5},
+        say:[{f:'produtor',t:'⭐⭐⭐⭐⭐  Atendimento excelente!',time:'11:04',out:true}]},
+      {role:'produtor',label:'⭐⭐⭐⭐  Bom',next:'sFim',do:{csat:4},
+        say:[{f:'produtor',t:'⭐⭐⭐⭐  Foi bom',time:'11:04',out:true}]},
+      {role:'produtor',label:'⭐⭐⭐  Regular',next:'sFim',do:{csat:3},
+        say:[{f:'produtor',t:'⭐⭐⭐  Regular',time:'11:04',out:true}]},
+      {role:'produtor',label:'⭐  Ruim',next:'sFimRuim',do:{csat:1},
+        say:[{f:'produtor',t:'⭐',time:'11:04',out:true}]},
+    ],
+  },
+  sFim:{
+    enter:[
+      {k:'milestone',icon:'🌱',label:'Atendimento concluído — obrigado!',detail:'Caso #BR-4471 encerrado · CSAT coletado',time:'11:05'},
+      {f:'bot',t:'Obrigado pela avaliação, João! 🌱 Qualquer coisa, é só abrir essa conversa. Boa safra!',time:'11:05'},
+      {f:'system',t:'Follow-up D+7 agendado · confirmar adoção AutoTrac',n:true},
+    ],
+    opts:[],
+  },
+  sFimRuim:{
+    enter:[
+      {f:'system',t:'CSAT baixo · alerta enviado ao dealer e à Deere',n:true},
+      {f:'csc',t:'João, lamentamos muito que o atendimento não tenha sido satisfatório. Vou te ligar pessoalmente ainda hoje para entender o que aconteceu.',time:'11:06'},
+    ],
+    opts:[],
+  },
+  sPausa:{
+    enter:[
+      {f:'bot',t:'Tudo bem! O caso #BR-4471 fica aberto. Te mando uma mensagem em alguns dias. Boa colheita! 🌾',time:'08:30'},
+      {f:'system',t:'Caso pausado · produtor em campo · sem ação por 3 dias → re-engajar',n:true},
+    ],
+    opts:[
+      {role:'produtor',label:'Pronto, vamos resolver agora',next:'sAgenda',
+        say:[{f:'produtor',t:'Tô disponível agora, podemos continuar?',time:'D+2',out:true}]},
+    ],
+  },
+};
+
+/* Dealer-init actions */
+const DEALER_INIT=[
+  {id:'oManut',label:'Manutenção preventiva',Icon:Wrench,
+    step:{enter:[{f:'dealer',t:'João, a X9 está chegando em 250h de uso. Quer agendar a revisão preventiva? Evita parada na safra.',time:'—'}],
+      opts:[{role:'produtor',label:'Sim, agendar revisão',next:'sAgenda',say:[{f:'produtor',t:'Sim, quero agendar a revisão',time:'—',out:true}]},{role:'produtor',label:'Depois da colheita',next:'sPausa',say:[{f:'produtor',t:'Depois da colheita',time:'—',out:true}]}]}},
+  {id:'oLic',label:'Renovação de licença',Icon:RefreshCw,
+    step:{enter:[{f:'dealer',t:'João, sua licença AutoPath vence em 30 dias. Renovamos agora?',time:'—'}],
+      opts:[{role:'produtor',label:'Renovar agora',next:'sLicOk',say:[{f:'produtor',t:'Pode renovar sim',time:'—',out:true}]},{role:'produtor',label:'Me liga depois',next:'sPausa',say:[{f:'produtor',t:'Me liga depois',time:'—',out:true}]}]}},
+  {id:'oAcomp',label:'Acompanhar adoção',Icon:TrendingUp,
+    step:{enter:[{f:'dealer',t:'Oi João! Vi que o AutoTrac foi ativado 🎉 Uma dica pra aproveitar o AutoPath também e ganhar mais hectares?',time:'—'}],
+      opts:[{role:'produtor',label:'Quero a dica',next:'sAcompOk',say:[{f:'produtor',t:'Claro, me manda!',time:'—',out:true}]},{role:'produtor',label:'Agora não',next:'sPausa',say:[{f:'produtor',t:'Agora não, obrigado',time:'—',out:true}]}]}},
+];
+const STEPS_EXT = {
+  sAcompOk:{enter:[{f:'dealer',t:'Mandei um vídeo de 2 min sobre o AutoPath. Qualquer dúvida, chama! 🌱',time:'—'},{f:'system',t:'Acompanhamento de adoção iniciado · AutoPath',n:true}],opts:[]},
+};
+
+const CH_DEALER=[
+  {label:'Pedir atualização',msg:'Carlos, como está o #BR-4471? Precisa de apoio?',reply:{f:'csc',t:'Tudo sob controle. Especialista viu o sinal, decidindo próximo passo.'}},
+  {label:'Sinalizar risco de SLA',msg:'Atenção: #BR-4471 próximo do limite de SLA.',reply:{f:'csc',t:'Entendido, priorizando agora.'}},
+  {label:'Sugerir acionar Field',msg:'Sugiro acionar o Field Trainer pra resolver de vez.',reply:{f:'csc',t:'Boa ideia, vou propor a visita ao João.'},customerStep:'sAgenda'},
+];
+const CH_FIELD=[
+  {label:'Pedir ETA',msg:'Diego, qual sua previsão pra chegar no #BR-4471?',reply:{f:'field',t:'Saindo agora, ETA ~1h.'}},
+  {label:'Pedir foto do campo',msg:'Pode mandar uma foto da antena na visita?',reply:{f:'field',t:'Claro! Envio assim que chegar 📷'}},
+  {label:'Confirmar conclusão',msg:'Quando fechar, confirma pra eu encerrar o acompanhamento?',reply:{f:'field',t:'Combinado, aviso com foto e passada validada.'}},
+];
+const DEALER_REPLY=[
+  {label:'Atualizar Deere',ev:{f:'csc',t:'Deere: caso em andamento, sem bloqueios. ETA resolução ~2h.'}},
+  {label:'Pedir apoio na licença',ev:{f:'csc',t:'Precisamos de apoio pra verificar licença do cliente. Conseguem?'}},
+];
+const FIELD_REPLY=[
+  {label:'Reportar à Deere',ev:{f:'field',t:'A caminho do talhão norte, tudo normal.'}},
+  {label:'Confirmar conclusão',ev:{f:'field',t:'Recalibrado e validado. Caso fechado com sucesso ✅'}},
+];
+
+/* Table data */
+const CLIENTES=[
+  {nome:'João Mendes',faz:'Santa Mônica',reg:'MT',dealer:'AgroBaggio',tech:'AutoTrac · AutoPath',uso:13,csat:null,status:'Ativo · caso aberto',live:true},
+  {nome:'Eduardo Lima',faz:'Primavera',reg:'GO',dealer:'AgroBaggio',tech:'AutoTrac · AutoPath',uso:91,csat:5,status:'Referência'},
+  {nome:'Sandra Rocha',faz:'Vale Verde',reg:'MT',dealer:'Tracbel',tech:'AutoTrac',uso:22,csat:null,status:'Em risco'},
+  {nome:'Marcos Dias',faz:'do Cerrado',reg:'GO',dealer:'AgroBaggio',tech:'AutoTrac',uso:0,csat:null,status:'Nunca ativou'},
+  {nome:'Tiago Alves',faz:'Boa Vista',reg:'MT',dealer:'Tracbel',tech:'AutoTrac · AutoPath',uso:47,csat:4,status:'Ativo'},
+  {nome:'Coop São José',faz:'—',reg:'RS',dealer:'AgroBaggio',tech:'AutoTrac',uso:35,csat:4,status:'Ativo'},
+  {nome:'Renata Souza',faz:'Três Irmãos',reg:'GO',dealer:'AgroBaggio',tech:'AutoPath',uso:68,csat:5,status:'Ativo'},
+  {nome:'Paulo Neto',faz:'Horizonte',reg:'MT',dealer:'Tracbel',tech:'AutoTrac',uso:8,csat:2,status:'Em risco'},
+];
+const CONSULTAS=[
+  {id:'MT-7782',cliente:'Tiago Alves',ramo:'Ramo 2 · Sinal',prio:'Média',sla:'4h12',estado:'Em fila',resp:'CSC Tracbel'},
+  {id:'RS-0471',cliente:'Coop São José',ramo:'Ramo 1 · Relatório',prio:'Baixa',sla:'1d',estado:'Em andamento',resp:'CSC AgroBaggio'},
+  {id:'MT-1190',cliente:'Sandra Rocha',ramo:'Ramo 3 · Setup',prio:'Alta',sla:'Atrasado',estado:'Parado',resp:'—'},
+  {id:'GO-3055',cliente:'Eduardo Lima',ramo:'Ramo 4 · Orientação',prio:'Baixa',sla:'—',estado:'Resolvido',resp:'Assistente Digital'},
+];
+const DEALERS_PERF=[
+  {nome:'AgroBaggio',casos:142,fcr:71,tmedio:'2 min',remoto:68,csat:4.6},
+  {nome:'Tracbel',casos:98,fcr:58,tmedio:'6 min',remoto:54,csat:4.1},
+  {nome:'Comagril',casos:64,fcr:49,tmedio:'11 min',remoto:41,csat:3.8},
+  {nome:'Vimaqui',casos:53,fcr:62,tmedio:'4 min',remoto:60,csat:4.3},
+];
+const FIELDS_PERF=[
+  {nome:'Diego Martins',dealer:'AgroBaggio',visitas:22,tvisita:'38 min',passada:92,usod7:87},
+  {nome:'Lucas Pereira',dealer:'Tracbel',visitas:17,tvisita:'52 min',passada:84,usod7:73},
+  {nome:'Bruno Costa',dealer:'AgroBaggio',visitas:14,tvisita:'41 min',passada:88,usod7:81},
+  {nome:'Felipe Nunes',dealer:'Comagril',visitas:9,tvisita:'1h05',passada:76,usod7:64},
+];
+
+/* ─── UI Helpers ──────────────────────────────────────── */
+function Pill({children,bg,fg,size}){
+  return <span style={{display:'inline-flex',alignItems:'center',gap:4,background:bg,color:fg,fontSize:size||11,fontWeight:600,padding:'2px 8px',borderRadius:4,whiteSpace:'nowrap'}}>{children}</span>;
+}
+function statusOf(flags,step){
+  if(flags.resolved)return{t:'RESOLVIDO',bg:C.okBg,fg:C.ok};
+  if(step==='sPausa')return{t:'PAUSADO',bg:C.critBg,fg:C.crit};
+  if(step==='s0')return{t:'AGUARDANDO',bg:C.line2,fg:C.ink3};
+  return{t:'EM ANDAMENTO',bg:C.warnBg,fg:C.warn};
+}
+function ecOf(e){
+  if(/resolv|referên/i.test(e))return{bg:C.okBg,fg:C.ok};
+  if(/risco|parado|atras|nunca/i.test(e))return{bg:C.critBg,fg:C.crit};
+  if(/fila|andamento/i.test(e))return{bg:C.warnBg,fg:C.warn};
+  return{bg:C.line2,fg:C.ink2};
+}
+function Bar({v,c}){
+  return <div style={{display:'flex',alignItems:'center',gap:8}}>
+    <div style={{flex:1,height:5,background:C.line2,borderRadius:4,overflow:'hidden'}}>
+      <div style={{width:v+'%',height:'100%',background:c||C.green,transition:'width .4s ease'}}/>
+    </div>
+    <span style={{fontSize:11,fontWeight:600,width:32,textAlign:'right',fontFamily:"'JetBrains Mono',monospace",color:C.ink2}}>{v}%</span>
+  </div>;
+}
+function KPI({label,value,sub,Icon,tone}){
+  const tc=tone==='crit'?C.crit:tone==='ok'?C.ok:C.ink;
+  return <div style={{border:'1px solid '+C.line,borderRadius:8,padding:'14px 16px',background:C.card,boxShadow:'var(--shadow-sm)',transition:'box-shadow 150ms'}}
+    onMouseEnter={e=>e.currentTarget.style.boxShadow='var(--shadow-md)'}
+    onMouseLeave={e=>e.currentTarget.style.boxShadow='var(--shadow-sm)'}>
+    <div style={{display:'flex',alignItems:'center',gap:6,color:C.ink3,fontSize:11,textTransform:'uppercase',letterSpacing:'.06em',marginBottom:8}}><Icon size={13} style={{color:tone==='crit'?C.crit:C.green}}/>{label}</div>
+    <div style={{fontSize:28,fontWeight:700,color:tc,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em'}}>{value}</div>
+    {sub&&<div style={{fontSize:10,color:C.ink4,marginTop:4}}>{sub}</div>}
+  </div>;
+}
+function Tbl({head,rows}){
+  return <div style={{border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:C.card,boxShadow:'var(--shadow-sm)'}}>
+    <div style={{overflowX:'auto'}}>
+    <table style={{width:'100%',borderCollapse:'collapse',fontSize:12.5}}>
+      <thead><tr style={{background:C.page}}>
+        {head.map((h,i)=><th key={i} style={{textAlign:'left',padding:'10px 14px',fontSize:10.5,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',borderBottom:'1px solid '+C.line,whiteSpace:'nowrap'}}>{h}</th>)}
+      </tr></thead>
+      <tbody>
+        {rows.map((r,i)=><tr key={i} className="row-hover" style={{borderBottom:'1px solid '+C.line2,transition:'background 150ms',cursor:'default'}}>
+          {r.map((cell,j)=><td key={j} style={{padding:'10px 14px',verticalAlign:'middle'}}>{cell}</td>)}
+        </tr>)}
+      </tbody>
+    </table>
+    </div>
+  </div>;
+}
+
+/* Avatar */
+const AV={
+  produtor:{label:'JM',bg:'#D6D0C8',c:'#4A4540'},
+  csc:     {label:'CA',bg:C.green,c:'#fff'},
+  especialista:{label:'ER',bg:'#2A6122',c:'#fff'},
+  field:   {label:'DM',bg:'#7A8C52',c:'#fff',jd:true},
+  dealer:  {label:'AB',bg:C.green,c:'#fff',sq:true},
+  bot:     {label:'AB',bg:C.green,c:'#fff',sq:true},
+  deere:   {label:'JD',bg:C.side,c:C.yellow,sq:true},
+  system:  {label:'⚙',bg:C.line,c:C.ink3},
+};
+function Avatar({who,size=30}){
+  const a=AV[who]||AV.system;
+  const r=a.sq?Math.round(size*.22):size;
+  return <div style={{width:size,height:size,borderRadius:r,background:a.bg,color:a.c,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,flexShrink:0,position:'relative',fontSize:Math.round(size*.37),fontFamily:"'Barlow Condensed',sans-serif"}}>
+    <span>{a.label}</span>
+    {a.jd&&<span style={{position:'absolute',right:-2,bottom:-3,width:Math.round(size*.42),height:Math.round(size*.42),borderRadius:100,background:C.yellow,border:'1.5px solid #fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:Math.round(size*.2),fontWeight:800,color:C.greenD,fontFamily:"'Barlow Condensed',sans-serif"}}>JD</span>}
+  </div>;
+}
+
+/* WA Bubble — super realistic */
+function WABubble({e, showAvatar}){
+  if(e.n) return (
+    <div style={{display:'flex',justifyContent:'center',margin:'8px 0 4px'}}>
+      <div style={{background:'rgba(225,245,254,.92)',color:'#3d5060',fontSize:11,padding:'4px 12px',borderRadius:8,display:'inline-flex',alignItems:'center',gap:5,backdropFilter:'blur(4px)'}}>
+        <Lock size={10}/><span>{e.t}</span>
+      </div>
+    </div>
+  );
+  /* Milestone — visible to produtor, centered status update */
+  if(e.k==='milestone') return (
+    <div style={{display:'flex',justifyContent:'center',margin:'10px 12px'}}>
+      <div style={{background:'rgba(255,255,255,0.92)',border:'1px solid rgba(54,124,43,.25)',color:'#1a5c14',fontSize:11.5,padding:'7px 14px',borderRadius:20,display:'inline-flex',alignItems:'center',gap:7,backdropFilter:'blur(4px)',boxShadow:'0 1px 3px rgba(0,0,0,.1)',maxWidth:'90%'}}>
+        <span style={{fontSize:14,flexShrink:0}}>{e.icon||'📋'}</span>
+        <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start'}}>
+          <span style={{fontWeight:700,lineHeight:1.2}}>{e.label}</span>
+          {e.detail&&<span style={{fontSize:10.5,color:'#3a7d35',opacity:.85,lineHeight:1.3,marginTop:1}}>{e.detail}</span>}
+        </div>
+      </div>
+    </div>
+  );
+  const out=!!e.out;
+  const bg=out?C.waOut:C.waIn;
+  const p=PROF[e.f]||PROF.system;
+  return (
+    <div style={{display:'flex',justifyContent:out?'flex-end':'flex-start',margin:'2px 8px',animation:'pop .2s ease-out'}}>
+      {!out&&showAvatar&&<div style={{width:32,flexShrink:0,marginRight:4,display:'flex',alignItems:'flex-end'}}><Avatar who={e.f} size={28}/></div>}
+      {!out&&!showAvatar&&<div style={{width:36,flexShrink:0}}/>}
+      <div style={{maxWidth:'72%',position:'relative'}}>
+        {/* Bubble tail */}
+        {out&&<div style={{position:'absolute',right:-6,bottom:8,width:0,height:0,borderTop:'8px solid transparent',borderBottom:'0px solid transparent',borderLeft:`8px solid ${bg}`}}/>}
+        {!out&&showAvatar&&<div style={{position:'absolute',left:-6,bottom:8,width:0,height:0,borderTop:'8px solid transparent',borderBottom:'0px solid transparent',borderRight:`8px solid ${bg}`}}/>}
+        <div style={{background:bg,borderRadius:out?'8px 8px 2px 8px':'8px 8px 8px 2px',padding:'6px 9px 5px',boxShadow:'0 1px 1px rgba(0,0,0,.13)'}}>
+          {!out&&showAvatar&&<div style={{fontSize:11,fontWeight:700,color:p.c,marginBottom:2}}>{p.name}</div>}
+          {e.t&&<div style={{fontSize:13.5,color:'#111',lineHeight:1.4,whiteSpace:'pre-line'}}>{e.t}</div>}
+          {e.k==='media'&&<div style={{marginTop:4,display:'flex',alignItems:'center',gap:5,fontSize:11,color:'#667'}}>
+            <span>📎</span><span style={{color:C.green}}>áudio + foto anexados</span>
+          </div>}
+          {e.k==='card'&&<div style={{marginTop:4,padding:'6px 8px',background:out?'rgba(0,0,0,.06)':'rgba(0,0,0,.04)',borderRadius:6,fontSize:11,color:'#445'}}>
+            <span style={{fontSize:10,fontWeight:700,textTransform:'uppercase',color:out?C.green:'#667',letterSpacing:'.05em'}}>Resposta interativa</span><br/>
+            <span>Toque nas opções abaixo para responder</span>
+          </div>}
+          {e.k==='csat'&&<div style={{marginTop:4,display:'flex',gap:6}}>
+            {[1,2,3,4,5].map(s=><span key={s} style={{fontSize:18,cursor:'default'}}>⭐</span>)}
+          </div>}
+          {e.k==='doc'&&<div style={{marginTop:6,padding:'8px 10px',background:'rgba(255,255,255,0.7)',borderRadius:8,border:'1px solid rgba(54,124,43,.2)',display:'flex',alignItems:'center',gap:8}}>
+            <span style={{fontSize:20,flexShrink:0}}>{e.docIcon||'📄'}</span>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:'#1a7d4a',marginBottom:1}}>{e.docTitle}</div>
+              <div style={{fontSize:10,color:'#667',display:'flex',alignItems:'center',gap:3}}><span style={{fontSize:9}}>🔗</span>Toque para abrir o documento</div>
+            </div>
+          </div>}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'flex-end',gap:3,marginTop:2}}>
+            <span style={{fontSize:10,color:out?'#667':'#90a'}}>{e.time||'--:--'}</span>
+            {out&&<CheckCheck size={13} style={{color:C.waRead}}/>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function WATyping({who}){
+  const p=PROF[who]||PROF.system;
+  return (
+    <div style={{display:'flex',alignItems:'flex-end',gap:5,margin:'4px 8px'}}>
+      <Avatar who={who} size={28}/>
+      <div style={{background:C.waIn,borderRadius:'8px 8px 8px 2px',padding:'8px 12px',boxShadow:'0 1px 1px rgba(0,0,0,.13)',display:'flex',alignItems:'center',gap:3}}>
+        <span className="dot" style={{animationDelay:'0s'}}/><span className="dot" style={{animationDelay:'.2s'}}/><span className="dot" style={{animationDelay:'.4s'}}/>
+      </div>
+    </div>
+  );
+}
+
+function WAThread({log,typing,height}){
+  const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=ref.current.scrollHeight;},[log.length,typing]);
+  let lastF=null;
+  return (
+    <div ref={ref} className="wa-bg" style={{overflowY:'auto',padding:'8px 0',height,display:'flex',flexDirection:'column',flex:height?undefined:1,minHeight:height?undefined:0}}>
+      <div style={{display:'flex',justifyContent:'center',margin:'8px 0 12px'}}>
+        <div style={{background:'rgba(225,245,254,.92)',color:'#3d5060',fontSize:11,padding:'4px 12px',borderRadius:8}}>HOJE</div>
+      </div>
+      {log.length===0&&(
+        <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:8,padding:'24px 20px',textAlign:'center'}}>
+          <span style={{fontSize:28,opacity:.5}}>💬</span>
+          <span style={{fontSize:12,color:'#8696a0',lineHeight:1.5}}>Toque numa opção abaixo para iniciar o atendimento.</span>
+        </div>
+      )}
+      {log.map((e,i)=>{
+        if(e.k==='milestone') return <WABubble key={i} e={e} showAvatar={false}/>;
+        const showAv=!e.out&&!e.n&&e.k!=='milestone'&&(e.f!==lastF||(log[i-1]&&(log[i-1].n||log[i-1].k==='milestone')));
+        if(!e.n&&!e.out&&e.k!=='milestone') lastF=e.f;
+        return <WABubble key={i} e={e} showAvatar={showAv}/>;
+      })}
+      {typing&&<WATyping who={typing}/>}
+    </div>
+  );
+}
+
+/* WA-style status bar (fake phone) */
+function PhoneStatusBar(){
+  const now=new Date();
+  const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  return (
+    <div style={{background:C.waHead2,color:'#fff',padding:'4px 16px 2px',display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:11,fontWeight:600}}>
+      <span>{t}</span>
+      <div style={{display:'flex',gap:5,alignItems:'center'}}><Signal size={13}/><Wifi size={13}/><Battery size={14}/></div>
+    </div>
+  );
+}
+
+/* WA Chat Header */
+function WAChatHeader({onBack,typing}){
+  return (
+    <div style={{background:C.waHead,color:'#fff',padding:'8px 12px',display:'flex',alignItems:'center',gap:10}}>
+      <button onClick={onBack} style={{background:'transparent',border:'none',color:'#fff',cursor:'pointer',padding:0,display:'flex',alignItems:'center',flexShrink:0}}><ArrowLeft size={22}/></button>
+      <div style={{width:38,height:38,borderRadius:38,background:C.green,display:'flex',alignItems:'center',justifyContent:'center',fontSize:15,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif",color:'#fff',flexShrink:0}}>AB</div>
+      <div style={{flex:1,minWidth:0}}>
+        <div style={{fontSize:15,fontWeight:600,lineHeight:1}}>Suporte AgroBaggio</div>
+        <div style={{fontSize:11.5,opacity:.85,marginTop:2}}>{typing?<span style={{color:'#a8edca'}}>digitando...</span>:'online'}</div>
+      </div>
+      <div style={{display:'flex',gap:14,alignItems:'center',flexShrink:0}}>
+        <Video size={20}/>
+        <Phone size={19}/>
+        <MoreVertical size={20}/>
+      </div>
+    </div>
+  );
+}
+
+/* WA List header */
+function WAListHeader(){
+  return (
+    <div style={{background:C.waHead,color:'#fff',padding:'14px 16px 10px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+      <div style={{fontSize:20,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.02em'}}>WhatsApp</div>
+      <div style={{display:'flex',gap:14,alignItems:'center'}}><Camera size={20}/><Search size={20}/><MoreVertical size={20}/></div>
+    </div>
+  );
+}
+
+/* WA Reply chips — pill style, not full-width */
+function WAChips({opts,role,choose,busy}){
+  if(busy||!opts.length) return null;
+  const mine=opts.filter(o=>o.role===role);
+  if(!mine.length) return null;
+  return (
+    <div style={{background:C.waBar,borderTop:'1px solid #e0e4df',padding:'8px 10px 10px'}}>
+      <div style={{fontSize:10,color:'#667',marginBottom:6,display:'flex',alignItems:'center',gap:4}}>
+        <MessageCircle size={10}/>O que você quer fazer?
+      </div>
+      <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+        {mine.map((o,i)=>(
+          <button key={i} onClick={()=>choose(o)} style={{display:'inline-flex',alignItems:'center',background:'rgba(255,255,255,0.95)',border:'1px solid #d4e0d0',color:'#1a7d4a',borderRadius:22,padding:'8px 16px',fontSize:13,fontWeight:500,cursor:'pointer',boxShadow:'0 1px 2px rgba(0,0,0,.07)',transition:'all 150ms',fontFamily:"'Barlow',sans-serif",whiteSpace:'nowrap'}}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* WA Composer */
+function WAComposer({onSend,disabled}){
+  const [v,setV]=useState('');
+  const [photoAttached,setPhotoAttached]=useState(false);
+  const send=()=>{if((v.trim()||photoAttached)&&!disabled){onSend(v.trim()||(photoAttached?'📷 Foto anexada':''));setV('');setPhotoAttached(false);}};
+  return (
+    <div style={{background:C.waBar,padding:'6px 10px 8px',display:'flex',flexDirection:'column',gap:6}}>
+      {photoAttached&&(
+        <div style={{display:'flex',alignItems:'center',gap:8,background:'rgba(37,211,102,0.1)',borderRadius:8,padding:'6px 10px',border:'1px solid rgba(37,211,102,0.3)'}}>
+          <span style={{fontSize:13}}>📷</span>
+          <span style={{fontSize:12.5,color:C.greenD,fontWeight:600,flex:1}}>Foto anexada</span>
+          <button onClick={()=>setPhotoAttached(false)} style={{background:'none',border:'none',color:C.ink3,cursor:'pointer',fontSize:13,padding:'0 4px'}}>✕</button>
+        </div>
+      )}
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <button onClick={()=>setPhotoAttached(p=>!p)} title="Anexar foto"
+          style={{width:38,height:38,borderRadius:38,background:photoAttached?C.greenL:'transparent',border:'none',color:photoAttached?C.green:'#8696a0',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,transition:'all 150ms'}}>
+          <Camera size={20}/>
+        </button>
+        <div style={{flex:1,display:'flex',alignItems:'center',background:C.waIn,borderRadius:22,padding:'8px 14px',gap:8,border:'none',boxShadow:'0 1px 2px rgba(0,0,0,.1)'}}>
+          <Smile size={20} style={{color:'#8696a0',flexShrink:0}}/>
+          <input value={v} onChange={e=>setV(e.target.value)} onKeyDown={e=>{if(e.key==='Enter')send();}} placeholder="Mensagem" disabled={disabled}
+            style={{flex:1,border:'none',outline:'none',fontSize:14.5,color:'#111',background:'transparent',fontFamily:"'Barlow',sans-serif"}}/>
+          <Paperclip size={20} style={{color:'#8696a0',flexShrink:0}}/>
+        </div>
+        <button onClick={(v.trim()||photoAttached)?send:undefined} style={{width:44,height:44,borderRadius:44,background:C.waHead,border:'none',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',flexShrink:0,transition:'background 150ms',boxShadow:'0 2px 4px rgba(0,0,0,.2)'}}>
+          {(v.trim()||photoAttached)?<Send size={18}/>:<Mic size={18}/>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+/* Non-WA thread (for dealer/field internal view) */
+function InternalBubble({e}){
+  if(e.n) return (
+    <div style={{display:'flex',justifyContent:'center',margin:'8px 0'}}>
+      <div style={{background:'#EBEFE6',color:C.ink3,fontSize:10.5,padding:'4px 12px',borderRadius:6,display:'inline-flex',alignItems:'center',gap:5}}>
+        <Lock size={10}/>{e.t}{e.time&&<span style={{opacity:.6}}>· {e.time}</span>}
+      </div>
+    </div>
+  );
+  const out=!!e.out;
+  const p=PROF[e.f]||PROF.system;
+  const bg=out?C.okBg:C.card;
+  return (
+    <div style={{display:'flex',justifyContent:out?'flex-end':'flex-start',margin:'6px 0',animation:'pop .2s ease-out'}}>
+      <div style={{maxWidth:'78%',background:bg,border:'1px solid '+(out?'transparent':C.line),borderRadius:8,padding:'8px 11px',boxShadow:'var(--shadow-sm)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:5,marginBottom:3}}><Avatar who={e.f} size={18}/><span style={{fontSize:10.5,fontWeight:700,color:p.c}}>{p.name}</span></div>
+        <div style={{fontSize:13,color:C.ink,lineHeight:1.4,whiteSpace:'pre-line'}}>{e.t}</div>
+        {e.k==='media'&&<div style={{marginTop:4,fontSize:11,color:C.ink3,display:'flex',alignItems:'center',gap:4}}><Paperclip size={10}/>áudio + foto</div>}
+        <div style={{fontSize:9.5,color:C.ink3,textAlign:'right',marginTop:3,display:'flex',justifyContent:'flex-end',alignItems:'center',gap:3}}>
+          {e.time}{out&&<CheckCheck size={11} style={{color:C.waRead}}/>}
+        </div>
+      </div>
+    </div>
+  );
+}
+function InternalThread({log,mine,typing,height,bg}){
+  const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=ref.current.scrollHeight;},[log.length,typing]);
+  return (
+    <div ref={ref} style={{overflowY:'auto',padding:'10px 12px',height,flex:height?undefined:1,minHeight:height?undefined:0,background:bg||'transparent'}}>
+      {log.map((e,i)=><InternalBubble key={i} e={{...e,out:mine?mine(e.f):e.out}}/>)}
+      {typing&&<WATyping who={typing}/>}
+    </div>
+  );
+}
+
+/* Mode toggle (Dealer/Field) — bigger, clearer */
+function ModeTog({mode,setMode,dealerLabel}){
+  const opt=(k,emoji,t,sub)=>(
+    <button onClick={()=>setMode(k)} style={{display:'inline-flex',alignItems:'center',gap:8,background:mode===k?C.side:C.card,color:mode===k?'#fff':C.ink2,border:'1.5px solid '+(mode===k?C.side:C.line),borderRadius:8,padding:'10px 18px',fontSize:13,fontWeight:600,cursor:'pointer',transition:'all 150ms',flex:1,justifyContent:'center'}}>
+      <span style={{fontSize:16}}>{emoji}</span>
+      <span>{t}<span style={{display:'block',fontSize:10,fontWeight:400,opacity:.65,marginTop:1}}>{sub}</span></span>
+    </button>
+  );
+  return <div style={{display:'flex',gap:8,marginBottom:16}}>{opt('whatsapp','💬','Conversa com o Produtor','João Mendes · WhatsApp')}{opt('painel','💻',dealerLabel||'Painel do Dealer','visão completa do caso')}</div>;
+}
+
+/* Turn banner — role-aware */
+function TurnoBanner({on,waitingFor}){
+  if(on) return (
+    <div style={{display:'flex',alignItems:'center',gap:8,background:C.yellow,color:C.yellowD,fontWeight:700,fontSize:13,padding:'10px 14px',borderRadius:8,marginBottom:12,boxShadow:'0 2px 8px rgba(255,222,0,.3)'}}>
+      <Bell size={15}/>É a sua vez de agir neste caso.
+    </div>
+  );
+  if(waitingFor) return (
+    <div style={{display:'flex',alignItems:'center',gap:8,background:C.line2,color:C.ink3,fontWeight:500,fontSize:12.5,padding:'8px 14px',borderRadius:8,marginBottom:12}}>
+      <Clock size={13}/>Aguardando resposta do <b style={{color:C.ink2,marginLeft:4}}>{waitingFor}</b>
+    </div>
+  );
+  return null;
+}
+
+/* Decisions (non-WA contexts) */
+function Decisions({opts,role,choose,waiting,busy}){
+  if(busy) return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Radio size={13} style={{color:C.green}}/>Aguardando resposta...</div>;
+  const mine=opts.filter(o=>o.role===role);
+  if(mine.length) return (
+    <div style={{display:'flex',flexDirection:'column',gap:6}}>
+      <div style={{fontSize:10,fontWeight:700,color:C.green,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:2}}>Sua vez</div>
+      {mine.map((o,i)=>(
+        <button key={i} onClick={()=>choose(o)} className="opt-btn" style={{textAlign:'left',background:C.card,border:'1px solid '+C.green,color:C.greenD,borderRadius:6,padding:'10px 13px',fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8,transition:'all 150ms'}}>
+          <span>{o.label}</span><ChevronRight size={15}/>
+        </button>
+      ))}
+    </div>
+  );
+  if(waiting.length) return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Clock size={13}/>Aguardando <b style={{color:C.ink2}}>{waiting.map(w=>ROLE_NAME[w]).join(' / ')}</b></div>;
+  return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Check size={13} style={{color:C.ok}}/>Encerrado.</div>;
+}
+
+/* Coord channel */
+function Coord({label,sub,log,mine,typing,buttons,height}){
+  return (
+    <div style={{border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:C.card,boxShadow:'var(--shadow-sm)'}}>
+      <div style={{background:C.page,borderBottom:'1px solid '+C.line,padding:'8px 13px'}}>
+        <div style={{fontSize:12.5,fontWeight:700,display:'flex',alignItems:'center',gap:6}}><Send size={13} style={{color:C.side}}/>{label}</div>
+        {sub&&<div style={{fontSize:10.5,color:C.ink3,marginTop:1}}>{sub}</div>}
+      </div>
+      {log.length?<InternalThread log={log} mine={mine} typing={typing} height={height||150}/>
+        :<div style={{height:height||150,display:'flex',alignItems:'center',justifyContent:'center',color:C.ink3,fontSize:12,padding:14,textAlign:'center'}}>Sem mensagens ainda.</div>}
+      <div style={{borderTop:'1px solid '+C.line,padding:10,display:'flex',gap:6,flexWrap:'wrap',background:C.page}}>
+        {buttons.map((b,i)=><button key={i} onClick={b.onClick} className="jd-btn-ghost" style={{fontSize:11.5}}>{b.Icon&&<b.Icon size={12}/>}{b.label}</button>)}
+      </div>
+    </div>
+  );
+}
+
+/* Checklist item — custom styled */
+function CheckItem({t,done}){
+  return (
+    <div style={{display:'flex',alignItems:'center',gap:8,fontSize:12.5,padding:'5px 0'}}>
+      <span style={{width:20,height:20,borderRadius:20,background:done?C.green:'transparent',border:'2px solid '+(done?C.green:C.line),display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,transition:'all 200ms'}}>
+        {done&&<Check size={11} style={{color:'#fff'}}/>}
+      </span>
+      <span style={{color:done?C.ink:C.ink3,textDecoration:done?'none':'none'}}>{t}</span>
+    </div>
+  );
+}
+
+/* ─── Documentos & Recursos contextual ───────────────── */
+const DOCS_RECURSOS = [
+  {id:'d1',icon:'📋',title:'Manual do Operador X9',cat:'Técnico',tag:'X9 · AutoTrac',desc:'Specs, ajustes e referência completa do modelo.',audience:['dealer','field'],sendMsg:'Oi João! Aqui está o manual do operador da X9 pra referência: [Manual X9 · AutoTrac]'},
+  {id:'d2',icon:'🧭',title:'Guia AutoTrac — instalação e calibração',cat:'Setup',tag:'Ramo 4 · AutoTrac',desc:'Passo a passo para ativar e calibrar o AutoTrac no monitor.',audience:['dealer','field'],sendMsg:'João, segue o guia de instalação e calibração do AutoTrac: [Guia AutoTrac v3.2]'},
+  {id:'d3',icon:'📡',title:'Recalibração StarFire — passo a passo',cat:'Troubleshooting',tag:'Ramo 4 · StarFire',desc:'Diagnóstico de sinal fraco e protocolo de recalibração.',audience:['dealer','field'],sendMsg:'Oi João! Esse guia explica como recalibrar o receptor StarFire: [Guia StarFire · Recalibração]'},
+  {id:'d4',icon:'✅',title:'Checklist de ativação digital (OpsCenter)',cat:'Onboarding',tag:'Setup · OpsCenter',desc:'Do cadastro da fazenda até a primeira operação.',audience:['dealer'],sendMsg:'João, preparei o checklist de ativação do OpsCenter pra facilitar o setup: [Checklist OpsCenter]'},
+  {id:'d5',icon:'🔑',title:'Estado de licença AutoPath',cat:'Comercial',tag:'AutoPath · licença',desc:'Vencimento em 30 dias · plano atual: AutoPath Standard.',audience:['dealer'],sendMsg:'Oi João, sua licença AutoPath vence em 30 dias. Preparei as opções de renovação: [Renovação AutoPath]'},
+  {id:'d6',icon:'🗺️',title:'Protocolo de visita técnica em campo',cat:'Campo',tag:'Field · presencial',desc:'Checklist de segurança e formulário de report pós-visita.',audience:['field'],sendMsg:'João, o Diego vai levar o protocolo de visita técnica. Aqui está o resumo: [Protocolo de visita]'},
+];
+function DocResources({role,onSend,sentDocs}){
+  const docs=DOCS_RECURSOS.filter(d=>d.audience.includes(role));
+  const [expanded,setExpanded]=useState(false);
+  const visible=expanded?docs:docs.slice(0,3);
+  return (
+    <div>
+      <div style={{padding:'4px 14px 6px',borderBottom:'1px solid '+C.line2,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <span style={{fontSize:10,color:C.green,fontWeight:600,background:C.greenL,padding:'1px 7px',borderRadius:10}}>Ramo 4 · AutoTrac · X9</span>
+      </div>
+      <div style={{padding:'4px 0'}}>
+        {visible.map(d=>{
+          const sent=sentDocs&&sentDocs.includes(d.id);
+          return (
+            <div key={d.id} style={{display:'flex',alignItems:'flex-start',gap:10,padding:'10px 14px',borderBottom:'1px solid '+C.line2,transition:'background 150ms'}}
+              onMouseEnter={e=>e.currentTarget.style.background=C.page}
+              onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+              <span style={{fontSize:18,flexShrink:0,marginTop:1}}>{d.icon}</span>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12.5,fontWeight:600,marginBottom:2}}>{d.title}</div>
+                <div style={{display:'flex',gap:4,marginBottom:4,flexWrap:'wrap'}}>
+                  <span style={{fontSize:10,fontWeight:600,color:C.green,background:C.greenL,padding:'1px 6px',borderRadius:10}}>{d.cat}</span>
+                  <span style={{fontSize:10,color:C.ink3,background:C.line2,padding:'1px 6px',borderRadius:10}}>{d.tag}</span>
+                </div>
+                <div style={{fontSize:11.5,color:C.ink3,lineHeight:1.4}}>{d.desc}</div>
+              </div>
+              <button onClick={()=>!sent&&onSend(d)} style={{display:'inline-flex',alignItems:'center',gap:4,background:sent?C.okBg:C.side,color:sent?C.ok:'#fff',border:'none',borderRadius:6,padding:'6px 10px',fontSize:11,fontWeight:600,cursor:sent?'default':'pointer',flexShrink:0,transition:'all 150ms',whiteSpace:'nowrap'}}>
+                {sent?<><Check size={10}/>Enviado</>:<><Send size={10}/>Enviar ao produtor</>}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+      {docs.length>3&&(
+        <div style={{padding:'8px 14px',borderTop:'1px solid '+C.line2}}>
+          <button onClick={()=>setExpanded(e=>!e)} style={{...bGhost,fontSize:11.5,width:'100%',justifyContent:'center'}}>
+            {expanded?'Mostrar menos':'Ver todos os '+docs.length+' recursos'}
+            <ChevronDown size={13} style={{transform:expanded?'rotate(180deg)':'none',transition:'transform 150ms'}}/>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* Phone Shell — fixed 844px height */
+function PhoneShell({children,bg}){
+  return (
+    <div style={{width:390,maxWidth:'100%',borderRadius:40,background:'#111',padding:'10px 8px',boxShadow:'0 24px 60px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.06)',overflow:'hidden',height:844,flexShrink:0}}>
+      <div style={{borderRadius:32,overflow:'hidden',background:bg||C.waBg,height:'100%',display:'flex',flexDirection:'column'}}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   VISTA PRODUTOR — WhatsApp pixel-perfect
+═══════════════════════════════════════════════════════ */
+const WA_CONTACTS=[
+  {id:'suporte',name:'Suporte AgroBaggio',avatar:'AB',avatarBg:C.green,preview:'Toque para abrir',time:'',badge:1,open:true},
+  {id:'coop',name:'Cooperativa Sorriso',avatar:'CS',avatarBg:'#5B8A3C',preview:'Reunião quinta-feira 🌾',time:'ontem',badge:0,open:false},
+  {id:'fam',name:'Família 🌱',avatar:'FA',avatarBg:'#E8A020',preview:'Vem almoçar domingo?',time:'ontem',badge:0,open:false},
+  {id:'posto',name:'Posto Sorriso',avatar:'PS',avatarBg:'#555',preview:'Nota fiscal enviada',time:'seg',badge:0,open:false},
+  {id:'agro',name:'Agro Suprimentos',avatar:'AS',avatarBg:'#7B6B52',preview:'Promoção de calcário 📢',time:'ter',badge:0,open:false},
+];
+function VProdutor({log,opts,choose,waiting,busy,typing,turno,onWrite,screen,setScreen,setTab}){
+  /* screen/setScreen lifted to App so reset() can return to list */
+  const filtLog=log.filter(e=>!e.n); /* hide system events from WA */
+  const waTyping=typing&&typing!=='produtor'?typing:null;
+  const waitingFor = !turno && waiting.length ? waiting.map(w=>ROLE_NAME[w]).join(' / ') : null;
+  /* Reactive contact list — preview and badge update as messages arrive */
+  const lastMsg=filtLog.length?filtLog[filtLog.length-1]:null;
+  const lastMsgText=lastMsg?(lastMsg.t||lastMsg.label||''):'';
+  const lastPreview=lastMsg?(lastMsg.out?'Você: ':'')+lastMsgText.slice(0,38)+(lastMsgText.length>38?'…':''):'Toque para iniciar o atendimento';
+  const contacts=WA_CONTACTS.map(c=>c.id==='suporte'?{...c,preview:lastPreview,badge:screen==='chat'?0:(filtLog.length>0?1:1),time:lastMsg?lastMsg.time:''}:c);
+  /* Auto-open chat if messages already exist (e.g. returning from another tab) */
+  useEffect(()=>{
+    if(filtLog.length>0&&screen==='list') setScreen('chat');
+  },[filtLog.length]);
+  /* Chips available to produtor */
+  const prodChips=opts.filter(o=>o.role==='produtor');
+  /* Next actor after produtor acts */
+  const nextActor=waiting.filter(r=>r!=='produtor')[0];
+  const NEXT_TAB={dealer:'dealer',field:'field',deere:'deere'};
+  const NEXT_LABEL={dealer:'Ver como o Dealer responde',field:'Ver como o Field Trainer responde'};
+  return (
+    <div style={{display:'flex',gap:20,flex:1,minHeight:0,alignItems:'flex-start'}}>
+      {/* === Left col: Phone === */}
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:10,flex:1,minHeight:0}}>
+        {turno&&<div style={{display:'flex',alignItems:'center',gap:8,background:C.yellow,color:C.yellowD,fontWeight:700,fontSize:14,padding:'8px 18px',borderRadius:8,boxShadow:'0 2px 8px rgba(255,222,0,.3)',width:'100%',maxWidth:390}}>
+          <Bell size={15}/>É a sua vez de agir neste caso.
+        </div>}
+        {waitingFor&&!turno&&<div style={{display:'flex',alignItems:'center',gap:8,background:C.line2,color:C.ink3,fontWeight:500,fontSize:13,padding:'7px 14px',borderRadius:8,width:'100%',maxWidth:390}}>
+          <Clock size={13}/>Aguardando resposta do <b style={{color:C.ink2,marginLeft:4}}>{waitingFor}</b>
+        </div>}
+        <PhoneShell bg={screen==='list'?'#fff':C.waBg}>
+          <PhoneStatusBar/>
+          {screen==='list'?(
+            <div style={{background:'#fff',flex:1,overflowY:'auto'}}>
+              <WAListHeader/>
+              <div style={{padding:'8px 12px',background:'#fff',borderBottom:'1px solid #f0f0f0'}}>
+                <div style={{background:'#f0f2f3',borderRadius:20,padding:'7px 14px',display:'flex',alignItems:'center',gap:8,color:'#8696a0',fontSize:13}}>
+                  <Search size={14}/>Pesquisar
+                </div>
+              </div>
+              <div style={{padding:'5px 14px 3px',background:'#fff'}}>
+                <span style={{fontSize:11,color:'#8696a0',fontWeight:600,letterSpacing:'.04em'}}>FIXADO</span>
+              </div>
+              {contacts.map((c,i)=>(
+                <div key={c.id} onClick={()=>c.open&&setScreen('chat')} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 15px',borderBottom:'1px solid #f0f2f0',cursor:c.open?'pointer':'default',background:'#fff',transition:'background 150ms'}}
+                  onMouseEnter={e=>e.currentTarget.style.background=c.open?'#f5f6f6':'#fff'}
+                  onMouseLeave={e=>e.currentTarget.style.background='#fff'}>
+                  <div style={{width:50,height:50,borderRadius:50,background:c.avatarBg,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,fontWeight:700,color:'#fff',fontFamily:"'Barlow Condensed',sans-serif",flexShrink:0}}>
+                    {c.avatar}
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                      <span style={{fontSize:15,fontWeight:c.badge?700:500,color:'#111'}}>{c.name}</span>
+                      <span style={{fontSize:11.5,color:c.badge?C.wa:'#8696a0'}}>{c.time}</span>
+                    </div>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',gap:6}}>
+                      <span style={{fontSize:13,color:'#8696a0',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:1}}>{c.preview}</span>
+                      {c.badge>0&&<span style={{minWidth:20,height:20,borderRadius:10,background:C.wa,color:'#fff',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',padding:'0 5px',flexShrink:0}}>{c.badge}</span>}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ):(
+            <>
+              <WAChatHeader onBack={()=>setScreen('list')} typing={waTyping}/>
+              <WAThread log={filtLog} typing={waTyping} height={undefined}/>
+              <WAComposer onSend={onWrite} disabled={busy}/>
+            </>
+          )}
+        </PhoneShell>
+        {screen==='list'&&<div style={{textAlign:'center',fontSize:12,color:C.ink3,maxWidth:390,lineHeight:1.5}}>
+          Toque em Suporte AgroBaggio para iniciar o atendimento.
+        </div>}
+      </div>
+      {/* === Right panel: actions + context === */}
+      <div style={{width:290,flexShrink:0,display:'flex',flexDirection:'column',gap:12,overflowY:'auto',maxHeight:'calc(100vh - 120px)'}}>
+        {/* Turn indicator */}
+        <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,padding:'14px 16px',boxShadow:'var(--shadow-sm)'}}>
+          <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:8,display:'flex',alignItems:'center',gap:6}}>
+            <Activity size={12}/>Turno atual
+          </div>
+          {turno?(
+            <div style={{fontSize:14,color:C.greenD,fontWeight:600,display:'flex',alignItems:'center',gap:7}}>
+              <Avatar who="produtor" size={22}/>Você (Produtor) responde
+            </div>
+          ):waitingFor?(
+            <div style={{fontSize:14,color:C.ink2,display:'flex',alignItems:'center',gap:7}}>
+              <Clock size={14} style={{color:C.ink3}}/><span>Aguardando <b style={{color:C.ink}}>{waitingFor}</b></span>
+            </div>
+          ):(
+            <div style={{fontSize:13,color:C.ink3}}>Processando...</div>
+          )}
+        </div>
+        {/* Chips panel */}
+        {screen==='chat'&&(
+          <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,padding:'14px 16px',boxShadow:'var(--shadow-sm)'}}>
+            <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>
+              <MessageCircle size={12}/>O que você quer fazer?
+            </div>
+            {busy?(
+              <div style={{fontSize:13,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'4px 0'}}>
+                <Radio size={13} style={{color:C.green}}/>Aguardando resposta...
+              </div>
+            ):prodChips.length>0?(
+              <div style={{display:'flex',flexDirection:'column',gap:7}}>
+                {prodChips.map((o,i)=>(
+                  <button key={i} onClick={()=>choose(o)}
+                    style={{textAlign:'left',background:'#fff',border:'1.5px solid '+C.green,color:C.greenD,borderRadius:8,padding:'10px 13px',fontSize:14,fontWeight:600,cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8,transition:'all 150ms',width:'100%'}}
+                    onMouseEnter={e=>{e.currentTarget.style.background=C.greenL}}
+                    onMouseLeave={e=>{e.currentTarget.style.background='#fff'}}>
+                    <span>{o.label}</span><ChevronRight size={15}/>
+                  </button>
+                ))}
+              </div>
+            ):(
+              <div style={{fontSize:13,color:C.ink3,lineHeight:1.5,padding:'2px 0'}}>Acompanhe a resposta do suporte acima.</div>
+            )}
+          </div>
+        )}
+        {/* Next actor quick-link */}
+        {screen==='chat'&&nextActor&&NEXT_TAB[nextActor]&&setTab&&(
+          <div style={{border:'1px solid #C8E6C0',borderRadius:10,background:'#EDF7EA',padding:'14px 16px'}}>
+            <div style={{fontSize:11,fontWeight:700,color:C.greenD,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:8}}>Próximo passo</div>
+            <div style={{fontSize:13,color:C.ink2,marginBottom:10,lineHeight:1.4}}>O <b>{ROLE_NAME[nextActor]}</b> aguarda ação.</div>
+            <button onClick={()=>setTab(NEXT_TAB[nextActor])} style={{width:'100%',background:C.green,color:'#fff',border:'none',borderRadius:7,padding:'9px 12px',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,transition:'background 150ms'}}
+              onMouseEnter={e=>e.currentTarget.style.background=C.greenD}
+              onMouseLeave={e=>e.currentTarget.style.background=C.green}>
+              <ExternalLink size={13}/>{NEXT_LABEL[nextActor]||'Ver resposta'}
+            </button>
+          </div>
+        )}
+        {/* Demo hint when on list screen */}
+        {screen==='list'&&(
+          <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,padding:'14px 16px',boxShadow:'var(--shadow-sm)'}}>
+            <div style={{fontSize:12,color:C.ink3,lineHeight:1.7}}>
+              <b style={{color:C.ink2,display:'block',marginBottom:6}}>👆 Como usar este demo</b>
+              1. Toque em <b>Suporte AgroBaggio</b><br/>
+              2. Escolha uma opção no painel ao lado<br/>
+              3. Veja a resposta de cada ator nas outras abas
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Collapsible card wrapper ───────────────────────── */
+function CollapsibleCard({title,icon,children,defaultOpen=true,accent}){
+  const [open,setOpen]=useState(defaultOpen);
+  const Ic=icon;
+  return (
+    <div style={{border:'1px solid '+(accent||C.line),borderRadius:8,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
+      <button onClick={()=>setOpen(o=>!o)} style={{width:'100%',background:open?C.page:'#fff',borderBottom:open?'1px solid '+C.line:'none',padding:'10px 14px',display:'flex',alignItems:'center',gap:6,border:'none',cursor:'pointer',transition:'background 150ms'}}
+        onMouseEnter={e=>e.currentTarget.style.background='#F0EFED'}
+        onMouseLeave={e=>e.currentTarget.style.background=open?C.page:'#fff'}>
+        {Ic&&<Ic size={13} style={{color:accent||C.green,flexShrink:0}}/>}
+        <span style={{fontSize:13,fontWeight:700,flex:1,textAlign:'left',color:C.ink}}>{title}</span>
+        <ChevronDown size={14} style={{color:C.ink3,transform:open?'rotate(180deg)':'none',transition:'transform 200ms',flexShrink:0}}/>
+      </button>
+      {open&&<div>{children}</div>}
+    </div>
+  );
+}
+
+/* ─── Customer 360 + Case Timeline ───────────────────── */
+const CASE_TIMELINE_DATA=[
+  {time:'08:11',who:'produtor',label:'Produtor inicia contato',detail:'AutoTrac não engata na X9'},
+  {time:'08:12',who:'bot',label:'Triagem automática',detail:'Ramo 4 · prioridade Alta · #BR-4471 aberto'},
+  {time:'08:17',who:'csc',label:'CSC assumiu o caso',detail:'Carlos verificou telemetria com especialista'},
+  {time:'08:22',who:'csc',label:'Diagnóstico: sinal StarFire 2/5',detail:'Proposta de visita enviada ao produtor'},
+  {time:'08:26',who:'produtor',label:'Visita confirmada',detail:'Amanhã 9h · talhão norte'},
+  {time:'10:48',who:'field',label:'Field Trainer recalibrou',detail:'Antena reposicionada · AutoTrac 100% ✅'},
+  {time:'11:00',who:'csc',label:'Fechamento do caso',detail:'CSAT coletado · caso encerrado'},
+  {time:'D+7',who:'bot',label:'Follow-up de adoção',detail:'Confirmar uso do AutoTrac e AutoPath'},
+];
+function CaseTimeline({flags,step}){
+  const resolved=!!flags.resolved;
+  const fieldDone=['sResolvido','sCsat','sFim','sFimRuim'].includes(step)||resolved;
+  const items=CASE_TIMELINE_DATA.map((it,i)=>{
+    let done=it.done||false;
+    if(i<=4) done=true; /* always shown as complete for demo context */
+    if(i===5) done=fieldDone;
+    if(i===6) done=['sCsat','sFim','sFimRuim'].includes(step)||resolved;
+    if(i===7) done=flags.csat!=null;
+    return {...it,done};
+  });
+  const curIdx=items.reduce((a,it,i)=>it.done?i:a,-1);
+  return (
+    <div style={{padding:'8px 14px 4px'}}>
+        {items.map((it,i)=>{
+          const isCur=i===curIdx+1&&!it.done;
+          return (
+            <div key={i} style={{display:'flex',gap:10,paddingBottom:i<items.length-1?10:4,position:'relative'}}>
+              {i<items.length-1&&<div style={{position:'absolute',left:9,top:20,width:2,height:'calc(100% - 4px)',background:it.done?C.green:C.line2}}/>}
+              <div style={{width:20,height:20,borderRadius:20,background:it.done?C.green:isCur?C.warnBg:C.line2,border:'2px solid '+(it.done?C.green:isCur?C.warn:C.line),display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,zIndex:1,transition:'all 300ms'}}>
+                {it.done&&<Check size={10} style={{color:'#fff'}}/>}
+                {isCur&&<span style={{width:6,height:6,borderRadius:6,background:C.warn,display:'block'}}/>}
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:1}}>
+                  <span style={{fontSize:11.5,fontWeight:600,color:it.done?C.ink:isCur?C.warn:C.ink3}}>{it.label}</span>
+                  {isCur&&<Pill bg={C.warnBg} fg={C.warn}>atual</Pill>}
+                </div>
+                <div style={{fontSize:10.5,color:C.ink3,lineHeight:1.4}}>{it.detail}</div>
+                <div style={{fontSize:10,color:C.ink4,marginTop:1}}>{it.time}</div>
+              </div>
+            </div>
+          );
+        })}
+    </div>
+  );
+}
+function Customer360({flags,step}){
+  const journeyStage=flags.resolved?'Usage & Retention — Resolvido':
+    ['sConfirmado','sCaminho','sEmCampo'].includes(step)?'Adoption — Visita em campo':
+    ['sHum','sRemoto','sInfo','sAgenda'].includes(step)?'Adoption — Suporte ativo':
+    ['s1','s2'].includes(step)?'Adoption — 1º uso / problema':'Delivery & Grounding';
+  const stageColor=flags.resolved?{bg:C.okBg,fg:C.ok}:{bg:C.warnBg,fg:C.warn};
+  const licColor=flags.resolved?C.ink3:C.warn;
+  const rows=[
+    ['Produtor','João Mendes'],['Fazenda','Santa Mônica · Sorriso/MT'],
+    ['Equipamento','X9 Combine · 2023'],['Tecnologias','AutoTrac · AutoPath · StarFire'],
+    ['Licença AutoPath',<span style={{color:licColor,fontWeight:600}}>Vence em 30 dias 🔑</span>],
+    ['OpsCenter','Ativo · Fazenda cadastrada ✅'],['Horas de uso','248 h (este equipamento)'],
+    ['Dealer','AgroBaggio · Carlos (CSC)'],
+    ['Último CSAT',flags.csat?'⭐'.repeat(flags.csat)+' ('+flags.csat+'/5)':'—'],
+  ];
+  return (
+    <div>
+      <div style={{padding:'6px 14px 8px',borderBottom:'1px solid '+C.line2,display:'flex',alignItems:'center',gap:6}}>
+        <Pill bg={stageColor.bg} fg={stageColor.fg}>{journeyStage}</Pill>
+      </div>
+      <div style={{padding:'8px 14px 10px'}}>
+        {rows.map(([k,v],i)=>(
+          <div key={i} style={{display:'flex',gap:8,padding:'4px 0',borderBottom:i<rows.length-1?'1px solid '+C.line2:'none'}}>
+            <span style={{fontSize:11,fontWeight:600,color:C.ink3,width:112,flexShrink:0}}>{k}</span>
+            <span style={{fontSize:11.5,color:C.ink,flex:1}}>{v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   VISTA DEALER
+═══════════════════════════════════════════════════════ */
+function VDealer({log,opts,choose,waiting,busy,typing,flags,step,runStep,chDealer,chSendDealer,typingDealer,turno,reengage,onSendDoc,sentDocs}){
+  const [mode,setMode]=useState('whatsapp');
+  const s=statusOf(flags,step);
+  const mineChat=f=>f!=='produtor';const mineCh=f=>f==='csc'||f==='dealer';
+  const esperaProdutor=!busy&&waiting.includes('produtor');
+  const dealerTurn=!busy&&waiting.includes('dealer');
+  const waitingFor = !turno && waiting.length ? waiting.map(w=>ROLE_NAME[w]).join(' / ') : null;
+  const inics=(
+    <div style={{display:'flex',gap:6,flexWrap:'wrap',marginTop:8}}>
+      {DEALER_INIT.map(a=>(
+        <button key={a.id} onClick={()=>runStep(a.id)} disabled={busy} className="jd-btn-ghost" style={{fontSize:11.5}}>
+          <a.Icon size={12}/>{a.label}
+        </button>
+      ))}
+    </div>
+  );
+  const reBox=esperaProdutor&&(
+    <div style={{marginTop:9,padding:'10px 12px',background:C.warnBg,borderRadius:6,fontSize:12,color:C.warn,border:'1px solid #FDE68A'}}>
+      <div style={{marginBottom:6,display:'flex',alignItems:'center',gap:5,fontWeight:600}}><Clock size={12}/>Vez do produtor. Se não responder:</div>
+      <button onClick={reengage} className="jd-btn-ghost" style={{fontSize:11.5}}><RefreshCw size={12}/>Reengajar</button>
+    </div>
+  );
+  const acoes=(
+    <div>
+      <div style={{fontSize:10,fontWeight:700,color:C.green,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}}>Ações do dealer</div>
+      <Decisions opts={opts} role="dealer" choose={choose} waiting={waiting} busy={busy}/>
+      {reBox}
+      <div style={{marginTop:10,borderTop:'1px dashed '+C.line,paddingTop:9}}>
+        <div style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:4}}>Iniciativas proativas</div>
+        {inics}
+      </div>
+    </div>
+  );
+  const parte=(who,label,est)=>(
+    <div style={{display:'flex',alignItems:'center',gap:8,padding:'5px 0'}}>
+      <Avatar who={who} size={24}/><span style={{fontSize:12.5,fontWeight:600,flex:1}}>{label}</span>
+      <Pill bg={est.bg} fg={est.fg}>{est.t}</Pill>
+    </div>
+  );
+  const prodEst=busy?{t:'RESPONDENDO',bg:C.warnBg,fg:C.warn}:esperaProdutor?{t:'AGUARDANDO',bg:C.warnBg,fg:C.warn}:flags.resolved?{t:'RESOLVIDO',bg:C.okBg,fg:C.ok}:{t:'EM CONVERSA',bg:C.line2,fg:C.ink2};
+  const fieldEst=flags.resolved==='campo'?{t:'CONCLUÍDO',bg:C.okBg,fg:C.ok}:flags.agenda?{t:'AGENDADO',bg:C.warnBg,fg:C.warn}:{t:'STANDBY',bg:C.line2,fg:C.ink3};
+  return (
+    <div style={{display:'flex',flexDirection:'column',flex:1,minHeight:0}}>
+      <TurnoBanner on={turno} waitingFor={waitingFor}/>
+      <div style={{display:'flex',alignItems:'center',gap:14,flexWrap:'wrap',marginBottom:12}}>
+        <Avatar who="dealer" size={46}/>
+        <div style={{flex:1,minWidth:200}}>
+          <div style={{fontSize:19,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em'}}>AgroBaggio <span style={{fontSize:14,fontWeight:400,color:C.ink3}}>· concessionário</span></div>
+          <div style={{fontSize:13,color:C.ink3}}>Atendendo João Mendes · #BR-4471 · Sorriso/MT</div>
+        </div>
+        <Pill bg={s.bg} fg={s.fg} size={13}>{s.t}</Pill>
+        {flags.csat&&<Pill bg={C.line2} fg={C.ink2}><Star size={11}/>CSAT {flags.csat}</Pill>}
+      </div>
+      <ModeTog mode={mode} setMode={setMode} dealerLabel="Painel do Dealer"/>
+      {mode==='whatsapp'?(
+        <div style={{display:'flex',gap:16,flex:1,minHeight:0,overflow:'hidden'}}>
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:12,flex:1}}>
+            <PhoneShell bg={C.waBg}>
+              <PhoneStatusBar/>
+              <WAChatHeader onBack={()=>{}} typing={typing&&typing==='produtor'?'produtor':null}/>
+              <WAThread log={log.filter(e=>!e.n)} typing={typing==='produtor'?'produtor':null} height={undefined}/>
+            </PhoneShell>
+            <div style={{fontSize:12,color:C.ink3,textAlign:'center',maxWidth:390}}>Vista do produtor — como ele vê no WhatsApp. As ações do dealer são enviadas pelo painel.</div>
+          </div>
+          <div style={{width:300,flexShrink:0,display:'flex',flexDirection:'column',gap:10,overflowY:'auto',maxHeight:'100%',paddingBottom:16}}>
+            <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,padding:'14px 16px',boxShadow:'var(--shadow-sm)'}}>
+              <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>
+                <Monitor size={12}/>Guia de acompanhamento
+              </div>
+              {acoes}
+            </div>
+          </div>
+        </div>
+      ):(
+        <div className="dealer-panel">
+          <div className="dealer-panel-main">
+            <div style={{background:C.page,borderBottom:'1px solid '+C.line,padding:'10px 14px',fontSize:13,fontWeight:700,display:'flex',alignItems:'center',gap:6,flexShrink:0}}>
+              <MessageCircle size={14} style={{color:C.green}}/>Conversa com João Mendes <span style={{fontWeight:400,color:C.ink3}}>· caso #BR-4471</span>
+            </div>
+            <InternalThread log={log} mine={mineChat} typing={typing} height={undefined}/>
+            <div style={{borderTop:'1px solid '+C.line,padding:13,background:C.page,flexShrink:0}}>{acoes}</div>
+          </div>
+          <div className="dealer-panel-side">
+            <CollapsibleCard title="Customer 360 · João Mendes" icon={Users} defaultOpen={true}>
+              <Customer360 flags={flags} step={step}/>
+            </CollapsibleCard>
+            <CollapsibleCard title="Timeline do caso #BR-4471" icon={Activity} defaultOpen={true}>
+              <CaseTimeline flags={flags} step={step}/>
+            </CollapsibleCard>
+            <CollapsibleCard title="Estado das partes" icon={Users} defaultOpen={true}>
+              <div style={{padding:'8px 14px 12px'}}>
+                {parte('produtor','Produtor',prodEst)}
+                {parte('dealer','Dealer (você)',{t:'ATENDENDO',bg:C.okBg,fg:C.ok})}
+                {parte('field','Field Trainer',fieldEst)}
+              </div>
+            </CollapsibleCard>
+            <CollapsibleCard title="Documentos & recursos" icon={Paperclip} defaultOpen={true}>
+              <DocResources role="dealer" onSend={onSendDoc} sentDocs={sentDocs}/>
+            </CollapsibleCard>
+            <CollapsibleCard title="Canal · John Deere" icon={Send} defaultOpen={false}>
+              <div style={{padding:'10px 14px 14px'}}>
+                <div style={{fontSize:12,color:C.ink3,marginBottom:8,lineHeight:1.5}}>Canal interno de coordenação. Use para solicitar suporte ou escalar para a Deere.</div>
+                <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:10}}>
+                  {DEALER_REPLY.map(r=>(
+                    <button key={r.ev} onClick={()=>chSendDealer(r.ev)} disabled={busy}
+                      style={{background:C.page,border:'1px solid '+C.line,borderRadius:6,padding:'7px 11px',fontSize:12,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:5,color:C.ink2,transition:'all 130ms'}}
+                      onMouseEnter={e=>e.currentTarget.style.background=C.greenL}
+                      onMouseLeave={e=>e.currentTarget.style.background=C.page}>
+                      <Send size={11}/>{r.label}
+                    </button>
+                  ))}
+                </div>
+                <Coord label="" sub="" log={chDealer} mine={mineCh} typing={typingDealer} height={100} buttons={[]}/>
+              </div>
+            </CollapsibleCard>
+            <CollapsibleCard title="Checklist de ativação" icon={CheckCircle} defaultOpen={false}>
+              <div style={{padding:'8px 14px 12px'}}>
+                <CheckItem t="Compra" done/><CheckItem t="Setup técnico" done/><CheckItem t="Setup digital (OpsCenter)" done/><CheckItem t="Primeira operação" done={!!flags.resolved}/><CheckItem t="Treinamento" done={flags.resolved==='campo'}/>
+              </div>
+            </CollapsibleCard>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   VISTA FIELD TRAINER
+═══════════════════════════════════════════════════════ */
+function VField({log,opts,choose,waiting,busy,typing,flags,step,chField,chSendField,typingField,turno,onSendDoc,sentDocs}){
+  const [mode,setMode]=useState('whatsapp');
+  const active=['sConfirmado','sCaminho','sEmCampo','sResolvido'].includes(step)||flags.agenda;
+  const mineChat=f=>f!=='produtor';const mineCh=f=>f==='field';
+  const waitingFor = !turno && waiting.length ? waiting.map(w=>ROLE_NAME[w]).join(' / ') : null;
+  const acoes=(
+    <div>
+      <div style={{fontSize:10,fontWeight:700,color:'#5E6B40',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}}>Ações do Field Trainer</div>
+      <Decisions opts={opts} role="field" choose={choose} waiting={waiting} busy={busy}/>
+    </div>
+  );
+  return (
+    <div style={{display:'flex',flexDirection:'column',flex:1,minHeight:0}}>
+      <TurnoBanner on={turno} waitingFor={waitingFor}/>
+      <div style={{display:'flex',alignItems:'center',gap:14,flexWrap:'wrap',marginBottom:12}}>
+        <Avatar who="field" size={46}/>
+        <div style={{flex:1,minWidth:200}}>
+          <div style={{fontSize:19,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em'}}>Diego Martins <span style={{fontSize:14,fontWeight:400,color:C.ink3}}>· Field Trainer (brandeado Deere)</span></div>
+          <div style={{fontSize:13,color:C.ink3}}>Técnico em campo · região MT</div>
+        </div>
+      </div>
+      <ModeTog mode={mode} setMode={setMode} dealerLabel="Painel do Field Trainer"/>
+      {mode==='whatsapp'?(
+        <div style={{display:'flex',gap:16,flex:1,minHeight:0,overflow:'hidden'}}>
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:12,flex:1}}>
+            <PhoneShell bg={C.waBg}>
+              <PhoneStatusBar/>
+              <WAChatHeader onBack={()=>{}} typing={typing==='produtor'?'produtor':null}/>
+              <WAThread log={log.filter(e=>!e.n)} typing={typing==='produtor'?'produtor':null} height={undefined}/>
+            </PhoneShell>
+            <div style={{fontSize:12,color:C.ink3,textAlign:'center',maxWidth:390}}>Vista do produtor — como ele vê no WhatsApp. As ações do Field Trainer são registradas no painel.</div>
+          </div>
+          <div style={{width:290,flexShrink:0,display:'flex',flexDirection:'column',gap:10,overflowY:'auto',maxHeight:'100%',paddingBottom:16}}>
+            <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,padding:'14px 16px',boxShadow:'var(--shadow-sm)'}}>
+              <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:8,display:'flex',alignItems:'center',gap:6}}>
+                <Activity size={12}/>Turno atual
+              </div>
+              {turno?(
+                <div style={{fontSize:14,color:C.greenD,fontWeight:600,display:'flex',alignItems:'center',gap:7}}>
+                  <Avatar who="field" size={22}/>Diego (Field Trainer) responde
+                </div>
+              ):waitingFor?(
+                <div style={{fontSize:14,color:C.ink2,display:'flex',alignItems:'center',gap:7}}>
+                  <Clock size={14} style={{color:C.ink3}}/><span>Aguardando <b style={{color:C.ink}}>{waitingFor}</b></span>
+                </div>
+              ):(
+                <div style={{fontSize:13,color:C.ink3}}>Processando...</div>
+              )}
+            </div>
+            <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,padding:'14px 16px',boxShadow:'var(--shadow-sm)'}}>
+              <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>
+                <Wrench size={12}/>Ações do Field Trainer
+              </div>
+              {acoes}
+            </div>
+          </div>
+        </div>
+      ):(
+        <div className="field-panel">
+          <div className="field-panel-side">
+            <CollapsibleCard title="Caso em atendimento" icon={MapPin} defaultOpen={true}>
+              <div style={{padding:'10px 16px 14px'}}>
+                {active?(
+                  <div style={{border:'1px solid #A3D698',borderRadius:8,padding:14,background:C.greenL}}>
+                    <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:6}}>
+                      <Avatar who="produtor" size={28}/>
+                      <div>
+                        <div style={{fontSize:14,fontWeight:700}}>João Mendes · #BR-4471</div>
+                        <div style={{fontSize:12,color:C.ink3}}>Faz. Santa Mônica · Sorriso/MT</div>
+                      </div>
+                    </div>
+                    <div style={{fontSize:12.5,color:C.ink2,marginBottom:10,lineHeight:1.5}}>AutoTrac não engata · antena StarFire · X9 2024</div>
+                    <Pill bg={C.warnBg} fg={C.warn}><Calendar size={11}/>{flags.agenda||'a agendar'}</Pill>
+                  </div>
+                ):(
+                  <div style={{fontSize:13,color:C.ink3,lineHeight:1.6,padding:'4px 0'}}>Nenhuma visita atribuída. Aparece quando o dealer acionar.</div>
+                )}
+              </div>
+            </CollapsibleCard>
+            <CollapsibleCard title="Agenda do Diego · hoje" icon={Calendar} defaultOpen={true}>
+              <div style={{padding:'8px 16px 14px'}}>
+                {[
+                  {time:'08:30',producer:'Carlos Faria · AgroBaggio',task:'Setup AutoTrac 6M',status:'concluído'},
+                  {time:'09:00',producer:'João Mendes · AgroBaggio',task:'AutoTrac X9 · antena StarFire',status:flags.agenda?'confirmado':'disponível',highlight:true},
+                  {time:'11:00',producer:'—',task:'Disponível',status:'disponível'},
+                  {time:'14:00',producer:'Sandra Rocha · Tracbel',task:'Calibração AutoPath S770',status:'confirmado'},
+                  {time:'15:30',producer:'—',task:'Disponível',status:'disponível'},
+                ].map((slot,i)=>{
+                  const isActive=slot.highlight&&flags.agenda;
+                  const isDone=slot.status==='concluído';
+                  const isAvail=slot.status==='disponível';
+                  const bg=isActive?C.greenL:isDone?C.line2:isAvail?'#fff':'#EEF4FB';
+                  const borderC=isActive?C.green:isDone?C.line:isAvail?C.line:'#90BFEA';
+                  const labelC=isActive?C.greenD:isDone?C.ink3:isAvail?C.ink3:'#1E5E9E';
+                  return (
+                    <div key={i} style={{display:'flex',gap:10,alignItems:'flex-start',padding:'9px 10px',borderRadius:7,border:'1px solid '+borderC,background:bg,marginBottom:i<4?6:0}}>
+                      <div style={{fontSize:12,fontWeight:700,color:isAvail?C.ink3:C.ink,width:38,flexShrink:0,paddingTop:1}}>{slot.time}</div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:12.5,fontWeight:isActive||(!isAvail&&!isDone)?600:400,color:isAvail?C.ink3:C.ink,lineHeight:1.4}}>{slot.task}</div>
+                        {!isAvail&&<div style={{fontSize:11,color:labelC,marginTop:2}}>{slot.producer}</div>}
+                      </div>
+                      <div style={{flexShrink:0}}>
+                        <span style={{fontSize:10,fontWeight:700,textTransform:'uppercase',letterSpacing:'.04em',
+                          color:isActive?C.greenD:isDone?C.ink3:isAvail?C.ink3:'#1E5E9E',
+                          background:isActive?C.okBg:isDone?C.line2:isAvail?C.line2:'#D6E9FF',
+                          padding:'2px 7px',borderRadius:10}}>
+                          {slot.status}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+                <div style={{fontSize:11.5,color:C.ink3,marginTop:10,lineHeight:1.5}}>
+                  Total: 3 visitas hoje · 2 slots disponíveis
+                </div>
+              </div>
+            </CollapsibleCard>
+            <CollapsibleCard title="Documentos & recursos" icon={Paperclip} defaultOpen={true}>
+              <DocResources role="field" onSend={onSendDoc} sentDocs={sentDocs}/>
+            </CollapsibleCard>
+            <CollapsibleCard title="Canal · John Deere" icon={Send} defaultOpen={false}>
+              <div style={{padding:'10px 14px 14px'}}>
+                <div style={{fontSize:12,color:C.ink3,marginBottom:8,lineHeight:1.5}}>Coordenação da visita. Confirme chegada e report pós-calibração.</div>
+                <div style={{display:'flex',gap:6,flexWrap:'wrap',marginBottom:10}}>
+                  {FIELD_REPLY.map(r=>(
+                    <button key={r.ev} onClick={()=>chSendField(r.ev)}
+                      style={{background:C.page,border:'1px solid '+C.line,borderRadius:6,padding:'7px 11px',fontSize:12,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',gap:5,color:C.ink2,transition:'all 130ms'}}
+                      onMouseEnter={e=>e.currentTarget.style.background=C.greenL}
+                      onMouseLeave={e=>e.currentTarget.style.background=C.page}>
+                      <Send size={11}/>{r.label}
+                    </button>
+                  ))}
+                </div>
+                <Coord label="" sub="" log={chField} mine={mineCh} typing={typingField} height={100} buttons={[]}/>
+              </div>
+            </CollapsibleCard>
+          </div>
+          <div className="field-panel-main">
+            <div style={{background:C.page,borderBottom:'1px solid '+C.line,padding:'10px 14px',fontSize:13,fontWeight:700,display:'flex',alignItems:'center',gap:6,flexShrink:0}}>
+              <Wrench size={14} style={{color:'#7A8C52'}}/>Conversa <span style={{fontWeight:400,color:C.ink3}}>· visão do Field Trainer</span>
+            </div>
+            <InternalThread log={log} mine={mineChat} typing={typing} height={undefined}/>
+            <div style={{borderTop:'1px solid '+C.line,padding:12,background:C.page,flexShrink:0}}>{acoes}</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   VISTA DEERE
+═══════════════════════════════════════════════════════ */
+const DEERE_NAV=[
+  ['visao',LayoutGrid,'Visão geral'],['carteira',Users,'Carteira'],
+  ['acomp',Activity,'Acompanhamento'],['consultas',Inbox,'Consultas'],
+  ['dealers',ShieldCheck,'Dealers'],['fields',Wrench,'Field Trainers'],
+  ['agentes',Bot,'Agentes'],['plataforma',Server,'Plataforma'],
+];
+function VDeere({log,flags,step,typing,chDealer,chField,sendDealer,sendField,typingDealer,typingField}){
+  const [sec,setSec]=useState('visao');const [ch,setCh]=useState('dealer');
+  const s=statusOf(flags,step);const stalled=step==='sPausa';
+  const real=log.filter(e=>!e.n);const last=real.length?real[real.length-1].f:null;
+  const seen=new Set(log.map(e=>e.f));const csatMed=flags.csat?((flags.csat+13)/4).toFixed(1):'4.5';
+  const mineMon=f=>f!=='produtor';const mineDeere=f=>f==='deere';
+
+  function Visao(){
+    const [filter,setFilter]=React.useState('todos');
+    const casos=[
+      {id:'BR-4471',cliente:'João Mendes',dealer:'AgroBaggio',tipo:'campo',prio:'Alta',estado:s.t,canal:'WhatsApp',live:true,tempo:'08:11',problema:'AutoTrac não engata · X9',ec:s},
+      {id:'BR-4468',cliente:'Sandra Rocha',dealer:'Tracbel',tipo:'bot',prio:'Média',estado:'Aberto',canal:'WhatsApp',live:false,tempo:'07:42',problema:'OpsCenter não sincroniza',ec:{bg:C.warnBg,fg:C.warn}},
+      {id:'BR-4455',cliente:'Marcos Dias',dealer:'AgroBaggio',tipo:'agente',prio:'Alta',estado:'Escalado',canal:'WhatsApp',live:false,tempo:'06:20',problema:'AutoPath — licença bloqueada',ec:{bg:C.critBg,fg:C.crit}},
+      {id:'BR-4447',cliente:'Paulo Neto',dealer:'Tracbel',tipo:'bot',prio:'Baixa',estado:'Resolvido',canal:'WhatsApp',live:false,tempo:'ons.',problema:'Relatório de área não gera',ec:{bg:C.okBg,fg:C.ok}},
+      {id:'BR-4439',cliente:'Ana Lima',dealer:'JD Cuiabá',tipo:'campo',prio:'Alta',estado:'Em campo',canal:'App',live:false,tempo:'ons.',problema:'StarFire sem sinal · soja',ec:{bg:C.warnBg,fg:C.warn}},
+      {id:'BR-4431',cliente:'Carlos Faria',dealer:'AgroBaggio',tipo:'agente',prio:'Baixa',estado:'Aguardando',canal:'WhatsApp',live:false,tempo:'seg.',problema:'Setup inicial AutoTrac 5000',ec:{bg:C.line2,fg:C.ink3}},
+    ];
+    const TIPO_ICON={'bot':'🤖','agente':'👤','campo':'🏃'};
+    const TIPO_LABEL={'bot':'Automação','agente':'Agente','campo':'Campo'};
+    const TIPO_COLOR={'bot':{bg:'#EDE9FE',fg:'#6D28D9'},'agente':{bg:C.line2,fg:C.ink2},'campo':{bg:C.okBg,fg:C.greenD}};
+    const PRIO_COLOR={'Alta':{c:C.crit},'Média':{c:C.warn},'Baixa':{c:C.ink3}};
+    const FILTERS=[['todos','Todos','16'],['campo','🏃 Em campo','2'],['alta','🔴 Alta prior.','3'],['bot','🤖 Automação','8'],['agente','👤 Agente','5']];
+    const filtered=filter==='todos'?casos:filter==='alta'?casos.filter(c=>c.prio==='Alta'):casos.filter(c=>c.tipo===filter);
+    return (
+      <div style={{display:'flex',flexDirection:'column',gap:16}}>
+        {/* KPI strip */}
+        <div className="kpi-grid">
+          <KPI label="Atendimentos hoje" value="128" sub="+12% vs ontem" Icon={MessageCircle}/>
+          <KPI label="1ª resposta média" value="2 min" sub="meta: 3 min" Icon={Clock} tone="ok"/>
+          <KPI label="Resolvido remoto" value="64%" sub="sem visita de campo" Icon={Bot} tone="ok"/>
+          <KPI label="CSAT médio" value={csatMed} sub="de 5.0 · rede" Icon={Star} tone="ok"/>
+          <KPI label="Casos abertos" value="17" sub="em andamento" Icon={Inbox}/>
+          <KPI label="Adoção D+7" value="87%" sub="usam após visita" Icon={TrendingUp} tone="ok"/>
+        </div>
+        {/* Active case highlight */}
+        <div style={{border:'1px solid '+(stalled?C.crit:C.green),borderRadius:8,padding:'12px 16px',background:stalled?C.critBg:C.okBg,display:'flex',alignItems:'center',gap:14}}>
+          <span style={{fontSize:18}}>📡</span>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:stalled?C.crit:C.greenD,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:2}}>Caso ao vivo agora</div>
+            <div style={{fontSize:15,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif"}}>João Mendes · #BR-4471 · AutoTrac · AgroBaggio · {s.t}</div>
+          </div>
+          <button onClick={()=>setSec('acomp')} className="jd-btn-ghost" style={{fontSize:12.5}}>Acompanhar <ChevronRight size={14}/></button>
+        </div>
+        {/* Case list */}
+        <div style={{border:'1px solid '+C.line,borderRadius:8,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
+          <div style={{background:C.page,borderBottom:'1px solid '+C.line,padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+            <span style={{fontSize:13,fontWeight:700,flex:1}}>Casos ativos · rede</span>
+            <div style={{display:'flex',gap:6}}>
+              {FILTERS.map(([k,label,n])=>(
+                <button key={k} onClick={()=>setFilter(k)} style={{background:filter===k?C.side:'#fff',color:filter===k?'#fff':C.ink2,border:'1px solid '+(filter===k?C.side:C.line),borderRadius:20,padding:'4px 11px',fontSize:11.5,fontWeight:600,cursor:'pointer',transition:'all 130ms'}}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            {filtered.map((c,i)=>(
+              <div key={c.id} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 16px',borderBottom:i<filtered.length-1?'1px solid '+C.line2:'none',background:c.live?'#FAFFF8':'#fff',transition:'background 130ms'}}
+                onMouseEnter={e=>e.currentTarget.style.background=c.live?'#F3FBF0':C.page}
+                onMouseLeave={e=>e.currentTarget.style.background=c.live?'#FAFFF8':'#fff'}>
+                <div style={{width:6,height:6,borderRadius:6,background:c.live?C.green:C.line,boxShadow:c.live?'0 0 0 3px '+C.okBg:'none',flexShrink:0}}/>
+                <div style={{width:72,flexShrink:0}}>
+                  <div style={{fontSize:11.5,fontWeight:700,color:C.ink}}>{c.id}</div>
+                  <div style={{fontSize:10.5,color:C.ink3}}>{c.tempo}</div>
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13,fontWeight:600,color:C.ink}}>{c.cliente}</div>
+                  <div style={{fontSize:11.5,color:C.ink3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.problema}</div>
+                </div>
+                <div style={{flexShrink:0,width:90,fontSize:11.5,color:C.ink3}}>{c.dealer}</div>
+                <div style={{flexShrink:0}}>
+                  <Pill bg={TIPO_COLOR[c.tipo].bg} fg={TIPO_COLOR[c.tipo].fg}>{TIPO_ICON[c.tipo]} {TIPO_LABEL[c.tipo]}</Pill>
+                </div>
+                <div style={{flexShrink:0}}>
+                  <span style={{fontSize:11.5,fontWeight:700,color:PRIO_COLOR[c.prio].c}}>{c.prio}</span>
+                </div>
+                <div style={{flexShrink:0}}>
+                  <Pill bg={c.ec.bg} fg={c.ec.fg}>{c.estado}</Pill>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Bottom row: alerts + consultations */}
+        <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
+          <div style={{flex:'1 1 280px',border:'1px solid '+C.line,borderRadius:8,padding:14,background:C.card,boxShadow:'var(--shadow-sm)'}}>
+            <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10,display:'flex',alignItems:'center',gap:5}}>
+              <Bell size={12}/>Alertas de retenção
+            </div>
+            {[
+              {label:'Sandra Rocha · Tracbel',detail:'Em risco · nunca usou AutoTrac',c:C.crit,bg:C.critBg},
+              {label:'Marcos Dias · AgroBaggio',detail:'0% adoção · 3 meses pós-entrega',c:C.crit,bg:C.critBg},
+              {label:'Paulo Neto · Tracbel',detail:'CSAT 2 · follow-up pendente',c:C.warn,bg:C.warnBg},
+              {label:'João Mendes · AgroBaggio',detail:'Licença AutoPath vence em 30 dias',c:C.warn,bg:C.warnBg},
+            ].map((a,i)=>(
+              <div key={i} style={{display:'flex',gap:8,alignItems:'flex-start',padding:'6px 8px',borderRadius:6,background:a.bg,marginBottom:i<3?4:0}}>
+                <AlertTriangle size={12} style={{color:a.c,flexShrink:0,marginTop:1}}/>
+                <div>
+                  <div style={{fontSize:11.5,fontWeight:600,color:a.c}}>{a.label}</div>
+                  <div style={{fontSize:10.5,color:C.ink3}}>{a.detail}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{flex:'1 1 220px',border:'1px solid '+C.line,borderRadius:8,padding:14,background:C.card,boxShadow:'var(--shadow-sm)'}}>
+            <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10}}>Consultas por ramo · hoje</div>
+            {[['Ramo 1 · Relatórios',28,'#5E7038'],['Ramo 2 · Sinal',41,C.green],['Ramo 3 · Setup',33,C.greenD],['Ramo 4 · Orientação',26,'#767471']].map((r,i)=>(
+              <div key={i} style={{marginBottom:7}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:2}}>
+                  <span style={{fontSize:11.5,color:C.ink2}}>{r[0]}</span>
+                  <span style={{fontSize:11,fontWeight:700,color:C.ink3}}>{r[1]}</span>
+                </div>
+                <Bar v={r[1]} c={r[2]}/>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function Carteira(){return (
+    <div>
+      <div style={{fontSize:12.5,color:C.ink3,marginBottom:12}}>Base monitorada · {CLIENTES.length} clientes · {CLIENTES.filter(c=>/risco|nunca/i.test(c.status)).length} em risco</div>
+      <Tbl head={['Cliente','Região','Dealer','Tecnologia','Uso','CSAT','Estado']}
+        rows={CLIENTES.map(c=>{const ec=ecOf(c.status);return[
+          <span style={{fontWeight:600}}>{c.nome}{c.live&&<span style={{color:C.green,fontSize:11}}> ● ao vivo</span>}<div style={{fontSize:11,color:C.ink3,fontWeight:400}}>Faz. {c.faz}</div></span>,
+          c.reg,c.dealer,c.tech,
+          <div style={{width:90}}><Bar v={c.uso} c={c.uso<25?C.crit:c.uso<60?C.warn:C.green}/></div>,
+          c.csat?<Pill bg={C.line2} fg={C.ink2}><Star size={10}/>{c.csat}</Pill>:<span style={{color:C.ink3}}>—</span>,
+          <Pill bg={ec.bg} fg={ec.fg}>{c.status}</Pill>,
+        ];})}/>
+    </div>
+  );}
+
+  function Acomp(){
+    const stat=f=>typing===f?{t:'digitando…',c:C.green,live:true}:last===f?{t:'falou agora',c:C.green,live:true}:seen.has(f)?{t:'no caso',c:C.ink3}:{t:'—',c:C.ink3};
+    const roster=[['produtor','Cliente'],['csc','Dealer · CSC'],['especialista','Especialista'],['field','Field Trainer']];
+    return (
+      <div>
+        <div style={{display:'flex',gap:7,flexWrap:'wrap',marginBottom:12}}>
+          {['Follow-up D+7 · 6','Pós-visita · 3','Adoção AutoPath · 9','CSAT baixo · 1'].map((t,i)=><Pill key={i} bg={i===3?C.critBg:C.line2} fg={i===3?C.crit:C.ink2}>{t}</Pill>)}
+        </div>
+        <div style={{display:'flex',gap:14,flexWrap:'wrap',alignItems:'flex-start'}}>
+          <div style={{flex:'1 1 360px',minWidth:280,display:'flex',flexDirection:'column',gap:12}}>
+            <div style={{border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:C.card,boxShadow:'var(--shadow-sm)'}}>
+              <div style={{background:C.page,borderBottom:'1px solid '+C.line,padding:'10px 14px',fontSize:12.5,fontWeight:700,display:'flex',alignItems:'center',gap:6}}>
+                <ShieldCheck size={14} style={{color:C.side}}/>Monitor · #BR-4471 <span style={{fontWeight:400,color:C.ink3}}>· somente leitura</span>
+              </div>
+              <InternalThread log={log} mine={mineMon} typing={typing} height={220} bg={C.page}/>
+            </div>
+            <CaseTimeline flags={flags} step={step}/>
+          </div>
+          <div style={{flex:'0 0 310px',minWidth:260,display:'flex',flexDirection:'column',gap:10}}>
+            <div style={{border:'1px solid '+C.line,borderRadius:8,background:C.card,padding:14,boxShadow:'var(--shadow-sm)'}}>
+              <div style={{fontSize:10.5,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10,display:'flex',alignItems:'center',gap:5}}><Users size={12}/>Partes envolvidas</div>
+              {roster.map(([f,role])=>{const st=stat(f);const P=PROF[f];return (
+                <div key={f} style={{display:'flex',alignItems:'center',gap:9,padding:'5px 0'}}>
+                  <span style={{width:8,height:8,borderRadius:8,background:st.live?C.green:C.line,boxShadow:st.live?'0 0 0 3px '+C.okBg:'none',transition:'all .3s'}}/>
+                  <Avatar who={f} size={20}/>
+                  <span style={{fontSize:13,fontWeight:600,flex:1}}>{P.name.split(' · ')[0]}<span style={{fontWeight:400,color:C.ink3}}> · {role}</span></span>
+                  <span style={{fontSize:11.5,color:st.c,fontWeight:st.live?700:400}}>{st.t}</span>
+                </div>
+              );})}
+            </div>
+            <div style={{fontSize:10.5,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em'}}>Falar com as partes</div>
+            <div style={{display:'flex',gap:6}}>
+              {[['dealer','Dealer · Carlos',UserCog],['field','Field · Diego',Wrench]].map(([k,t,Ic])=>(
+                <button key={k} onClick={()=>setCh(k)} style={{flex:1,display:'inline-flex',alignItems:'center',justifyContent:'center',gap:6,background:ch===k?C.side:C.card,color:ch===k?'#fff':C.ink2,border:'1px solid '+(ch===k?C.side:C.line),borderRadius:6,padding:'8px 10px',fontSize:12.5,fontWeight:600,cursor:'pointer',transition:'all 150ms'}}>
+                  <Ic size={13}/>{t}
+                  {((k==='dealer'&&chDealer.length)||(k==='field'&&chField.length))&&<span style={{width:6,height:6,borderRadius:6,background:ch===k?C.yellow:C.green}}/>}
+                </button>
+              ))}
+            </div>
+            {ch==='dealer'
+              ?<Coord label="Canal Deere ↔ AgroBaggio" sub="Não vai ao cliente" log={chDealer} mine={mineDeere} typing={typingDealer} height={180} buttons={CH_DEALER.map(m=>({label:m.label,Icon:Send,onClick:()=>sendDealer(m)}))}/>
+              :<Coord label="Canal Deere ↔ Field Trainer" sub="Não vai ao cliente" log={chField} mine={mineDeere} typing={typingField} height={180} buttons={CH_FIELD.map(m=>({label:m.label,Icon:Send,onClick:()=>sendField(m)}))}/>
+            }
+            {stalled&&<div style={{border:'1px solid '+C.crit,borderRadius:6,padding:12,background:C.critBg,fontSize:12,color:C.crit}}><b>Caso parado.</b> Use o canal do Dealer para pedir retomada.</div>}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function Consultas(){
+    const live={id:'BR-4471',cliente:'João Mendes',ramo:'Ramo 4 · Orientação',prio:'Alta',sla:flags.resolved?'—':'2h40',estado:flags.resolved?'Resolvido':stalled?'Parado':'Em andamento',resp:'AgroBaggio'};
+    const rows=[live,...CONSULTAS];
+    return (
+      <div>
+        <div style={{fontSize:12.5,color:C.ink3,marginBottom:12}}>Fila de consultas da rede · ordenadas por prioridade</div>
+        <Tbl head={['#','Cliente','Ramo','Prioridade','SLA','Estado','Responsável']}
+          rows={rows.map(c=>{const ec=ecOf(c.estado);const pc=c.prio==='Alta'?C.crit:c.prio==='Média'?C.warn:C.ink3;return[
+            <span style={{fontWeight:600}}>{c.id}{c.id==='BR-4471'&&<span style={{color:C.green,fontSize:11}}> ●</span>}</span>,
+            c.cliente,c.ramo,<span style={{color:pc,fontWeight:600}}>{c.prio}</span>,
+            <span style={{color:/atras/i.test(c.sla)?C.crit:C.ink2,fontWeight:600}}>{c.sla}</span>,
+            <Pill bg={ec.bg} fg={ec.fg}>{c.estado}</Pill>,c.resp,
+          ];})}/>
+      </div>
+    );
+  }
+
+  function Dealers(){return (
+    <div>
+      <div style={{fontSize:12.5,color:C.ink3,marginBottom:12}}>Desempenho por concessionário</div>
+      <Tbl head={['Dealer','Casos','FCR','Tempo médio','Resolvido remoto','CSAT']}
+        rows={DEALERS_PERF.map(d=>[
+          <span style={{fontWeight:600}}>{d.nome}</span>,d.casos,
+          <div style={{width:110}}><Bar v={d.fcr} c={d.fcr<55?C.warn:C.green}/></div>,
+          d.tmedio,<div style={{width:110}}><Bar v={d.remoto} c={'#5E7038'}/></div>,
+          <Pill bg={C.line2} fg={C.ink2}><Star size={10}/>{d.csat}</Pill>,
+        ])}/>
+    </div>
+  );}
+
+  function Fields(){return (
+    <div>
+      <div style={{fontSize:12.5,color:C.ink3,marginBottom:12}}>Qualidade da 1ª passada e adoção a D+7</div>
+      <Tbl head={['Field Trainer','Dealer','Visitas','Tempo médio','1ª passada','Uso D+7']}
+        rows={FIELDS_PERF.map(d=>[
+          <span style={{fontWeight:600}}>{d.nome}</span>,d.dealer,d.visitas,d.tvisita,
+          <div style={{width:100}}><Bar v={d.passada} c={C.green}/></div>,
+          <div style={{width:100}}><Bar v={d.usod7} c={d.usod7<70?C.warn:C.green}/></div>,
+        ])}/>
+    </div>
+  );}
+
+  function Agentes(){
+    const card=(titulo,Ic,estado,ec,linhas)=>(
+      <div style={{border:'1px solid '+C.line,borderRadius:8,padding:14,background:C.card,flex:'1 1 240px',boxShadow:'var(--shadow-sm)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+          <Ic size={16} style={{color:C.green}}/>
+          <span style={{fontWeight:700,fontSize:14,flex:1,fontFamily:"'Barlow Condensed',sans-serif"}}>{titulo}</span>
+          <Pill bg={ec.bg} fg={ec.fg}>{estado}</Pill>
+        </div>
+        {linhas.map((l,i)=>(
+          <div key={i} style={{display:'flex',justifyContent:'space-between',fontSize:12.5,padding:'3px 0'}}>
+            <span style={{color:C.ink3}}>{l[0]}</span>
+            <span style={{fontWeight:700,fontFamily:"'JetBrains Mono',monospace",fontSize:12}}>{l[1]}</span>
+          </div>
+        ))}
+      </div>
+    );
+    return (
+      <div>
+        <div style={{fontSize:12.5,color:C.ink3,marginBottom:12}}>Estado dos agentes da rede</div>
+        <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+          {card('Assistente Digital',Bot,'OPERANDO',{bg:C.okBg,fg:C.ok},[['Conversas hoje','340'],['Taxa de contenção','58%'],['Deflexão humano','41%'],['CSAT bot','4.3']])}
+          {card('Fila CSC',UserCog,'6 ONLINE',{bg:C.okBg,fg:C.ok},[['Online agora','6'],['Na fila','3'],['Tempo médio','2 min'],['SLA cumprido','92%']])}
+          {card('Field Trainers',Wrench,'3 EM CAMPO',{bg:C.warnBg,fg:C.warn},[['Disponíveis','4'],['Em campo','3'],['Visitas hoje','11'],['Backlog','8']])}
+        </div>
+      </div>
+    );
+  }
+
+  function Plataforma(){
+    const integ=[
+      ['OpsCenter','Sincronizado há 4 min',true],['CRM','Sincronizado há 8 min',true],
+      ['WhatsApp Business API','Latência 120 ms',true],['StarFire / RTK','Operacional',true],
+      ['Pagamentos','Degradado · fila lenta',false],
+    ];
+    return (
+      <div>
+        <div className="kpi-grid" style={{marginBottom:14}}>
+          <KPI label="Uptime (30d)" value="99.9%" Icon={Activity} tone="ok"/>
+          <KPI label="Eventos hoje" value="48.2k" sub="msgs + ações" Icon={Zap}/>
+          <KPI label="Erros (24h)" value="3" sub="não críticos" Icon={AlertTriangle}/>
+          <KPI label="Última sync" value="4 min" sub="OpsCenter" Icon={RefreshCw} tone="ok"/>
+        </div>
+        <div style={{border:'1px solid '+C.line,borderRadius:8,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
+          <div style={{background:C.page,borderBottom:'1px solid '+C.line,padding:'10px 14px',fontSize:12.5,fontWeight:700}}>Integrações</div>
+          {integ.map((it,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:10,padding:'12px 15px',borderBottom:i<integ.length-1?'1px solid '+C.line2:'none'}}>
+              {it[2]?<CheckCircle size={16} style={{color:C.ok}}/>:<XCircle size={16} style={{color:C.warn}}/>}
+              <span style={{fontWeight:600,fontSize:13,flex:1}}>{it[0]}</span>
+              <span style={{fontSize:12,color:it[2]?C.ink3:C.warn}}>{it[1]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const RENDER={visao:Visao,carteira:Carteira,acomp:Acomp,consultas:Consultas,dealers:Dealers,fields:Fields,agentes:Agentes,plataforma:Plataforma};
+  const Section=RENDER[sec];const navTitle=DEERE_NAV.find(n=>n[0]===sec)[2];
+  return (
+    <div style={{display:'flex',gap:16,flex:1,minHeight:0,overflow:'hidden'}}>
+      {/* Sidebar */}
+      <div style={{flex:'0 0 200px',border:'1px solid '+C.line,borderRadius:8,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)',alignSelf:'flex-start',position:'sticky',top:0}}>
+        <div style={{padding:'12px 14px',borderBottom:'1px solid '+C.line,display:'flex',alignItems:'center',gap:9,background:C.page}}>
+          <JDBadge size={24}/><span style={{fontSize:12,fontWeight:700,color:C.side,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.03em'}}>GOVERNANÇA BRASIL</span>
+        </div>
+        {DEERE_NAV.map(([k,Ic,t])=>{
+          const on=sec===k;const alert=k==='consultas'&&stalled;
+          return (
+            <button key={k} onClick={()=>setSec(k)} className={'nav-item'+(on?' on':'')}>
+              <Ic size={14} style={{color:on?C.green:C.ink4}}/><span style={{flex:1}}>{t}</span>
+              {alert&&<span style={{width:7,height:7,borderRadius:7,background:C.crit}}/>}
+            </button>
+          );
+        })}
+      </div>
+      {/* Content */}
+      <div style={{flex:1,minWidth:0,overflowY:'auto',minHeight:0,paddingBottom:24}}>
+        <div style={{marginBottom:16}}>
+          <div style={{fontSize:21,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em',textTransform:'uppercase'}}>{navTitle}</div>
+          <div style={{fontSize:12.5,color:C.ink3,marginTop:2}}>Rede Brasil · {new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div>
+        </div>
+        <Section/>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   FLUXO SWIMLANE — viewport-locked
+═══════════════════════════════════════════════════════ */
+const FLANES=[
+  {k:'produtor',who:'produtor',t:'Produtor',s:'WhatsApp'},
+  {k:'bot',who:'bot',t:'Assistente Digital',s:'automação'},
+  {k:'csc',who:'csc',t:'Dealer · CSC',s:'painel'},
+  {k:'esp',who:'especialista',t:'Especialista',s:'telemetria'},
+  {k:'field',who:'field',t:'Field Trainer',s:'app + campo'},
+];
+const FLY={produtor:118,bot:184,csc:250,esp:316,field:384};
+const STG=[
+  {who:'produtor',lane:'produtor',t:'Inicia o contato',time:'08:11',canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Cliente',
+   desc:'O produtor abre o WhatsApp e seleciona a categoria do problema: Maquinaria 🚜, Software 💻 ou Administrativo 📋. Não é necessário descrever nada antes — o bot guia a triagem.',
+   msg:'Tenho um problema com maquinaria 🚜'},
+  {who:'bot',lane:'bot',t:'Identifica máquinas',time:'08:12',canal:'WhatsApp',platform:'JD Operations Support',supportType:'Automatizado',
+   branches:[{icon:'🚜',label:'X9 2024 selecionada',type:'bot'},  {icon:'🌾',label:'S770 2023 selecionada',type:'bot'},{icon:'✍️',label:'Digitou manualmente',type:'bot'}],
+   desc:'O Assistente Digital consulta o OpsCenter e identifica os equipamentos registrados do produtor. Apresenta a lista para seleção — sem supor qual máquina tem o problema. O produtor seleciona ou digita. Pode anexar foto do painel.',
+   msg:'Seus equipamentos: X9 2024 (AutoTrac), S770 2023. Qual está com problema?'},
+  {who:'bot',lane:'bot',t:'Triagem automática',time:'08:12',canal:'Automação',platform:'JD Operations Support',supportType:'Automatizado',
+   desc:'O Assistente Digital identifica a máquina, classifica o problema por categoria (maquinaria / software / administrativo) e abre o caso com ramo e prioridade — sem fila, sem espera.',
+   msg:'Registrei como AutoTrac não engata (Ramo 4). Caso #BR-4471 aberto.',
+   branches:[
+     {icon:'🤖',label:'Automação resolve',desc:'Bot entrega guia rápido → caso fechado em < 5 min'},
+     {icon:'👤',label:'Escala para agente',desc:'Bot identifica complexidade e chama CSC humano'}
+   ]},
+  {who:'csc',lane:'csc',t:'CSC entra na conversa',time:'08:17',canal:'Painel',platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
+   desc:'O CSC do dealer recebe alerta no painel, vê contexto completo (telemetria, histórico) e entra na conversa já informado.',
+   msg:'Carlos: Oi João, já tô vendo seu caso do AutoTrac.'},
+  {who:'especialista',lane:'esp',t:'Diagnóstico remoto',time:'08:20',canal:'Telemetria',platform:'Deere Connect / JDLink',supportType:'Especialista remoto',
+   desc:'O especialista remoto acessa a telemetria e identifica sinal StarFire fraco (2/5 barras). Sem necessidade de visita ainda.',
+   msg:'Sinal StarFire fraco (2/5). Provável posição de antena.'},
+  {who:'csc',lane:'csc',t:'Propõe solução',time:'08:22',canal:'Painel',platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
+   desc:'O dealer apresenta duas opções ao produtor: guia rápido (auto-atendimento) ou visita do Field Trainer.',
+   msg:'Posso mandar um guia ou agendar o Diego (Field Trainer) aí.',
+   branches:[
+     {icon:'📄',label:'Guia rápido (remoto)',desc:'Produtor resolve sozinho seguindo o documento → caso fechado remotamente'},
+     {icon:'🏃',label:'Visita Field Trainer',desc:'Diego vai ao talhão → diagnóstico presencial e recalibração'}
+   ]},
+  {who:'produtor',lane:'produtor',t:'Confirma visita',time:'08:26',ret:true,canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Cliente',
+   desc:'O produtor confirma a visita para o dia seguinte — ainda no WhatsApp, sem precisar trocar de canal.',
+   msg:'Perfeito! 9h tá ótimo ✅'},
+  {who:'field',lane:'field',t:'Recebe e agenda',time:'08:30',canal:'App de campo',platform:'JD Field App',supportType:'Humano – Field Trainer',
+   desc:'Diego recebe o ticket no app, confirma disponibilidade e agenda a visita automaticamente.',
+   msg:'Visita confirmada · amanhã 9h · talhão norte.'},
+  {who:'field',lane:'field',t:'A caminho',time:'09:00',canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Humano – Field Trainer',
+   desc:'Diego avisa o produtor diretamente pelo WhatsApp que está a caminho — mesmo canal que o produtor já usa.',
+   msg:'Oi João, estou saindo agora, chego em ~1h 🚙'},
+  {who:'produtor',lane:'produtor',t:'Responde e aguarda',time:'09:02',ret:true,canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Cliente',
+   desc:'João confirma e espera no talhão norte. Todo o fluxo acontece no canal dele, sem apps extras.',
+   msg:'Ótimo Diego! Te espero no talhão norte 👍'},
+  {who:'field',lane:'field',t:'Recalibra em campo',time:'10:48',canal:'Presencial',platform:'Presencial + Deere Connect',supportType:'Humano – Field Trainer',
+   desc:'Diego recalibra a antena e valida com uma passada completa. AutoTrac 100%. Resultado registrado no sistema.',
+   msg:'Recalibrado e validado. AutoTrac 100% 🌱'},
+  {who:'csc',lane:'csc',t:'Fecha o caso',time:'11:00',canal:'Painel',platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
+   desc:'O dealer recebe o report do Field, confere o CSAT e fecha o caso no painel com todas as ações registradas.',
+   msg:'Tudo resolvido! Fechando o caso #BR-4471.'},
+  {who:'produtor',lane:'produtor',t:'Follow-up D+7',time:'D+7',ret:true,canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Automatizado',
+   desc:'Sete dias depois, o assistente confirma adoção. A Deere acompanha o uso real do AutoTrac pós-visita.',
+   msg:'Como está usando o AutoTrac? (uso confirmado: 87%)'},
+];
+const canalCor=c=>/WhatsApp/i.test(c)?{bg:'#DFF3E8',fg:'#1A7D4A'}:/Painel/i.test(c)?{bg:C.okBg,fg:C.greenD}:{bg:C.line2,fg:C.ink2};
+
+function Fluxo(){
+  const X=i=>60+i*152;const N=STG.length;
+  const [step,setStep]=useState(0);
+  const scrollRef=useRef(null);
+  useEffect(()=>{const el=scrollRef.current;if(el)el.scrollTo({left:Math.max(0,X(step)-el.clientWidth/2),behavior:'smooth'});},[step]);
+  const segs=STG.slice(0,-1).map((n,i)=>({from:i,a:[X(i)+69,FLY[n.lane]],b:[X(i+1)-69,FLY[STG[i+1].lane]]}));
+  const plotW=X(N-1)+130;const pathd=(a,b)=>'M '+a[0]+' '+a[1]+' C '+(a[0]+48)+' '+a[1]+', '+(b[0]-48)+' '+b[1]+', '+b[0]+' '+b[1];
+  const cur=STG[step];const cc=canalCor(cur.canal);
+  const stCor=t=>/Automatizado/.test(t)?{bg:'#EDE7F6',fg:'#6A1B9A'}:/Field/.test(t)?{bg:'#FFF3E0',fg:'#E65100'}:/CSC/.test(t)?{bg:C.okBg,fg:C.greenD}:{bg:C.line2,fg:C.ink2};
+  return (
+    <div className="fluxo-wrap">
+      {/* Header */}
+      <div style={{marginBottom:10,flexShrink:0}}>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:3}}>Como funciona</div>
+        <h1 style={{fontSize:24,fontWeight:800,margin:'0 0 4px',fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em',textTransform:'uppercase'}}>O fluxo completo — clique em cada momento</h1>
+        <div style={{fontSize:13.5,color:C.ink2,lineHeight:1.5,maxWidth:700}}>O produtor sempre <b>inicia</b> o contato. Cada ator entra no canal certo. A Deere acompanha tudo em tempo real.</div>
+      </div>
+      {/* Map area */}
+      <div className="fluxo-map-area">
+        <div style={{display:'flex',border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:C.card,boxShadow:'var(--shadow-sm)',flex:1,minHeight:0}}>
+          <div style={{position:'relative',width:176,flexShrink:0,borderRight:'1px solid '+C.line,background:C.page}}>
+            <div style={{position:'absolute',left:12,top:30,right:8}}>
+              <div style={{display:'flex',alignItems:'center',gap:6}}><JDBadge size={20}/><span style={{fontSize:12,fontWeight:700,color:C.side,fontFamily:"'Barlow Condensed',sans-serif"}}>JOHN DEERE</span></div>
+              <div style={{fontSize:9.5,color:C.ink3,marginTop:1,marginLeft:28}}>visão cross</div>
+            </div>
+            {FLANES.map(l=>(
+              <div key={l.k} style={{position:'absolute',left:12,top:FLY[l.k]-18,right:6}}>
+                <div style={{display:'flex',alignItems:'center',gap:6}}><Avatar who={l.who} size={22}/><span style={{fontSize:13,fontWeight:600,lineHeight:1.1}}>{l.t}</span></div>
+                <div style={{fontSize:10,color:C.ink3,marginTop:1,marginLeft:30}}>{l.s}</div>
+              </div>
+            ))}
+          </div>
+          <div ref={scrollRef} style={{overflowX:'auto',flex:1}}>
+            <div style={{position:'relative',width:plotW,height:440}}>
+              <div style={{position:'absolute',left:0,top:26,width:plotW,height:34,background:'#F2F5F1',borderBottom:'1px dashed '+C.side,display:'flex',alignItems:'center',paddingLeft:14}}>
+                <span style={{fontSize:10.5,color:C.side,fontWeight:600}}>Deere acompanha cada passo — métricas, satisfação e coordenação cross</span>
+              </div>
+              {FLANES.map(l=><div key={l.k} style={{position:'absolute',left:0,top:FLY[l.k]-27,width:plotW,height:54,borderTop:'1px solid '+C.line2}}/>)}
+              <svg width={plotW} height="440" viewBox={'0 0 '+plotW+' 440'} style={{position:'absolute',inset:0,zIndex:1,pointerEvents:'none'}}>
+                <defs><marker id="fah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
+                {segs.map((sg,i)=>{const done=step>sg.from;const cur2=step===sg.from+1;return <path key={i} d={pathd(sg.a,sg.b)} fill="none" stroke={done||cur2?C.green:'#D6DDCF'} strokeWidth={done||cur2?2.5:1.5} markerEnd="url(#fah)" style={{transition:'stroke .35s,stroke-width .2s'}}/>;  })}
+              </svg>
+              {STG.map((n,i)=>{
+                const done=i<step;const sel=i===step;const fut=i>step;
+                const x=X(i),y=FLY[n.lane];
+                return(
+                  <div key={i} onClick={()=>setStep(i)} style={{position:'absolute',left:x-70,top:y-27,width:140,zIndex:2,cursor:'pointer',transition:'opacity .25s,transform .2s',transform:sel?'translateY(-3px)':'none',opacity:fut?.28:1}}>
+                    <div style={{background:sel?C.greenL:done?'#f0f8ee':C.card,border:(sel?2:1.5)+'px solid '+(sel?C.green:done?C.green:'#D6DDCF'),borderRadius:8,padding:'7px 10px',boxShadow:sel?'var(--shadow-md)':'var(--shadow-sm)',transition:'all 150ms',animation:sel?'pulse-ring 2s ease-out infinite':undefined,position:'relative'}}>
+                      {done&&<span style={{position:'absolute',top:-6,right:-6,width:16,height:16,borderRadius:16,background:C.green,border:'2px solid #fff',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        <Check size={9} style={{color:'#fff'}}/>
+                      </span>}
+                      {n.branches&&<span style={{position:'absolute',top:-6,left:-6,background:'#7C3AED',color:'#fff',fontSize:8,fontWeight:700,borderRadius:4,padding:'1px 5px',letterSpacing:'.03em',border:'1.5px solid #fff'}}>2 caminhos</span>}
+                      {n.ret&&<div style={{display:'flex',alignItems:'center',gap:4,marginBottom:3}}><ArrowLeft size={10} style={{color:C.waHead}}/><span style={{fontSize:8,fontWeight:700,color:C.waHead,letterSpacing:'.04em',textTransform:'uppercase'}}>volta ao produtor</span></div>}
+                      <div style={{display:'flex',alignItems:'center',gap:5}}><Avatar who={n.who} size={18}/><span style={{fontSize:13,fontWeight:600,lineHeight:1.15}}>{n.t}</span></div>
+                      <div style={{fontSize:10,color:C.ink3,marginTop:3}}>{n.time} · {n.canal}</div>
+                    </div>
+                  </div>
+                );})}
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Controls */}
+      <div style={{display:'flex',alignItems:'center',gap:10,margin:'10px 0 4px',flexShrink:0}}>
+        <button onClick={()=>setStep(x=>Math.max(0,x-1))} className="jd-btn-ghost" disabled={step===0}
+          style={{opacity:step===0?.35:1,cursor:step===0?'not-allowed':'pointer'}}>
+          <ChevronLeft size={15}/>Anterior
+        </button>
+        <button onClick={()=>setStep(x=>Math.min(N-1,x+1))} className="jd-btn" disabled={step===N-1}
+          style={{opacity:step===N-1?.5:1,cursor:step===N-1?'not-allowed':'pointer',minWidth:110}}>
+          Próximo<ChevronRight size={15}/>
+        </button>
+        <span style={{fontSize:13,color:C.ink3,marginLeft:4}}>Passo <b style={{color:C.ink}}>{step+1}</b> de {N}</span>
+        {cur.branches&&<span style={{fontSize:12,color:'#7C3AED',fontWeight:600,marginLeft:8,display:'flex',alignItems:'center',gap:4}}><GitBranch size={13}/>Passo com bifurcação</span>}
+      </div>
+      {/* Context panel */}
+      <div className="fluxo-ctx-area">
+        <div style={{display:'flex',gap:16,flexWrap:'wrap',background:C.page,padding:'16px 16px 20px'}}>
+          {/* Left: actor + description */}
+          <div style={{flex:'1 1 280px',minWidth:240}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+              <Avatar who={cur.who} size={38}/>
+              <div>
+                <div style={{fontSize:16,fontWeight:700}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</div>
+                <div style={{fontSize:12,color:C.ink3,marginTop:1}}>{cur.t} · {cur.time}</div>
+              </div>
+            </div>
+            {/* Channel + Platform + Support type chips */}
+            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:12}}>
+              <Pill bg={cc.bg} fg={cc.fg}><MessageCircle size={11}/>Canal: {cur.canal}</Pill>
+              <Pill bg='#E3F2FD' fg='#1565C0'><Monitor size={11}/>Plataforma: {cur.platform}</Pill>
+              <Pill bg={stCor(cur.supportType).bg} fg={stCor(cur.supportType).fg}>
+                {/Automatizado/.test(cur.supportType)?<Radio size={11}/>:<Users size={11}/>}
+                {cur.supportType}
+              </Pill>
+            </div>
+            <div style={{fontSize:14,color:C.ink2,lineHeight:1.7}}>{cur.desc}</div>
+          </div>
+          {/* Right: message card + branches */}
+          <div style={{flex:'0 0 auto',display:'flex',flexDirection:'column',gap:10,minWidth:220}}>
+            <div>
+              <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}}>Mensagem do momento</div>
+              <div style={{background:C.waIn,border:'1px solid '+C.line,borderRadius:10,padding:14,boxShadow:'var(--shadow-sm)',minWidth:220}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}><Avatar who={cur.who} size={24}/><span style={{fontSize:13,fontWeight:600}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</span></div>
+                <div style={{fontSize:13.5,color:C.ink,background:cur.out?C.waOut:'#f0f2f0',borderRadius:8,padding:'8px 10px',lineHeight:1.4}}>{cur.msg}</div>
+              </div>
+            </div>
+            {cur.branches&&(
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:'#7C3AED',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6,display:'flex',alignItems:'center',gap:5}}><GitBranch size={12}/>Caminhos possíveis</div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  {cur.branches.map((b,i)=>(
+                    <div key={i} style={{background:i===0?'#F3E8FF':'#FFF3E0',border:'1px solid '+(i===0?'#DDD6FE':'#FFCC80'),borderRadius:8,padding:'8px 12px'}}>
+                      <div style={{fontSize:13,fontWeight:700,color:i===0?'#6D28D9':'#C05621',marginBottom:2}}>{b.icon} {b.label}</div>
+                      <div style={{fontSize:11.5,color:C.ink3,lineHeight:1.4}}>{b.desc}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   APP ROOT
+═══════════════════════════════════════════════════════ */
+const seed=()=>({customer:[],dealer:[],field:[]}); /* EMPTY — producer goes first */
+
+function App(){
+  const [tab,setTab]=useState('fluxo');const [step,setStep]=useState('s0');
+  const [chat,setChat]=useState(seed);const [typing,setTyping]=useState({customer:null,dealer:null,field:null});
+  const [flags,setFlags]=useState({resolved:null,agenda:null,csat:null});
+  const [busy,setBusy]=useState(false);
+  const [sentDocs,setSentDocs]=useState([]);
+  const [seen,setSeen]=useState({fluxo:0,produtor:0,dealer:0,field:0,deere:0});
+  const [toast,setToast]=useState(null);
+  const [prodScreen,setProdScreen]=useState('list'); /* lifted so reset() can return to list */
+  const timers=useRef([]);const toastT=useRef(null);const prevOwner=useRef(null);
+  const clearTs=()=>{timers.current.forEach(clearTimeout);timers.current=[];};
+  useEffect(()=>()=>clearTs(),[]);
+
+  const totalFor=k=>{if(k==='fluxo')return 0;const cu=chat.customer.length;if(k==='produtor')return cu;if(k==='dealer')return cu+chat.dealer.length;if(k==='field')return cu+chat.field.length;return cu+chat.dealer.length+chat.field.length;};
+  useEffect(()=>{setSeen(s=>({...s,[tab]:totalFor(tab)}));},[tab,chat]);
+  const unseen=k=>Math.max(0,totalFor(k)-seen[k]);
+
+  const fireToast=txt=>{setToast(txt);clearTimeout(toastT.current);toastT.current=setTimeout(()=>setToast(null),3000);};
+  const appendTo=(k,ev)=>setChat(c=>({...c,[k]:[...c[k],ev]}));
+  const setTyp=(k,who)=>setTyping(t=>({...t,[k]:who}));
+
+  function playInto(k,events,startDelay){
+    let t=startDelay||0;
+    (events||[]).forEach(ev=>{
+      if(ev.n){timers.current.push(setTimeout(()=>appendTo(k,ev),t));t+=500;}
+      else{
+        const dur=700+Math.min((ev.t||'').length*13,800);
+        timers.current.push(setTimeout(()=>setTyp(k,ev.f),t));
+        timers.current.push(setTimeout(()=>{appendTo(k,ev);setTyp(k,null);},t+dur));
+        t+=dur+350;
+      }
+    });
+    return t;
+  }
+
+  const currentStep=STEPS[step]||STEPS_EXT[step]||{enter:[],opts:[]};
+  const opts=currentStep.opts||[];
+  const waiting=busy?[]:[...new Set(opts.map(o=>o.role))];
+
+  useEffect(()=>{
+    if(busy)return;
+    const owner=waiting[0]||null;
+    if(owner&&owner!==prevOwner.current&&owner!==tab) fireToast('Vez de: '+ROLE_NAME[owner]);
+    prevOwner.current=owner;
+  },[busy,step]);
+
+  function runCustomer(say,next,doFlags){
+    setBusy(true);
+    (say||[]).forEach(ev=>appendTo('customer',ev));
+    const allSteps={...STEPS,...STEPS_EXT};
+    const enter=next?(allSteps[next]?allSteps[next].enter:[]):[];
+    const total=playInto('customer',enter,380);
+    timers.current.push(setTimeout(()=>{
+      if(next)setStep(next);
+      if(doFlags)setFlags(f=>({...f,...doFlags}));
+      setBusy(false);
+    },total+100));
+  }
+
+  const choose=o=>runCustomer(o.say,o.next,o.do);
+
+  function writeFree(text){
+    setBusy(true);
+    appendTo('customer',{f:'produtor',t:text,time:'agora',out:true});
+    const total=playInto('customer',[{f:'bot',t:'Recebi! Para te ajudar melhor, toque numa das opções abaixo 👇',time:'agora'}],500);
+    timers.current.push(setTimeout(()=>setBusy(false),total+100));
+  }
+
+  function reengage(){
+    appendTo('customer',{f:'csc',t:'Oi João, conseguiu dar uma olhada? Fico à disposição para continuar 👍',time:'agora'});
+    if(tab!=='produtor') fireToast('Dealer reengajou o produtor');
+  }
+
+  function sendDoc(doc){
+    /* Mark doc as sent */
+    setSentDocs(s=>s.includes(doc.id)?s:[...s,doc.id]);
+    /* Inject resource card into customer chat */
+    const who=tab==='field'?'field':'csc';
+    const senderName=tab==='field'?'Diego · Field Trainer':'Carlos · AgroBaggio';
+    const now=new Date();
+    const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+    appendTo('customer',{f:who,t:doc.sendMsg,time:t,k:'doc',docTitle:doc.title,docIcon:doc.icon});
+    fireToast('Recurso enviado ao produtor ✓');
+  }
+
+  function runStep(id){
+    const def=DEALER_INIT.find(d=>d.id===id);
+    if(!def)return;
+    setBusy(true);
+    const enter=def.step.enter||[];const total=playInto('customer',enter,300);
+    const newStep={...def.step};
+    timers.current.push(setTimeout(()=>{setStep(id+'_active');setBusy(false);},total+100));
+    /* register ephemeral step */
+    STEPS[id+'_active']={enter:[],opts:def.step.opts};
+  }
+
+  function sendDealer(m){
+    appendTo('dealer',{f:'deere',t:m.msg,time:'agora'});
+    playInto('dealer',[m.reply],580);
+    if(m.customerStep)runCustomer([],m.customerStep,null);
+    if(tab!=='dealer') fireToast('Deere → Dealer');
+  }
+  function sendField(m){
+    appendTo('field',{f:'deere',t:m.msg,time:'agora'});
+    playInto('field',[m.reply],580);
+    if(tab!=='field') fireToast('Deere → Field Trainer');
+  }
+  const chSendDealer=ev=>appendTo('dealer',{...ev,time:'agora'});
+  const chSendField=ev=>appendTo('field',{...ev,time:'agora'});
+
+  function reset(){
+    clearTs();setStep('s0');setChat(seed());
+    setTyping({customer:null,dealer:null,field:null});
+    setFlags({resolved:null,agenda:null,csat:null});
+    setBusy(false);setSentDocs([]);setSeen({fluxo:0,produtor:0,dealer:0,field:0,deere:0});
+    setProdScreen('list'); /* return Produtor to WA list screen */
+    setToast(null);
+  }
+
+  const TABS=[['fluxo',Activity,'Fluxo'],['produtor',Smartphone,'Produtor'],['dealer',Building2,'Dealer'],['field',Wrench,'Field Trainer'],['deere',ShieldCheck,'Deere']];
+  const turnoOf=r=>!busy&&waiting.includes(r);
+
+  return (
+    <div style={{fontFamily:"'Barlow',system-ui,sans-serif",background:C.page,height:'100%',display:'flex',flexDirection:'column',color:C.ink}}>
+      {/* Toast */}
+      {toast&&<div style={{position:'fixed',top:16,right:18,zIndex:999,background:C.side,color:'#fff',padding:'12px 16px',borderRadius:8,fontSize:13,fontWeight:600,display:'flex',alignItems:'center',gap:8,boxShadow:'var(--shadow-lg)',animation:'slidein .2s ease-out'}}>
+        <Bell size={15} style={{color:C.yellow}}/>{toast}
+      </div>}
+      {/* Header */}
+      <div style={{background:C.side,color:'#fff',padding:'0 20px',display:'flex',alignItems:'center',gap:14,height:56,position:'sticky',top:0,zIndex:100,boxShadow:'0 2px 8px rgba(0,0,0,.3)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+          <JDBadge size={28}/>
+          <div className="header-logo-text" style={{fontWeight:700,fontSize:13,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.04em',lineHeight:1}}>
+            OPERATIONS<br/><span style={{fontSize:10,fontWeight:400,opacity:.7,letterSpacing:'.06em'}}>SUPPORT · BRASIL</span>
+          </div>
+        </div>
+        <div style={{width:1,height:28,background:'rgba(255,255,255,.15)',flexShrink:0}}/>
+        <div style={{display:'flex',gap:0,flex:1,overflowX:'auto',scrollbarWidth:'none'}}>
+          {TABS.map(([k,Ic,t])=>{
+            const on=tab===k;const u=unseen(k);
+            return (
+              <button key={k} onClick={()=>setTab(k)} className={'tab-btn'+(on?' on':'')}>
+                <Ic size={15}/>
+                <span className="tab-label">{t}</span>
+                {!on&&u>0&&<span style={{minWidth:18,height:18,padding:'0 4px',borderRadius:9,background:C.yellow,color:C.yellowD,fontSize:10.5,fontWeight:800,display:'inline-flex',alignItems:'center',justifyContent:'center'}}>{u}</span>}
+                {!on&&u===0&&turnoOf(k)&&<span style={{width:7,height:7,borderRadius:7,background:C.yellow}}/>}
+              </button>
+            );
+          })}
+        </div>
+        <button onClick={reset} className="jd-btn-ghost" style={{background:'transparent',color:'#fff',border:'1px solid rgba(255,255,255,.25)',fontSize:12,flexShrink:0}}>
+          <RotateCcw size={13}/>Reiniciar
+        </button>
+      </div>
+      {/* Modo Demo banner */}
+      <div style={{background:'#EDF7EA',borderBottom:'1px solid #C8E6C0',padding:'6px 24px',display:'flex',alignItems:'center',gap:0,flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,paddingRight:20,borderRight:'1px solid #C8E6C0',marginRight:20,flexShrink:0}}>
+          <span style={{fontSize:10,fontWeight:800,letterSpacing:'.1em',color:C.greenD,textTransform:'uppercase',background:C.greenL,border:'1px solid #A5D6A7',borderRadius:4,padding:'2px 7px'}}>Modo Demo</span>
+        </div>
+        <span style={{fontSize:13,color:C.ink2,lineHeight:1.4}}>
+          Cada aba mostra o <b>mesmo caso</b> do ponto de vista de um ator diferente.
+          <span style={{color:C.ink3,marginLeft:8}}>O produtor sempre inicia. Contadores nas abas indicam novas mensagens.</span>
+        </span>
+      </div>
+      {/* Content — viewport-locked, no page scroll */}
+      <div style={{padding:tab==='fluxo'?'4px 24px 0':'12px 24px',maxWidth:1320,margin:'0 auto',flex:1,minHeight:0,overflow:'hidden',boxSizing:'border-box',display:'flex',flexDirection:'column'}}>
+        {tab==='fluxo'&&<Fluxo/>}
+        {tab==='produtor'&&<VProdutor log={chat.customer} opts={opts} choose={choose} waiting={waiting} busy={busy} typing={typing.customer} turno={turnoOf('produtor')} onWrite={writeFree} screen={prodScreen} setScreen={setProdScreen} setTab={setTab}/>}
+        {tab==='dealer'&&<VDealer log={chat.customer} opts={opts} choose={choose} waiting={waiting} busy={busy} typing={typing.customer} flags={flags} step={step} runStep={runStep} chDealer={chat.dealer} chSendDealer={chSendDealer} typingDealer={typing.dealer} turno={turnoOf('dealer')} reengage={reengage} onSendDoc={sendDoc} sentDocs={sentDocs}/>}
+        {tab==='field'&&<VField log={chat.customer} opts={opts} choose={choose} waiting={waiting} busy={busy} typing={typing.customer} flags={flags} step={step} chField={chat.field} chSendField={chSendField} typingField={typing.field} turno={turnoOf('field')} onSendDoc={sendDoc} sentDocs={sentDocs}/>}
+        {tab==='deere'&&<VDeere log={chat.customer} flags={flags} step={step} typing={typing.customer} chDealer={chat.dealer} chField={chat.field} sendDealer={sendDealer} sendField={sendField} typingDealer={typing.dealer} typingField={typing.field}/>}
+      </div>
+    </div>
+  );
+}
+
+const root=ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App/>);
+</script>
+</body>
+</html>

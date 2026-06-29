@@ -1,0 +1,302 @@
+<!-- @dsCard group="Marketing" viewport="1440x820" name="Homepage" subtitle="deere.com marketing homepage — hero, products, dealer locator" -->
+<!-- @startingPoint section="UI Kits" subtitle="deere.com — marketing homepage with hero, products, and footer" viewport="1440x820" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>John Deere — Nothing Runs Like a Deere</title>
+<link rel="stylesheet" href="../../styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{font-family:'Barlow',sans-serif;color:#27251F;background:#fff;min-height:100vh}
+  a{text-decoration:none;color:inherit}
+  img{display:block}
+  .nav-link{padding:0 16px;height:64px;display:flex;align-items:center;font-size:14px;font-weight:500;color:rgba(255,255,255,0.88);border-bottom:3px solid transparent;transition:color 150ms,border-color 150ms;white-space:nowrap}
+  .nav-link:hover{color:#fff;border-bottom-color:#FFDE00}
+  .sub-link{padding:10px 16px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.78);display:block;white-space:nowrap;transition:color 150ms}
+  .sub-link:hover{color:#fff}
+  .btn-primary{display:inline-flex;align-items:center;height:48px;padding:0 24px;background:#367C2B;color:#fff;border-radius:6px;font-size:15px;font-weight:700;font-family:'Barlow',sans-serif;border:none;cursor:pointer;text-decoration:none;transition:background 150ms}
+  .btn-primary:hover{background:#2A6122}
+  .btn-yellow{display:inline-flex;align-items:center;height:48px;padding:0 24px;background:#FFDE00;color:#27251F;border-radius:6px;font-size:15px;font-weight:700;font-family:'Barlow',sans-serif;border:none;cursor:pointer;text-decoration:none;transition:background 150ms}
+  .btn-yellow:hover{background:#E6C800}
+  .cat-card{border-radius:8px;overflow:hidden;border:1px solid #DEDEDC;cursor:pointer;transition:box-shadow 180ms,transform 150ms}
+  .cat-card:hover{box-shadow:0 8px 24px rgba(39,37,31,0.13);transform:translateY(-2px)}
+  .prod-card{background:#fff;border-radius:8px;border:1px solid #DEDEDC;overflow:hidden;transition:box-shadow 180ms;cursor:pointer}
+  .prod-card:hover{box-shadow:0 8px 24px rgba(39,37,31,0.12)}
+  .footer-link{display:block;font-size:13px;color:rgba(255,255,255,0.6);margin-bottom:8px;transition:color 150ms}
+  .footer-link:hover{color:#fff}
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<header style="background:#367C2B;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,0.18)">
+  <div style="max-width:1440px;margin:0 auto;padding:0 32px;height:64px;display:flex;align-items:center;gap:0">
+    <a href="#" style="display:flex;align-items:center;gap:10px;flex-shrink:0;margin-right:24px">
+      <img src="../../assets/logo/jd-badge.png" alt="John Deere" style="height:44px">
+    </a>
+    <nav style="display:flex;align-items:center;flex:1">
+      <a href="#" class="nav-link">Agriculture</a>
+      <a href="#" class="nav-link">Construction</a>
+      <a href="#" class="nav-link">Turf</a>
+      <a href="#" class="nav-link">Technology</a>
+      <a href="#" class="nav-link">Parts &amp; Service</a>
+    </nav>
+    <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <button style="height:36px;padding:0 16px;border:1.5px solid rgba(255,255,255,0.45);background:transparent;color:#fff;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Barlow',sans-serif;transition:border-color 150ms" onmouseover="this.style.borderColor='rgba(255,255,255,0.9)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.45)'">Sign In</button>
+      <a href="#" class="btn-yellow" style="height:36px;font-size:13px;padding:0 16px">Find a Dealer</a>
+    </div>
+  </div>
+  <div style="max-width:1440px;margin:0 auto;padding:0 24px;display:flex;border-top:1px solid rgba(255,255,255,0.14)">
+    <a href="#" class="sub-link">Agriculture</a>
+    <a href="#" class="sub-link">Construction</a>
+    <a href="#" class="sub-link">Turf &amp; Utility</a>
+    <a href="#" class="sub-link">Technology</a>
+    <a href="#" class="sub-link">Financial Services</a>
+    <a href="#" class="sub-link">Parts</a>
+    <a href="#" class="sub-link">Careers</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section style="position:relative;overflow:hidden;height:540px">
+  <img src="../../assets/images/banner-building-america.jpeg" alt="Building America Since 1837" style="width:100%;height:100%;object-fit:cover;object-position:center 40%">
+  <div style="position:absolute;inset:0;background:linear-gradient(to right,rgba(26,26,24,0.55) 0%,rgba(26,26,24,0.2) 38%,transparent 60%)"></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;padding:0 72px">
+    <div style="max-width:440px">
+      <div style="font-size:16px;color:rgba(255,255,255,0.90);line-height:1.65;margin-bottom:24px">Purpose-built equipment and technology for every operation that feeds, builds, and sustains the world.</div>
+      <div style="display:flex;gap:12px">
+        <a href="#products" class="btn-primary">Shop Equipment</a>
+        <a href="#" class="btn-yellow">Find a Dealer</a>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;top:0;right:0;width:10px;height:100%;background:#FFDE00"></div>
+</section>
+
+<!-- STATS BAR -->
+<div style="background:#27251F">
+  <div style="max-width:1440px;margin:0 auto;display:flex">
+    <div style="flex:1;padding:20px 32px;border-right:1px solid rgba(255,255,255,0.1);text-align:center">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#fff">1837</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600">Founded</div>
+    </div>
+    <div style="flex:1;padding:20px 32px;border-right:1px solid rgba(255,255,255,0.1);text-align:center">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#fff">160+</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600">Countries</div>
+    </div>
+    <div style="flex:1;padding:20px 32px;border-right:1px solid rgba(255,255,255,0.1);text-align:center">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#fff">75,000+</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600">Employees</div>
+    </div>
+    <div style="flex:1;padding:20px 32px;text-align:center">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:#FFDE00">#84</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.45);margin-top:3px;letter-spacing:0.08em;text-transform:uppercase;font-weight:600">Fortune 500</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT CATEGORIES -->
+<section id="products" style="padding:72px 32px;background:#fff">
+  <div style="max-width:1440px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:44px">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:38px;font-weight:800;text-transform:uppercase;letter-spacing:-0.01em">What We Build</div>
+      <div style="font-size:16px;color:#767471;margin-top:8px">Purpose-built for every industry that powers the world</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <!-- Agriculture: typography on dark green -->
+      <a href="#" class="cat-card">
+        <div style="height:200px;background:#1E4718;position:relative;display:flex;align-items:flex-end;padding:20px">
+          <div style="position:absolute;top:0;right:0;width:4px;height:100%;background:#FFDE00"></div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#FFDE00;margin-bottom:6px">Est. 1837</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:-0.01em">Agriculture</div>
+          </div>
+        </div>
+        <div style="padding:16px 20px">
+          <div style="font-size:13px;color:#767471;line-height:1.5">Tractors · Combines · Planters · Sprayers</div>
+          <div style="margin-top:12px;font-size:13px;font-weight:600;color:#367C2B">Shop Agriculture →</div>
+        </div>
+      </a>
+      <!-- Construction: typography on near-black -->
+      <a href="#" class="cat-card">
+        <div style="height:200px;background:#27251F;position:relative;display:flex;align-items:flex-end;padding:20px">
+          <div style="position:absolute;top:0;left:0;right:0;height:4px;background:#FFDE00"></div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:6px">Heavy Equipment</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:-0.01em">Construction</div>
+          </div>
+        </div>
+        <div style="padding:16px 20px">
+          <div style="font-size:13px;color:#767471;line-height:1.5">Excavators · Dozers · Loaders · Graders</div>
+          <div style="margin-top:12px;font-size:13px;font-weight:600;color:#367C2B">Shop Construction →</div>
+        </div>
+      </a>
+      <!-- Turf: typography-only, JD green -->
+      <a href="#" class="cat-card">
+        <div style="height:200px;background:#367C2B;position:relative;display:flex;align-items:flex-end;padding:18px 20px">
+          <div style="border-left:3px solid #FFDE00;padding-left:14px">
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:4px">Turf &amp;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#fff;text-transform:uppercase;line-height:1">Utility</div>
+          </div>
+        </div>
+        <div style="padding:16px 20px">
+          <div style="font-size:13px;color:#767471;line-height:1.5">Mowers · Compact Tractors · Gators</div>
+          <div style="margin-top:12px;font-size:13px;font-weight:600;color:#367C2B">Shop Turf &amp; Utility →</div>
+        </div>
+      </a>
+      <!-- Technology: dark with yellow accent -->
+      <a href="#" class="cat-card">
+        <div style="height:200px;background:#1A1A18;position:relative;display:flex;align-items:flex-end;padding:18px 20px">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:#FFDE00"></div>
+          <div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#FFDE00;margin-bottom:8px">Precision Ag</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:-0.01em">Technology</div>
+          </div>
+        </div>
+        <div style="padding:16px 20px">
+          <div style="font-size:13px;color:#767471;line-height:1.5">Operations Center · JDLink™ · APEX™</div>
+          <div style="margin-top:12px;font-size:13px;font-weight:600;color:#367C2B">Explore Technology →</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED EQUIPMENT -->
+<section style="padding:64px 32px;background:#F8F7F5">
+  <div style="max-width:1440px;margin:0 auto">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:32px">
+      <div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;text-transform:uppercase;letter-spacing:-0.01em">Featured Equipment</div>
+        <div style="font-size:14px;color:#767471;margin-top:6px">The tools that define modern agriculture</div>
+      </div>
+      <a href="#" style="font-size:14px;font-weight:600;color:#367C2B">View All Equipment →</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+      <div class="prod-card">
+        <div style="height:220px;background:#367C2B;display:flex;align-items:center;justify-content:center;position:relative;flex-direction:column;gap:2px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:96px;font-weight:800;color:#fff;line-height:0.9;letter-spacing:-0.04em">8R</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:#FFDE00;letter-spacing:0.06em">410 HP</div>
+          <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:#FFDE00"></div>
+          <span style="position:absolute;top:14px;right:14px;background:#27251F;color:#fff;font-size:10px;font-weight:700;letter-spacing:0.08em;padding:3px 9px;border-radius:4px">NEW</span>
+        </div>
+        <div style="padding:22px 24px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#367C2B;margin-bottom:6px">Up to 410 HP</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase">8R Series Tractor</div>
+          <div style="font-size:13px;color:#767471;margin-top:8px;line-height:1.6">Maximum power, ultimate efficiency. Industry-leading cab and IVT transmission for every field condition.</div>
+          <div style="margin-top:18px;display:flex;gap:10px">
+            <a href="#" class="btn-primary" style="flex:1;justify-content:center;height:38px;font-size:13px">Build &amp; Price</a>
+            <a href="#" style="height:38px;padding:0 16px;display:flex;align-items:center;border:1px solid #C4C3C1;color:#27251F;border-radius:6px;font-size:13px;font-weight:500;font-family:'Barlow',sans-serif;transition:border-color 150ms" onmouseover="this.style.borderColor='#9A9897'" onmouseout="this.style.borderColor='#C4C3C1'">Learn More</a>
+          </div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div style="height:220px;background:#27251F;display:flex;align-items:center;justify-content:center;position:relative;flex-direction:column;gap:2px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:96px;font-weight:800;color:#fff;line-height:0.9;letter-spacing:-0.04em">S790</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#FFDE00;letter-spacing:0.08em">COMBINE</div>
+          <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:#FFDE00"></div>
+        </div>
+        <div style="padding:22px 24px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#367C2B;margin-bottom:6px">X9 Series Technology</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase">S790 Combine</div>
+          <div style="font-size:13px;color:#767471;margin-top:8px;line-height:1.6">Record-breaking harvest capacity with the most powerful single-rotor system ever made.</div>
+          <div style="margin-top:18px;display:flex;gap:10px">
+            <a href="#" class="btn-primary" style="flex:1;justify-content:center;height:38px;font-size:13px">Build &amp; Price</a>
+            <a href="#" style="height:38px;padding:0 16px;display:flex;align-items:center;border:1px solid #C4C3C1;color:#27251F;border-radius:6px;font-size:13px;font-weight:500;font-family:'Barlow',sans-serif">Learn More</a>
+          </div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div style="height:220px;background:#1E4718;display:flex;align-items:center;justify-content:center;position:relative;flex-direction:column;gap:4px;padding:0 24px">
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:52px;font-weight:800;color:#fff;line-height:1;text-align:center;letter-spacing:-0.02em">ExactEmerge™</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:#FFDE00;letter-spacing:0.06em">16R PLANTER</div>
+          <div style="position:absolute;bottom:0;left:0;right:0;height:4px;background:#FFDE00"></div>
+          <span style="position:absolute;top:14px;right:14px;background:#B45309;color:#fff;font-size:10px;font-weight:700;letter-spacing:0.08em;padding:3px 9px;border-radius:4px">POPULAR</span>
+        </div>
+        <div style="padding:22px 24px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#367C2B;margin-bottom:6px">16-Row &amp; 24-Row</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:800;text-transform:uppercase">ExactEmerge™ Planter</div>
+          <div style="font-size:13px;color:#767471;margin-top:8px;line-height:1.6">Plant at speeds up to 10 mph without sacrificing accuracy — row by row precision every time.</div>
+          <div style="margin-top:18px;display:flex;gap:10px">
+            <a href="#" class="btn-primary" style="flex:1;justify-content:center;height:38px;font-size:13px">Build &amp; Price</a>
+            <a href="#" style="height:38px;padding:0 16px;display:flex;align-items:center;border:1px solid #C4C3C1;color:#27251F;border-radius:6px;font-size:13px;font-weight:500;font-family:'Barlow',sans-serif">Learn More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section style="background:#367C2B;padding:52px 32px">
+  <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:40px">
+    <div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:-0.01em">GENUINE PARTS. GENUINE SERVICE.</div>
+      <div style="font-size:15px;color:rgba(255,255,255,0.82);margin-top:8px">12,000+ dealer locations worldwide. Same-day parts availability.</div>
+    </div>
+    <div style="display:flex;gap:12px;flex-shrink:0">
+      <a href="#" class="btn-yellow">Find a Dealer</a>
+      <a href="#" style="height:48px;padding:0 24px;display:inline-flex;align-items:center;border:1.5px solid rgba(255,255,255,0.5);color:#fff;border-radius:6px;font-size:15px;font-weight:600;font-family:'Barlow',sans-serif;transition:border-color 150ms" onmouseover="this.style.borderColor='rgba(255,255,255,0.9)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.5)'">Order Parts Online</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="background:#1A1A18;padding:52px 32px 28px">
+  <div style="max-width:1440px;margin:0 auto">
+    <div style="display:flex;gap:48px;margin-bottom:40px">
+      <div style="flex-shrink:0;min-width:200px">
+        <img src="../../assets/logo/jd-horizontal.png" alt="John Deere" style="height:32px;margin-bottom:16px;opacity:0.9">
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7">Nothing Runs Like a Deere™</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.3);margin-top:6px">© 2026 Deere &amp; Company<br>Moline, Illinois, USA</div>
+      </div>
+      <div style="flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:32px">
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:14px">Products</div>
+          <a href="#" class="footer-link">Tractors</a>
+          <a href="#" class="footer-link">Combines</a>
+          <a href="#" class="footer-link">Planters</a>
+          <a href="#" class="footer-link">Sprayers</a>
+          <a href="#" class="footer-link">Construction</a>
+          <a href="#" class="footer-link">Turf &amp; Utility</a>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:14px">Technology</div>
+          <a href="#" class="footer-link">Operations Center</a>
+          <a href="#" class="footer-link">JDLink™</a>
+          <a href="#" class="footer-link">APEX™</a>
+          <a href="#" class="footer-link">See &amp; Spray™</a>
+          <a href="#" class="footer-link">AutoTrac™</a>
+          <a href="#" class="footer-link">Connected Support</a>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:14px">Company</div>
+          <a href="#" class="footer-link">About John Deere</a>
+          <a href="#" class="footer-link">Careers</a>
+          <a href="#" class="footer-link">Investor Relations</a>
+          <a href="#" class="footer-link">Sustainability</a>
+          <a href="#" class="footer-link">Newsroom</a>
+          <a href="#" class="footer-link">History</a>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:rgba(255,255,255,0.38);margin-bottom:14px">Support</div>
+          <a href="#" class="footer-link">Find a Dealer</a>
+          <a href="#" class="footer-link">Parts &amp; Service</a>
+          <a href="#" class="footer-link">Operator Manuals</a>
+          <a href="#" class="footer-link">Training</a>
+          <a href="#" class="footer-link">Financing</a>
+          <a href="#" class="footer-link">Contact Us</a>
+        </div>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap">
+      <div style="font-size:12px;color:rgba(255,255,255,0.32)">Privacy Policy &nbsp;·&nbsp; Terms of Use &nbsp;·&nbsp; Accessibility &nbsp;·&nbsp; Cookie Settings &nbsp;·&nbsp; Do Not Sell My Information</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.32)">Founded 1837 · Moline, Illinois</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

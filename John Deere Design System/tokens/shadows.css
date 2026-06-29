@@ -1,0 +1,23 @@
+/* John Deere Design System — Shadow Tokens
+ * Base color: JD Black #27251F (39,37,31) for warm-tinted shadows.
+ */
+:root {
+  --shadow-xs:  0 1px 2px rgba(39,37,31,0.07);
+  --shadow-sm:  0 1px 4px rgba(39,37,31,0.09), 0 0 1px rgba(39,37,31,0.05);
+  --shadow-md:  0 4px 12px rgba(39,37,31,0.11),0 0 2px rgba(39,37,31,0.05);
+  --shadow-lg:  0 8px 24px rgba(39,37,31,0.13),0 0 4px rgba(39,37,31,0.05);
+  --shadow-xl:  0 16px 48px rgba(39,37,31,0.15),0 0 6px rgba(39,37,31,0.05);
+  --shadow-2xl: 0 24px 64px rgba(39,37,31,0.18),0 0 8px rgba(39,37,31,0.05);
+
+  /* ── Inset / Focus ─────────────────────────────── */
+  --shadow-inner:       inset 0 2px 4px rgba(39,37,31,0.07);
+  --shadow-focus:       0 0 0 3px rgba(54,124,43,0.32);
+  --shadow-focus-error: 0 0 0 3px rgba(185,28,28,0.25);
+
+  /* ── Semantic Aliases ──────────────────────────── */
+  --shadow-card:     var(--shadow-sm);
+  --shadow-modal:    var(--shadow-xl);
+  --shadow-popover:  var(--shadow-lg);
+  --shadow-tooltip:  var(--shadow-md);
+  --shadow-dropdown: var(--shadow-md);
+}

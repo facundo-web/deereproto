@@ -1,0 +1,21 @@
+<!-- @dsCard group="Borders" viewport="700x120" name="Radius Scale" subtitle="--radius-sm through --radius-full" -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{padding:20px 16px;background:#fff;display:flex;gap:10px;align-items:center;justify-content:center}
+  .box{width:68px;height:56px;background:#367C2B;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px}
+  .label{font-family:'Barlow',sans-serif;font-size:10px;font-weight:600;color:#fff;letter-spacing:0.06em;text-transform:uppercase}
+  .val{font-family:'JetBrains Mono',monospace;font-size:9px;color:rgba(255,255,255,0.6)}
+</style>
+</head><body>
+  <div class="box" style="border-radius:var(--radius-none)"><div class="label">none</div><div class="val">0</div></div>
+  <div class="box" style="border-radius:var(--radius-sm)"><div class="label">sm</div><div class="val">4px</div></div>
+  <div class="box" style="border-radius:var(--radius-md)"><div class="label">md</div><div class="val">6px</div></div>
+  <div class="box" style="border-radius:var(--radius-lg)"><div class="label">lg</div><div class="val">8px</div></div>
+  <div class="box" style="border-radius:var(--radius-xl)"><div class="label">xl</div><div class="val">12px</div></div>
+  <div class="box" style="border-radius:var(--radius-2xl)"><div class="label">2xl</div><div class="val">16px</div></div>
+  <div class="box" style="border-radius:var(--radius-full);width:56px"><div class="label">full</div><div class="val">∞</div></div>
+</body></html>

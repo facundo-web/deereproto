@@ -1,0 +1,369 @@
+<!-- @dsCard group="Operations Center" viewport="1440x880" name="Dashboard" subtitle="Precision ag platform — dashboard, fields, equipment" -->
+<!-- @startingPoint section="UI Kits" subtitle="Operations Center — farm management, fields, equipment tracking" viewport="1440x880" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Operations Center · John Deere</title>
+<link rel="stylesheet" href="../../styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@700;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Barlow',sans-serif;color:#27251F;overflow:hidden;height:100vh;background:#F8F7F5}
+  .ms{font-family:'Material Symbols Outlined';font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20;user-select:none;line-height:1}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#C4C3C1;border-radius:9999px}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState} = React;
+
+const FIELDS = [
+  {id:1,name:'North Field',  acres:320.4,crop:'Corn',       status:'planting',progress:48, lastOp:'2h ago'},
+  {id:2,name:'South Field',  acres:278.7,crop:'Soybeans',   status:'spraying',progress:12, lastOp:'Active'},
+  {id:3,name:'East Quarter', acres:162.3,crop:'Corn',       status:'planned', progress:0,  lastOp:'—'},
+  {id:4,name:'River Bottom', acres:214.5,crop:'Soybeans',   status:'complete',progress:100,lastOp:'3 days ago'},
+  {id:5,name:'Upper Pasture',acres:140.8,crop:'Winter Wheat',status:'growing', progress:null,lastOp:'14 days ago'},
+];
+
+const EQUIPMENT = [
+  {id:1,name:'8R 410',           type:'Tractor', status:'active',   location:'North Field', speed:'5.2 mph',fuel:68, hours:2341,operation:'Corn Planting'},
+  {id:2,name:'7R 330',           type:'Tractor', status:'idle',     location:'Home Farm',                    fuel:92, hours:1847},
+  {id:3,name:'S790 Combine',     type:'Combine', status:'stored',   location:'Storage',                      fuel:100,hours:3204},
+  {id:4,name:'ExactEmerge 16R',  type:'Planter', status:'connected',location:'North Field',                        hours:412},
+  {id:5,name:'R4038 Sprayer',    type:'Sprayer', status:'active',   location:'South Field',speed:'7.1 mph', fuel:51, hours:876, operation:'Pre-emerge Application'},
+];
+
+const OPS = [
+  {id:1,name:'Corn Planting',          field:'North Field', progress:48, done:154.0,total:320.4,eq:'8R 410 + ExactEmerge 16R', rate:'4.2 ac/hr'},
+  {id:2,name:'Pre-emerge Application', field:'South Field', progress:12, done:33.4, total:278.7,eq:'R4038 Sprayer',             rate:'28.3 ac/hr'},
+];
+
+const STATUS_DOT = {active:'#367C2B',idle:'#9A9897',stored:'#C4C3C1',connected:'#1D4ED8',planting:'#367C2B',spraying:'#1D4ED8',planned:'#9A9897',complete:'#367C2B',growing:'#4E9B3E'};
+const STATUS_CHIP = {active:{bg:'#EDF7EA',fg:'#2A6122'},idle:{bg:'#F8F7F5',fg:'#767471'},stored:{bg:'#F0EFED',fg:'#595754'},connected:{bg:'#EFF6FF',fg:'#1D4ED8'},planting:{bg:'#EDF7EA',fg:'#2A6122'},spraying:{bg:'#EFF6FF',fg:'#1D4ED8'},planned:{bg:'#F8F7F5',fg:'#767471'},complete:{bg:'#EDF7EA',fg:'#2A6122'},growing:{bg:'#EDF7EA',fg:'#4E9B3E'}};
+
+function Icon({n,sz=20,col,style:sx}){return <span className="ms" style={{fontSize:sz,color:col,...sx}}>{n}</span>}
+function Bar({val,h=6,col='#367C2B'}){return<div style={{height:h,background:'#DEDEDC',borderRadius:9999,overflow:'hidden'}}><div style={{height:'100%',width:`${Math.min(100,Math.max(0,val))}%`,background:col,borderRadius:9999,transition:'width 600ms ease'}}/></div>}
+function Chip({status}){const s=STATUS_CHIP[status]||{bg:'#F8F7F5',fg:'#767471'};return<span style={{fontSize:11,fontWeight:700,letterSpacing:'0.05em',textTransform:'uppercase',padding:'3px 8px',borderRadius:4,background:s.bg,color:s.fg}}>{status}</span>}
+
+function Sidebar({page,onNav}){
+  const NAV=[{id:'dashboard',i:'home',l:'Dashboard'},{id:'fields',i:'grass',l:'My Fields'},{id:'equipment',i:'agriculture',l:'Equipment'},{id:'reports',i:'bar_chart',l:'Reports'},{id:'data',i:'sync',l:'Data Transfer'}];
+  return(
+    <div style={{width:240,background:'#1A1A18',display:'flex',flexDirection:'column',flexShrink:0,height:'100vh',overflow:'hidden'}}>
+      <div style={{padding:'18px 16px 14px',borderBottom:'1px solid rgba(255,255,255,0.08)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <img src="../../assets/logo/jd-badge.png" alt="JD" style={{height:38,flexShrink:0}}/>
+          <div><div style={{fontSize:10,fontWeight:700,letterSpacing:'0.12em',textTransform:'uppercase',color:'rgba(255,255,255,0.35)',lineHeight:1}}>Operations</div><div style={{fontSize:14,fontWeight:700,color:'#fff',letterSpacing:'0.01em',marginTop:2}}>Center</div></div>
+        </div>
+      </div>
+      <nav style={{flex:1,padding:'8px 8px 0',overflow:'auto'}}>
+        {NAV.map(item=>{
+          const active=page===item.id;
+          return(
+            <button key={item.id} onClick={()=>onNav(item.id)} style={{display:'flex',alignItems:'center',gap:10,width:'100%',padding:'10px 12px',border:'none',background:active?'#367C2B':'transparent',color:active?'#fff':'rgba(255,255,255,0.58)',borderRadius:6,cursor:'pointer',marginBottom:2,fontSize:14,fontFamily:"'Barlow',sans-serif",fontWeight:active?600:400,transition:'background 150ms,color 150ms',textAlign:'left'}}
+              onMouseEnter={e=>{if(!active)e.currentTarget.style.background='rgba(255,255,255,0.07)'}}
+              onMouseLeave={e=>{if(!active)e.currentTarget.style.background='transparent'}}>
+              <Icon n={item.i} sz={20}/>{item.l}
+            </button>
+          );
+        })}
+      </nav>
+      <div style={{padding:'10px 8px 16px',borderTop:'1px solid rgba(255,255,255,0.08)'}}>
+        <button style={{display:'flex',alignItems:'center',gap:10,width:'100%',padding:'8px 12px',border:'none',background:'transparent',color:'rgba(255,255,255,0.45)',borderRadius:6,cursor:'pointer',fontSize:13,fontFamily:"'Barlow',sans-serif",textAlign:'left'}}><Icon n="settings" sz={18}/>Settings</button>
+        <div style={{display:'flex',alignItems:'center',gap:10,padding:'8px 12px',marginTop:2}}>
+          <div style={{width:34,height:34,borderRadius:'50%',background:'#367C2B',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'#fff',flexShrink:0}}>JM</div>
+          <div><div style={{fontSize:13,fontWeight:600,color:'#fff',lineHeight:1.2}}>J. Miller</div><div style={{fontSize:11,color:'rgba(255,255,255,0.38)'}}>Farm Manager</div></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Header(){
+  return(
+    <header style={{height:56,background:'#fff',borderBottom:'1px solid #DEDEDC',display:'flex',alignItems:'center',padding:'0 24px',gap:12,flexShrink:0,zIndex:10}}>
+      <div style={{display:'flex',alignItems:'center',gap:6,cursor:'pointer',marginRight:4}}>
+        <span style={{fontSize:15,fontWeight:700,color:'#27251F'}}>Miller Family Farms</span>
+        <Icon n="keyboard_arrow_down" sz={18} col="#9A9897"/>
+      </div>
+      <div style={{flex:1}}/>
+      <div style={{display:'flex',alignItems:'center',gap:8,background:'#F8F7F5',border:'1px solid #DEDEDC',borderRadius:6,padding:'0 12px',height:34,width:224}}>
+        <Icon n="search" sz={16} col="#9A9897"/>
+        <span style={{fontSize:13,color:'#9A9897'}}>Search fields, equipment...</span>
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:6,padding:'0 10px',background:'#EDF7EA',borderRadius:6,height:34}}>
+        <Icon n="partly_cloudy_day" sz={18} col="#367C2B"/>
+        <span style={{fontSize:13,fontWeight:600,color:'#27251F'}}>62°F</span>
+        <span style={{fontSize:12,color:'#595754'}}>Partly Cloudy</span>
+      </div>
+      <div style={{position:'relative',cursor:'pointer',padding:4}}>
+        <Icon n="notifications" sz={22} col="#595754"/>
+        <span style={{position:'absolute',top:0,right:0,width:14,height:14,background:'#B91C1C',borderRadius:'50%',fontSize:8,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700}}>3</span>
+      </div>
+      <div style={{width:34,height:34,borderRadius:'50%',background:'#367C2B',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'#fff',cursor:'pointer',flexShrink:0}}>JM</div>
+    </header>
+  );
+}
+
+function DashboardScreen(){
+  const totalAcres=FIELDS.reduce((s,f)=>s+f.acres,0).toFixed(1);
+  const StatCard=({icon,value,label,sub})=>(
+    <div style={{background:'#fff',borderRadius:8,border:'1px solid #DEDEDC',padding:'16px 20px',flex:1}}>
+      <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897',marginBottom:10,display:'flex',alignItems:'center',gap:5}}>
+        <Icon n={icon} sz={14} col="#9A9897"/>{label}
+      </div>
+      <div style={{fontSize:34,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",color:'#27251F',lineHeight:1}}>{value}</div>
+      {sub&&<div style={{fontSize:12,color:'#9A9897',marginTop:5}}>{sub}</div>}
+    </div>
+  );
+  return(
+    <div style={{padding:24,overflow:'auto',height:'100%'}}>
+      <div style={{marginBottom:20,display:'flex',alignItems:'baseline',gap:12}}>
+        <h1 style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:26,fontWeight:800,textTransform:'uppercase',letterSpacing:'-0.01em'}}>Spring 2026</h1>
+        <span style={{fontSize:13,color:'#767471',fontWeight:500}}>Planting Season · Central Iowa</span>
+      </div>
+      <div style={{display:'flex',gap:12,marginBottom:24}}>
+        <StatCard icon="terrain"    value={totalAcres} label="Total Acres"       sub="5 fields"        col="#367C2B"/>
+        <StatCard icon="agriculture" value="2"         label="Equipment Active"  sub="Right now"       col="#1D4ED8"/>
+        <StatCard icon="timeline"   value="2"          label="Ops Running"       sub="Planting + Spray" col="#367C2B"/>
+        <StatCard icon="schedule"   value="3"          label="Tasks Pending"     sub="This week"       col="#B45309"/>
+      </div>
+      <div style={{marginBottom:24}}>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897',marginBottom:12}}>Active Operations</div>
+        <div style={{display:'flex',gap:12}}>
+          {OPS.map(op=>(
+            <div key={op.id} style={{flex:1,background:'#fff',borderRadius:8,border:'1px solid #DEDEDC',padding:'16px 20px',boxShadow:'0 1px 4px rgba(39,37,31,0.07)'}}>
+              <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:12}}>
+                <div><div style={{fontSize:15,fontWeight:700}}>{op.name}</div><div style={{fontSize:13,color:'#767471',marginTop:2}}>{op.field}</div></div>
+                <span style={{animation:'pulse 2s ease-in-out infinite',fontSize:11,fontWeight:700,letterSpacing:'0.05em',textTransform:'uppercase',padding:'3px 8px',borderRadius:4,background:'#EDF7EA',color:'#2A6122'}}>In Progress</span>
+              </div>
+              <Bar val={op.progress}/>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8}}>
+                <span style={{fontSize:13,color:'#595754'}}><strong style={{fontFamily:"'JetBrains Mono',monospace"}}>{op.done.toFixed(1)}</strong><span style={{color:'#9A9897'}}> / {op.total.toFixed(1)} ac</span></span>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.04em',textTransform:'uppercase',color:'#767471'}}>{op.progress}% · {op.rate}</span>
+              </div>
+              <div style={{marginTop:8,fontSize:12,color:'#9A9897',display:'flex',alignItems:'center',gap:4}}><Icon n="agriculture" sz={13} col="#9A9897"/>{op.eq}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897',marginBottom:12}}>Field Summary</div>
+        <div style={{background:'#fff',borderRadius:8,border:'1px solid #DEDEDC',overflow:'hidden',boxShadow:'0 1px 4px rgba(39,37,31,0.07)'}}>
+          <table style={{width:'100%',borderCollapse:'collapse',fontSize:14}}>
+            <thead><tr style={{background:'#F8F7F5'}}>{['Field','Crop','Acres','Status','Last Activity'].map(h=><th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:11,fontWeight:700,letterSpacing:'0.06em',textTransform:'uppercase',color:'#767471',borderBottom:'1px solid #DEDEDC',whiteSpace:'nowrap'}}>{h}</th>)}</tr></thead>
+            <tbody>
+              {FIELDS.map((f,i)=>(
+                <tr key={f.id} style={{background:i%2===0?'#fff':'#F8F7F5'}}>
+                  <td style={{padding:'10px 16px',fontWeight:600,borderBottom:'1px solid #DEDEDC'}}>{f.name}</td>
+                  <td style={{padding:'10px 16px',color:'#595754',borderBottom:'1px solid #DEDEDC'}}>{f.crop}</td>
+                  <td style={{padding:'10px 16px',borderBottom:'1px solid #DEDEDC',fontFamily:"'JetBrains Mono',monospace",fontSize:13,color:'#595754'}}>{f.acres.toFixed(1)}</td>
+                  <td style={{padding:'10px 16px',borderBottom:'1px solid #DEDEDC'}}><Chip status={f.status}/></td>
+                  <td style={{padding:'10px 16px',color:'#9A9897',fontSize:13,borderBottom:'1px solid #DEDEDC'}}>{f.lastOp}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FieldsScreen({sel,onSel}){
+  const FC={planting:'#367C2B',spraying:'#1D4ED8',planned:'#9A9897',complete:'#2A6122',growing:'#6BB858'};
+  const FP=[
+    {id:1,pts:"20,15 290,15 290,165 20,165",   cx:155,cy:90},
+    {id:2,pts:"20,175 215,175 215,325 20,325",  cx:117,cy:250},
+    {id:3,pts:"300,15 478,15 478,175 300,175",  cx:389,cy:95},
+    {id:4,pts:"225,185 478,185 478,330 300,345 225,330",cx:355,cy:257},
+    {id:5,pts:"20,335 210,335 210,365 20,365",  cx:115,cy:350},
+  ];
+  return(
+    <div style={{display:'flex',height:'100%',overflow:'hidden'}}>
+      <div style={{width:260,background:'#fff',borderRight:'1px solid #DEDEDC',overflow:'auto',flexShrink:0}}>
+        <div style={{padding:'16px 16px 10px',borderBottom:'1px solid #DEDEDC'}}>
+          <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897'}}>My Fields</div>
+          <div style={{fontSize:24,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",marginTop:2}}>1,116.7 ac</div>
+        </div>
+        {FIELDS.map(f=>{
+          const isSel=sel&&sel.id===f.id;
+          return(
+            <div key={f.id} onClick={()=>onSel(f)} style={{padding:'12px 16px',cursor:'pointer',borderBottom:'1px solid #DEDEDC',background:isSel?'#EDF7EA':'#fff',transition:'background 120ms'}}>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4}}>
+                <span style={{fontSize:14,fontWeight:isSel?700:600}}>{f.name}</span>
+                <span style={{fontSize:12,fontFamily:"'JetBrains Mono',monospace",color:'#767471'}}>{f.acres.toFixed(1)} ac</span>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:6}}>
+                <span style={{width:7,height:7,borderRadius:'50%',background:FC[f.status]||'#9A9897',display:'inline-block',flexShrink:0}}/>
+                <span style={{fontSize:12,color:'#767471'}}>{f.crop}</span>
+                {f.progress!=null&&f.progress>0&&<span style={{fontSize:11,fontWeight:600,marginLeft:'auto',color:'#595754'}}>{f.progress}%</span>}
+              </div>
+              {f.progress!=null&&f.progress>0&&<div style={{marginTop:5,height:3,background:'#DEDEDC',borderRadius:9999,overflow:'hidden'}}><div style={{height:'100%',width:`${f.progress}%`,background:FC[f.status]||'#367C2B',borderRadius:9999}}/></div>}
+            </div>
+          );
+        })}
+      </div>
+      <div style={{flex:1,background:'#D4C5A0',position:'relative',overflow:'hidden'}}>
+        <svg viewBox="0 0 498 380" style={{width:'100%',height:'100%',display:'block'}} preserveAspectRatio="xMidYMid meet">
+          <rect width="498" height="380" fill="#C8B99A"/>
+          {Array.from({length:42}).map((_,i)=><line key={i} x1="0" y1={i*9.5} x2="498" y2={i*9.5} stroke="#BCA98A" strokeWidth="0.5" opacity="0.4"/>)}
+          <rect x="288" y="0" width="12" height="380" fill="#CBBEA5" opacity="0.9"/>
+          <rect x="0" y="168" width="498" height="7" fill="#CBBEA5" opacity="0.9"/>
+          <path d="M488,185 Q495,220 492,270 Q488,310 485,345" stroke="#7AAFD4" strokeWidth="14" fill="none" strokeLinecap="round" opacity="0.65"/>
+          <path d="M488,185 Q496,222 493,272 Q489,312 486,347" stroke="#A8CCE8" strokeWidth="6" fill="none" strokeLinecap="round" opacity="0.5"/>
+          {FP.map(fp=>{
+            const f=FIELDS.find(x=>x.id===fp.id);if(!f)return null;
+            const col=FC[f.status]||'#9A9897';
+            const isSel=sel&&sel.id===fp.id;
+            return(
+              <g key={fp.id} onClick={()=>onSel(f)} style={{cursor:'pointer'}}>
+                <polygon points={fp.pts} fill={col} opacity={isSel?0.88:0.68} stroke={isSel?'#fff':'rgba(255,255,255,0.3)'} strokeWidth={isSel?2.5:0.5}/>
+                {f.progress!=null&&f.progress>0&&f.progress<100&&(
+                  <polygon points={fp.pts} fill="#27251F" opacity="0.15" style={{pointerEvents:'none'}}/>
+                )}
+                <text x={fp.cx} y={fp.cy-6} textAnchor="middle" dominantBaseline="middle" fontSize="10" fontWeight="700" fill="#fff" fontFamily="Barlow,sans-serif" style={{pointerEvents:'none',filter:'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'}}>{f.name}</text>
+                {f.progress!=null&&<text x={fp.cx} y={fp.cy+7} textAnchor="middle" dominantBaseline="middle" fontSize="9" fill="rgba(255,255,255,0.85)" fontFamily="Barlow,sans-serif" style={{pointerEvents:'none'}}>{f.progress!=null?f.progress+'%':''}</text>}
+              </g>
+            );
+          })}
+          <circle cx="155" cy="90" r="7" fill="#FFDE00" stroke="#27251F" strokeWidth="1.5"/>
+          <circle cx="120" cy="250" r="7" fill="#FFDE00" stroke="#27251F" strokeWidth="1.5"/>
+          <g transform="translate(455,22)">
+            <circle r="15" fill="rgba(255,255,255,0.88)"/>
+            <text y="-4" textAnchor="middle" fontSize="9" fontWeight="700" fill="#27251F" fontFamily="Barlow">N</text>
+            <path d="M0,-12 L-3,5 L0,2 L3,5 Z" fill="#27251F"/>
+          </g>
+          <rect x="10" y="355" width="8" height="8" fill="#367C2B" rx="1"/><text x="22" y="362" fontSize="9" fill="#27251F" fontFamily="Barlow" fontWeight="600">Planted</text>
+          <rect x="80" y="355" width="8" height="8" fill="#1D4ED8" rx="1"/><text x="92" y="362" fontSize="9" fill="#27251F" fontFamily="Barlow" fontWeight="600">Spraying</text>
+          <rect x="160" y="355" width="8" height="8" fill="#9A9897" rx="1"/><text x="172" y="362" fontSize="9" fill="#27251F" fontFamily="Barlow" fontWeight="600">Planned</text>
+        </svg>
+      </div>
+      {sel&&(
+        <div style={{width:280,background:'#fff',borderLeft:'1px solid #DEDEDC',overflow:'auto',flexShrink:0}}>
+          <div style={{padding:'16px 20px',borderBottom:'1px solid #DEDEDC'}}>
+            <div style={{fontSize:18,fontWeight:700}}>{sel.name}</div>
+            <div style={{fontSize:13,color:'#767471',marginTop:2}}>{sel.acres.toFixed(1)} ac · {sel.crop}</div>
+          </div>
+          <div style={{padding:'16px 20px'}}>
+            {sel.progress!=null&&sel.progress>0&&(
+              <div style={{marginBottom:20}}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}><span style={{fontSize:13,fontWeight:600}}>Spring Planting</span><span style={{fontSize:13,fontWeight:700,color:'#367C2B'}}>{sel.progress}%</span></div>
+                <Bar val={sel.progress} h={8}/>
+                <div style={{fontSize:12,color:'#9A9897',marginTop:4}}>Last activity: {sel.lastOp}</div>
+              </div>
+            )}
+            <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897',marginBottom:8}}>Field Details</div>
+            {[['Acres',`${sel.acres.toFixed(1)} ac`],['Crop',sel.crop],['Status',sel.status],['Location','Central Iowa'],['Zone','Zone 4-B']].map(([k,v])=>(
+              <div key={k} style={{display:'flex',justifyContent:'space-between',padding:'8px 0',borderBottom:'1px solid #F0EFED'}}>
+                <span style={{fontSize:13,color:'#767471'}}>{k}</span>
+                <span style={{fontSize:13,fontWeight:600,textTransform:'capitalize'}}>{v}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function EquipmentScreen({sel,onSel}){
+  const SC={active:{bg:'#EDF7EA',fg:'#2A6122',dot:'#367C2B'},idle:{bg:'#F8F7F5',fg:'#767471',dot:'#9A9897'},stored:{bg:'#F0EFED',fg:'#595754',dot:'#C4C3C1'},connected:{bg:'#EFF6FF',fg:'#1D4ED8',dot:'#1D4ED8'}};
+  return(
+    <div style={{display:'flex',height:'100%',overflow:'hidden'}}>
+      <div style={{width:300,background:'#fff',borderRight:'1px solid #DEDEDC',overflow:'auto',flexShrink:0}}>
+        <div style={{padding:'16px 16px 10px',borderBottom:'1px solid #DEDEDC'}}>
+          <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897'}}>Fleet</div>
+          <div style={{fontSize:24,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",marginTop:2}}>5 Machines</div>
+        </div>
+        {EQUIPMENT.map(e=>{
+          const ss=SC[e.status]||SC.idle;const isSel=sel&&sel.id===e.id;
+          return(
+            <div key={e.id} onClick={()=>onSel(e)} style={{padding:'14px 16px',cursor:'pointer',borderBottom:'1px solid #DEDEDC',background:isSel?'#EDF7EA':'#fff',transition:'background 120ms'}}>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4}}>
+                <span style={{fontSize:14,fontWeight:600}}>{e.name}</span>
+                <span style={{width:8,height:8,borderRadius:'50%',background:ss.dot,flexShrink:0,animation:e.status==='active'?'pulse 2s ease-in-out infinite':'none'}}/>
+              </div>
+              <div style={{fontSize:12,color:'#9A9897',marginBottom:6}}>{e.type}</div>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <span style={{fontSize:11,fontWeight:700,letterSpacing:'0.04em',textTransform:'uppercase',padding:'2px 7px',borderRadius:4,background:ss.bg,color:ss.fg}}>{e.status}</span>
+                {e.location&&<span style={{fontSize:12,color:'#9A9897'}}>{e.location}</span>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      {sel&&(
+        <div style={{flex:1,padding:24,overflow:'auto'}}>
+          <div style={{maxWidth:640}}>
+            <div style={{marginBottom:24}}>
+              <div style={{fontFamily:"'Barlow Condensed',sans-serif",fontSize:28,fontWeight:800,textTransform:'uppercase',letterSpacing:'-0.01em'}}>{sel.name}</div>
+              <div style={{fontSize:14,color:'#767471',marginTop:4,display:'flex',alignItems:'center',gap:8}}>
+                <span>{sel.type}</span><span>·</span><span>{sel.location||'—'}</span>
+              </div>
+            </div>
+            <div style={{display:'flex',gap:12,marginBottom:20}}>
+              {[{l:'Engine Hours',v:sel.hours?sel.hours.toLocaleString()+'h':'—'},{l:'Fuel Level',v:sel.fuel?sel.fuel+'%':'—'},{l:'Speed',v:sel.speed||'—'}].map(s=>(
+                <div key={s.l} style={{flex:1,background:'#fff',borderRadius:8,border:'1px solid #DEDEDC',padding:'14px 16px'}}>
+                  <div style={{fontSize:26,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",color:'#27251F',lineHeight:1}}>{s.v}</div>
+                  <div style={{fontSize:12,color:'#9A9897',marginTop:4}}>{s.l}</div>
+                </div>
+              ))}
+            </div>
+            {sel.operation&&(
+              <div style={{background:'#fff',borderRadius:8,border:'1px solid #DEDEDC',padding:'16px 20px',marginBottom:12}}>
+                <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897',marginBottom:8}}>Current Operation</div>
+                <div style={{fontSize:16,fontWeight:700}}>{sel.operation}</div>
+                {sel.speed&&<div style={{fontSize:13,color:'#767471',marginTop:4}}>Speed: {sel.speed}</div>}
+              </div>
+            )}
+            {sel.fuel&&(
+              <div style={{background:'#fff',borderRadius:8,border:'1px solid #DEDEDC',padding:'16px 20px'}}>
+                <div style={{fontSize:11,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:'#9A9897',marginBottom:10}}>Fuel</div>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}><span style={{fontSize:13,color:'#595754'}}>Tank Level</span><span style={{fontSize:13,fontWeight:700}}>{sel.fuel}%</span></div>
+                <Bar val={sel.fuel} h={10} col={sel.fuel<25?'#B91C1C':sel.fuel<50?'#854D0E':'#367C2B'}/>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App(){
+  const [page,setPage]=useState('dashboard');
+  const [selField,setSelField]=useState(FIELDS[0]);
+  const [selEquip,setSelEquip]=useState(EQUIPMENT[0]);
+  const fullH=page==='fields'||page==='equipment';
+  return(
+    <div style={{display:'flex',height:'100vh',overflow:'hidden'}}>
+      <Sidebar page={page} onNav={setPage}/>
+      <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',minWidth:0}}>
+        <Header/>
+        <main style={{flex:1,overflow:fullH?'hidden':'auto',background:'#F8F7F5'}}>
+          {page==='dashboard' &&<DashboardScreen/>}
+          {page==='fields'    &&<FieldsScreen    sel={selField} onSel={setSelField}/>}
+          {page==='equipment' &&<EquipmentScreen sel={selEquip} onSel={setSelEquip}/>}
+          {(page==='reports'||page==='data')&&(
+            <div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',flexDirection:'column',gap:16}}>
+              <span style={{fontFamily:"'Material Symbols Outlined'",fontSize:48,color:'#C4C3C1'}}>{page==='reports'?'bar_chart':'sync'}</span>
+              <div style={{fontSize:16,fontWeight:600,color:'#9A9897'}}>{page==='reports'?'Reports':'Data Transfer'} coming soon</div>
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

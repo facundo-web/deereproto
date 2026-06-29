@@ -1,0 +1,18 @@
+/* John Deere Design System — Border & Radius Tokens */
+:root {
+  /* ── Border Widths ─────────────────────────────── */
+  --border-thin:  1px;
+  --border-base:  1px;
+  --border-thick: 2px;
+
+  /* ── Corner Radii ──────────────────────────────── */
+  --radius-none: 0;
+  --radius-xs:   2px;
+  --radius-sm:   4px;      /* badges, tags, chips */
+  --radius-md:   6px;      /* buttons, inputs, selects */
+  --radius-lg:   8px;      /* cards, panels, drawers */
+  --radius-xl:   12px;     /* modals, dialogs */
+  --radius-2xl:  16px;     /* large feature cards */
+  --radius-3xl:  24px;     /* hero blocks */
+  --radius-full: 9999px;   /* pills, avatars, full-round */
+}

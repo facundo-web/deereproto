@@ -1,0 +1,82 @@
+/* John Deere Design System — Color Tokens
+ * JD Green  #367C2B  — verified from official SVG logo files
+ * JD Yellow #FFDE00  — verified from official SVG logo files
+ * JD Black  #27251F  — warm near-black characteristic of the brand
+ */
+:root {
+  /* ── Brand Green ──────────────────────────────── */
+  --jd-green-50:  #EDF7EA;
+  --jd-green-100: #D1EBCA;
+  --jd-green-200: #A3D698;
+  --jd-green-300: #6BB858;
+  --jd-green-400: #4E9B3E;
+  --jd-green-500: #3F8F31;
+  --jd-green-600: #367C2B;   /* ← JD Green — primary brand color */
+  --jd-green-700: #2A6122;
+  --jd-green-800: #1E4718;
+  --jd-green-900: #122D0E;
+
+  /* ── Brand Yellow ─────────────────────────────── */
+  --jd-yellow-50:  #FFFCE5;
+  --jd-yellow-100: #FFF5B3;
+  --jd-yellow-200: #FFEA66;
+  --jd-yellow-300: #FFE233;
+  --jd-yellow-400: #FFDE00;   /* ← JD Yellow — secondary brand color */
+  --jd-yellow-500: #E6C800;
+  --jd-yellow-600: #CCB200;
+  --jd-yellow-700: #B39900;
+
+  /* ── Neutral Warm Gray ────────────────────────── */
+  --neutral-0:   #FFFFFF;
+  --neutral-50:  #F8F7F5;
+  --neutral-100: #F0EFED;
+  --neutral-200: #DEDEDC;
+  --neutral-300: #C4C3C1;
+  --neutral-400: #9A9897;
+  --neutral-500: #767471;
+  --neutral-600: #595754;
+  --neutral-700: #3D3C38;
+  --neutral-800: #27251F;   /* ← JD Black */
+  --neutral-900: #1A1A18;
+
+  /* ── Semantic ─────────────────────────────────── */
+  --color-success:        #367C2B;
+  --color-success-light:  #EDF7EA;
+  --color-success-border: #A3D698;
+  --color-warning:        #854D0E;
+  --color-warning-bg:     #FFFBEB;
+  --color-warning-border: #FDE68A;
+  --color-error:          #B91C1C;
+  --color-error-bg:       #FEE2E2;
+  --color-error-border:   #FECACA;
+  --color-info:           #1D4ED8;
+  --color-info-bg:        #EFF6FF;
+  --color-info-border:    #BFDBFE;
+
+  /* ── Surfaces ─────────────────────────────────── */
+  --surface-page:           var(--neutral-50);
+  --surface-card:           var(--neutral-0);
+  --surface-raised:         var(--neutral-0);
+  --surface-overlay:        rgba(26, 26, 24, 0.72);
+  --surface-sidebar:        #1A1A18;
+  --surface-sidebar-active: var(--jd-green-600);
+  --surface-header:         var(--neutral-0);
+
+  /* ── Text ─────────────────────────────────────── */
+  --text-primary:    var(--neutral-800);
+  --text-secondary:  var(--neutral-600);
+  --text-tertiary:   var(--neutral-500);
+  --text-disabled:   var(--neutral-400);
+  --text-inverse:    var(--neutral-0);
+  --text-link:       var(--jd-green-600);
+  --text-link-hover: var(--jd-green-700);
+  --text-on-green:   var(--neutral-0);
+  --text-on-yellow:  var(--neutral-800);
+
+  /* ── Borders ──────────────────────────────────── */
+  --border-subtle:  var(--neutral-200);
+  --border-default: var(--neutral-300);
+  --border-strong:  var(--neutral-500);
+  --border-focus:   var(--jd-green-600);
+  --border-error:   var(--color-error);
+}

@@ -1,0 +1,69 @@
+<!-- @dsCard group="Components" viewport="700x380" name="Forms" subtitle="Input · Select · Toggle · Checkbox" -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{padding:20px;font-family:'Barlow',sans-serif;background:#F8F7F5}
+  .sec{margin-bottom:18px}
+  .lbl{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#9A9897;margin-bottom:8px}
+  .row{display:flex;align-items:flex-start;flex-wrap:wrap;gap:16px}
+  .col{display:flex;flex-direction:column;gap:10px}
+</style>
+</head><body>
+<div id="root"></div>
+<script type="text/babel">
+const { Input, Select, Toggle, Checkbox } = window.JohnDeereDesignSystem_387495;
+function Demo() {
+  const [tog1, setTog1] = React.useState(true);
+  const [tog2, setTog2] = React.useState(false);
+  const [cb1, setCb1] = React.useState(true);
+  const [cb2, setCb2] = React.useState(false);
+  return (
+    <div>
+      <div className="sec">
+        <div className="lbl">Input</div>
+        <div className="row">
+          <Input label="Field Name" placeholder="e.g. North Field" style={{width:200}} />
+          <Input label="Acres" placeholder="0.0" suffix="ac" style={{width:140}} />
+          <Input label="Error State" placeholder="Enter value" error="This field is required" style={{width:200}} />
+          <Input label="Disabled" placeholder="Disabled" disabled style={{width:180}} />
+        </div>
+      </div>
+      <div className="sec">
+        <div className="lbl">Select</div>
+        <div className="row">
+          <Select label="Crop Type" placeholder="Select crop..." options={['Corn','Soybeans','Winter Wheat','Alfalfa','Sorghum']} style={{width:180}} />
+          <Select label="Season" options={['Spring 2026','Fall 2025','Spring 2025']} style={{width:160}} />
+          <Select label="Error" options={['Option 1','Option 2']} error="Selection required" style={{width:160}} />
+        </div>
+      </div>
+      <div className="sec">
+        <div className="lbl">Toggle</div>
+        <div className="row" style={{alignItems:'center'}}>
+          <Toggle checked={tog1} onChange={setTog1} label="AutoTrac enabled" />
+          <Toggle checked={tog2} onChange={setTog2} label="Night mode" />
+          <Toggle checked disabled label="Locked (on)" />
+          <Toggle size="sm" checked={tog1} onChange={setTog1} label="Small" />
+        </div>
+      </div>
+      <div className="sec">
+        <div className="lbl">Checkbox</div>
+        <div className="row" style={{alignItems:'center'}}>
+          <Checkbox checked={cb1} onChange={setCb1} label="Include field notes" />
+          <Checkbox checked={cb2} onChange={setCb2} label="Notify on completion" hint="Sends email + push" />
+          <Checkbox checked disabled label="Locked" />
+          <Checkbox indeterminate label="Indeterminate" />
+        </div>
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script>
+</body></html>
