@@ -353,13 +353,13 @@ const STEPS = {
   /* ── Maquinaria path (main demo) ─────────────────── */
   sMaq:{
     enter:[
-      {f:'bot',t:'Encontrei seus equipamentos registrados no sistema:\n\n🚜 X9 2024 — AutoTrac + AutoPath\n🌾 S770 2023 — AutoPath\n\nQual está com problema?',time:'08:12'},
-      {f:'produtor',t:'X9 2024 — AutoTrac não engata de jeito nenhum',time:'08:13',out:true},
+      {f:'bot',t:'Encontrei seus equipamentos registrados no sistema:\n\n🚜 X9 2023 — AutoTrac + AutoPath\n🌾 S770 2023 — AutoPath\n\nQual está com problema?',time:'08:12'},
+      {f:'produtor',t:'X9 2023 — AutoTrac não engata de jeito nenhum',time:'08:13',out:true},
       {f:'bot',t:'Entendido. Pode me mandar uma foto do painel da máquina ou descrever quando começou? Isso ajuda a abrir o caso já com o diagnóstico correto 📷',time:'08:13'},
       {f:'produtor',t:'Já tentei reiniciar. Acontece desde ontem depois da chuva.',time:'08:13',out:true,k:'media'},
-      {f:'bot',t:'Obrigado! Caso #BR-4471 aberto: AutoTrac não engata na X9 — Ramo 4 · prioridade Alta. Como quer seguir?',time:'08:14'},
-      {k:'milestone',icon:'🎫',label:'Caso #BR-4471 aberto',detail:'Ramo 4 · AutoTrac X9 · prioridade Alta',time:'08:14'},
-      {f:'system',t:'Triagem automática · Ramo 4 · prioridade ALTA · cliente ativo · X9 2024',n:true},
+      {f:'bot',t:'Obrigado! Caso #BR-4471 aberto: AutoTrac não engata na X9 — Ramo 2 · Sinal · prioridade Alta. Como quer seguir?',time:'08:14'},
+      {k:'milestone',icon:'🎫',label:'Caso #BR-4471 aberto',detail:'Ramo 2 · Sinal · AutoTrac X9 · prioridade Alta',time:'08:14'},
+      {f:'system',t:'Triagem automática · Ramo 4 · prioridade ALTA · cliente ativo · X9 2023',n:true},
     ],
     opts:[
       {role:'produtor',label:'Tentar resolver agora (guia rápido)',next:'s2',
@@ -376,9 +376,9 @@ const STEPS = {
     enter:[
       {f:'bot',t:'Entendido! É com OpsCenter, AutoPath, licença, JDLink ou outro software?',time:'08:12'},
       {f:'produtor',t:'OpsCenter não está sincronizando com a máquina',time:'08:13',out:true},
-      {f:'bot',t:'Recebi. Caso #BR-4465 aberto: OpsCenter sem sync · X9 2024 · prioridade Média. Vou verificar o JDLink remotamente. Qual o modelo da sua máquina?',time:'08:13'},
-      {f:'produtor',t:'X9 2024',time:'08:14',out:true},
-      {k:'milestone',icon:'🎫',label:'Caso #BR-4465 aberto',detail:'Software · OpsCenter · X9 2024',time:'08:14'},
+      {f:'bot',t:'Recebi. Caso #BR-4465 aberto: OpsCenter sem sync · X9 2023 · prioridade Média. Vou verificar o JDLink remotamente. Qual o modelo da sua máquina?',time:'08:13'},
+      {f:'produtor',t:'X9 2023',time:'08:14',out:true},
+      {k:'milestone',icon:'🎫',label:'Caso #BR-4465 aberto',detail:'Software · OpsCenter · X9 2023',time:'08:14'},
       {f:'system',t:'Caso software aberto · equipe técnica notificada',n:true},
     ],
     opts:[
@@ -607,13 +607,13 @@ const STEPS_ES = {
     {role:'produtor',label:'Consulta administrativa 📋',next:'sAdmin',say:[{f:'produtor',t:'Tengo una consulta administrativa 📋',time:'08:11',out:true}]},
   ],chips:['Problema con maquinaria 🚜','Problema de software 💻','Consulta administrativa 📋']},
   sMaq:{enter:[
-    {f:'bot',t:'Encontré tus equipos registrados:\n\n🚜 X9 2024 — AutoTrac + AutoPath\n🌾 S770 2023 — AutoPath\n\n¿Cuál tiene el problema?',time:'08:12'},
-    {f:'produtor',t:'X9 2024 — el AutoTrac no engrana de ninguna manera',time:'08:13',out:true},
+    {f:'bot',t:'Encontré tus equipos registrados:\n\n🚜 X9 2023 — AutoTrac + AutoPath\n🌾 S770 2023 — AutoPath\n\n¿Cuál tiene el problema?',time:'08:12'},
+    {f:'produtor',t:'X9 2023 — el AutoTrac no engrana de ninguna manera',time:'08:13',out:true},
     {f:'bot',t:'Entendido. ¿Podés mandarme una foto del panel o describir cuándo empezó? 📷',time:'08:13'},
     {f:'produtor',t:'Ya intenté reiniciar. Pasa desde ayer después de la lluvia.',time:'08:13',out:true,k:'media'},
     {f:'bot',t:'¡Gracias! Caso #BR-4471 abierto: AutoTrac sin engranar · Ramo 4 · prioridad Alta. ¿Cómo querés continuar?',time:'08:14'},
     {k:'milestone',icon:'🎫',label:'Caso #BR-4471 abierto',detail:'Ramo 4 · AutoTrac X9 · prioridad Alta',time:'08:14'},
-    {f:'system',t:'Triaje automático · Ramo 4 · prioridad ALTA · cliente activo · X9 2024',n:true},
+    {f:'system',t:'Triaje automático · Ramo 4 · prioridad ALTA · cliente activo · X9 2023',n:true},
   ],opts:[
     {role:'produtor',label:'Intentar resolver ahora (guía rápida)',next:'s2',say:[{f:'produtor',t:'Quiero intentar resolverlo ahora mismo',time:'08:15',out:true}]},
     {role:'produtor',label:'Hablar con un especialista',next:'sHum',say:[{f:'produtor',t:'Prefiero hablar con un especialista',time:'08:15',out:true}]},
@@ -706,13 +706,13 @@ const STEPS_EN = {
     {role:'produtor',label:'Administrative question 📋',next:'sAdmin',say:[{f:'produtor',t:'I have an administrative question 📋',time:'08:11',out:true}]},
   ],chips:['Machinery issue 🚜','Software issue 💻','Administrative question 📋']},
   sMaq:{enter:[
-    {f:'bot',t:"Found your registered equipment:\n\n🚜 X9 2024 — AutoTrac + AutoPath\n🌾 S770 2023 — AutoPath\n\nWhich one has the issue?",time:'08:12'},
-    {f:'produtor',t:"X9 2024 — AutoTrac won't engage at all",time:'08:13',out:true},
+    {f:'bot',t:"Found your registered equipment:\n\n🚜 X9 2023 — AutoTrac + AutoPath\n🌾 S770 2023 — AutoPath\n\nWhich one has the issue?",time:'08:12'},
+    {f:'produtor',t:"X9 2023 — AutoTrac won't engage at all",time:'08:13',out:true},
     {f:'bot',t:"Understood. Can you send a photo of the panel or describe when it started? 📷",time:'08:13'},
     {f:'produtor',t:"Already tried restarting. Happening since yesterday after the rain.",time:'08:13',out:true,k:'media'},
     {f:'bot',t:"Got it! Case #BR-4471 opened: AutoTrac won't engage on X9 — Branch 4 · High priority. How would you like to proceed?",time:'08:14'},
     {k:'milestone',icon:'🎫',label:'Case #BR-4471 opened',detail:'Branch 4 · AutoTrac X9 · High priority',time:'08:14'},
-    {f:'system',t:'Auto-triage · Branch 4 · HIGH priority · active customer · X9 2024',n:true},
+    {f:'system',t:'Auto-triage · Branch 4 · HIGH priority · active customer · X9 2023',n:true},
   ],opts:[
     {role:'produtor',label:'Try to fix it now (quick guide)',next:'s2',say:[{f:'produtor',t:'I want to try fixing it right now',time:'08:15',out:true}]},
     {role:'produtor',label:'Talk to a specialist',next:'sHum',say:[{f:'produtor',t:'I prefer to talk to a specialist',time:'08:15',out:true}]},
@@ -1306,7 +1306,7 @@ function CollapsibleCard({title,icon,children,defaultOpen=true,accent,scrollH}){
 /* ─── Case Timeline ───────────────────────────────────── */
 const CASE_TL=[
   {time:'08:11',who:'produtor',label:'Produtor inicia contato',     detail:'AutoTrac não engata na X9'},
-  {time:'08:12',who:'bot',     label:'Triagem automática',           detail:'Ramo 4 · prioridade Alta · #BR-4471'},
+  {time:'08:12',who:'bot',     label:'Triagem automática',           detail:'Ramo 2 · Sinal · prioridade Alta · #BR-4471'},
   {time:'08:17',who:'csc',     label:'CSC assumiu o caso',           detail:'Carlos verificou telemetria'},
   {time:'08:22',who:'csc',     label:'Diagnóstico: sinal StarFire 2/5',detail:'Proposta de visita enviada'},
   {time:'08:26',who:'produtor',label:'Visita confirmada',            detail:'Amanhã 9h · talhão norte'},
@@ -1316,13 +1316,31 @@ const CASE_TL=[
 ];
 function CaseTimeline({flags,step}){
   const resolved=!!flags.resolved;
-  const fieldDone=['sResolvido','sCsat','sFim','sFimRuim'].includes(step)||resolved;
+  const fieldDone=['sResolvido','sCsat','sFim','sFimRuim'].includes(step)||flags.resolved==='campo';
+  // Which steps are done depends on the actual chosen branch
+  const isRemoto=flags.resolved==='remoto';
+  const isCampo=flags.resolved==='campo';
+  const visitaConfirmada=flags.agenda!=null||isCampo;
+  const caseOpen=['sMaq','s2','sHum','sRemoto','sInfo','sSoft','sAdmin'].includes(step)||chat.customer.some(m=>m.k==='milestone');
+  const cscJoined=['sHum','sRemoto','sInfo','sAgenda','sConfirmado','sCaminho','sEmCampo','sResolvido'].includes(step);
+  const diagDone=['sRemoto','sAgenda','sConfirmado','sCaminho','sEmCampo','sResolvido'].includes(step)||(isRemoto||isCampo);
   const items=CASE_TL.map((it,i)=>{
-    let done=i<=4;
-    if(i===5) done=fieldDone;
-    if(i===6) done=['sCsat','sFim','sFimRuim'].includes(step)||resolved;
-    if(i===7) done=flags.csat!=null;
-    return{...it,done};
+    let done=false;
+    if(i===0) done=caseOpen;                              // Produtor inicia
+    if(i===1) done=caseOpen;                              // Triagem automática
+    if(i===2) done=cscJoined;                             // CSC entrou
+    if(i===3) done=diagDone;                              // Diagnóstico
+    if(i===4) done=visitaConfirmada;                      // Visita confirmada — ONLY if agenda was set
+    if(i===5) done=fieldDone;                             // Field recalibrou
+    if(i===6) done=['sCsat','sFim','sFimRuim'].includes(step)||resolved; // Fechamento
+    if(i===7) done=flags.csat!=null;                      // Follow-up D+7
+    return{...it,done,
+      // For remote path, show alternative label at step 4
+      label: i===4&&isRemoto?'Resolvido remotamente (sem visita)':
+             i===4&&!visitaConfirmada?'Visita confirmada (não agendado)':it.label,
+      detail: i===4&&isRemoto?'Guia de reposicionamento funcionou ✅':
+              i===4&&!visitaConfirmada?'Aguardando decisão do produtor':it.detail,
+    };
   });
   const curIdx=items.reduce((a,it,i)=>it.done?i:a,-1);
   return(
@@ -1814,7 +1832,7 @@ function VField({lang='pt',log,opts,choose,waiting,busy,typing,flags,step,chFiel
                         <div style={{fontSize:11.5,color:C.ink3}}>{tl('waContactHint')}</div>
                       </div>
                     </div>
-                    <div style={{fontSize:12.5,color:C.ink2,marginBottom:10,lineHeight:1.5}}>AutoTrac não engata · antena StarFire · X9 2024</div>
+                    <div style={{fontSize:12.5,color:C.ink2,marginBottom:10,lineHeight:1.5}}>AutoTrac não engata · antena StarFire · X9 2023</div>
                     <Pill bg={C.warnBg} fg={C.warn}><Calendar size={11}/>{flags.agenda||'a agendar'}</Pill>
                   </div>
                 ):(
@@ -1923,7 +1941,12 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
 
     /* ── Data ── */
     const casos=[
-      {id:'BR-4471',cliente:'João Mendes',  dealer:'AgroBaggio',tipo:'campo', prio:'Alta',  estado:s.t,         canal:'WhatsApp',live:true, tempo:'08:11',problema:'AutoTrac não engata · X9',     ec:s},
+      {id:'BR-4471',cliente:'João Mendes',  dealer:'AgroBaggio',
+       tipo:flags.resolved==='remoto'?'bot':flags.resolved==='campo'?'campo':'bot',
+       prio:'Alta',
+       estado:flags.resolved==='remoto'?'Resolvido':flags.resolved==='campo'?s.t:s.t,
+       canal:'WhatsApp',live:true,tempo:'08:11',problema:'AutoTrac não engata · X9',
+       ec:flags.resolved==='remoto'?{bg:C.okBg,fg:C.ok}:s},
       {id:'BR-4468',cliente:'Sandra Rocha', dealer:'Tracbel',    tipo:'bot',   prio:'Média', estado:'Aberto',    canal:'WhatsApp',live:false,tempo:'07:42',problema:'OpsCenter não sincroniza',        ec:{bg:C.warnBg,fg:C.warn}},
       {id:'BR-4455',cliente:'Marcos Dias',  dealer:'AgroBaggio', tipo:'agente',prio:'Alta',  estado:'Escalado',  canal:'WhatsApp',live:false,tempo:'06:20',problema:'AutoPath — licença bloqueada',    ec:{bg:C.critBg,fg:C.crit}},
       {id:'BR-4447',cliente:'Paulo Neto',   dealer:'Tracbel',    tipo:'bot',   prio:'Baixa', estado:'Resolvido', canal:'WhatsApp',live:false,tempo:'ons.', problema:'Relatório de área não gera',     ec:{bg:C.okBg,fg:C.ok}},
@@ -2124,7 +2147,7 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
                 </div>
                 {[
                   ['Ramo 1 · Relatórios', 28, 22, '#5E7038'],
-                  ['Ramo 2 · Sinal',      41, 32, C.green],
+                  ['Ramo 2 · Sinal',      49, 38, C.green],
                   ['Ramo 3 · Setup',      33, 26, C.greenD],
                   ['Ramo 4 · Orientação', 26, 20, '#767471'],
                 ].map(([label,val,pct,color],i)=>(
@@ -2365,410 +2388,544 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
 }
 
 /* ═══════════════════════════════════════════════════════
-   FLUXO SWIMLANE — redesign completo
+   FLUXO — grafo completo, todos ramos sempre visíveis
 ═══════════════════════════════════════════════════════ */
 
-/* ── Swimlanes ── */
-const FLANES=[
-  {k:'deere',   who:'deere',       t:'John Deere',        s:'visão cross · governança', color:'#365314'},
-  {k:'produtor',who:'produtor',    t:'Produtor',           s:'WhatsApp',                 color:'#1A7D4A'},
-  {k:'bot',     who:'bot',         t:'Assistente Digital', s:'automação',                color:'#6A1B9A'},
-  {k:'csc',     who:'csc',         t:'Dealer · CSC',       s:'painel',                   color:'#1565C0'},
-  {k:'esp',     who:'especialista',t:'Especialista',       s:'telemetria',               color:'#7B3F00'},
-  {k:'field',   who:'field',       t:'Field Trainer',      s:'app + campo',              color:'#C05621'},
-];
-
-const LANE_H=72;
-const FLY={deere:44,produtor:116,bot:188,csc:260,esp:332,field:404};
-const TOTAL_H=448;
-const NODE_W=148;
-const NODE_X=i=>80+i*NODE_W;
-
-const canalCor=c=>/WhatsApp/i.test(c)?{bg:'#DFF3E8',fg:'#1A7D4A'}:/Painel/i.test(c)?{bg:'#E3F2FD',fg:'#1565C0'}:/Telemetria/i.test(c)?{bg:'#FFF3E0',fg:'#7B3F00'}:/Presencial/i.test(c)?{bg:'#F3E8FF',fg:'#6D28D9'}:/Automação/i.test(c)?{bg:'#EDE7F6',fg:'#6A1B9A'}:{bg:'#F4F4F4',fg:'#555'};
-
-/* ── 13 happy-path nodes ── */
-const HAPPY=[
-  {id:'h0',who:'produtor',lane:'produtor',t:'Inicia o contato',time:'08:11',canal:'WhatsApp',
-   platform:'WhatsApp Business',supportType:'Cliente',
-   desc:'O produtor abre o WhatsApp e toca numa das categorias de problema — sem precisar descrever nada. O Assistente Digital guia toda a triagem desde o início.',
-   msg:'Tenho um problema com maquinaria 🚜',
-   branches:[
-     {type:'happy',icon:'📲',label:'REATIVO (este path)',desc:'Produtor inicia · conversão 2–3% · happy path continua'},
-     {type:'loop', icon:'🤖',label:'PROATIVO (entrada B)',desc:'Sistema detecta subutilização → aborda primeiro · conversão 18%'},
-   ]},
-  {id:'h1',who:'bot',lane:'bot',t:'Identifica máquinas',time:'08:12',canal:'WhatsApp',
-   platform:'JD Operations Support',supportType:'Automatizado',
-   desc:'O Assistente Digital consulta o OpsCenter e lista os equipamentos registrados. O produtor seleciona ou digita o modelo. Pode anexar foto do painel diretamente pelo WhatsApp.',
-   msg:'Seus equipamentos: 🚜 X9 2024 (AutoTrac) · 🌾 S770 2023. Qual está com problema?',
-   branches:[
-     {type:'happy',icon:'🚜',label:'Com telemetria (JDLink)',desc:'Diagnóstico remoto disponível → continua happy path'},
-     {type:'alt',  icon:'📷',label:'Sem JDLink — pede foto/vídeo',desc:'CSC recebe mídia → triagem manual sem telemetria'},
-     {type:'empty',icon:'🔑',label:'Ghost Login / sem acesso OpsCenter',desc:'Fluxo de recuperação de acesso → suporte especializado'},
-   ]},
-  {id:'h2',who:'bot',lane:'bot',t:'Triagem automática',time:'08:12',canal:'Automação',
-   platform:'JD Operations Support',supportType:'Automatizado',
-   desc:'O Assistente classifica o problema por arquétipo e abre o caso com ramo e prioridade. Nenhuma fila, nenhuma espera humana nesse momento.',
-   msg:'Caso #BR-4471 aberto · Ramo 4 · AutoTrac não engata · Prioridade Alta ⚡',
-   branches:[
-     {type:'happy',icon:'🔧',label:'Máquina / hardware → campo',desc:'Sinal StarFire fraco · continua para diagnóstico remoto'},
-     {type:'alt',  icon:'🔄',label:'Dados não sincronizados → remoto',desc:'Bot entrega guia de resync → EXIT: Resolvido sem visita'},
-     {type:'alt',  icon:'🐛',label:'Bug de software → Tier 2',desc:'Escala para Engenharia → EXIT conforme resposta'},
-   ]},
-  {id:'h3',who:'csc',lane:'csc',t:'CSC entra na conversa',time:'08:17',canal:'Painel',
-   platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
-   desc:'O CSC recebe alerta no painel com contexto completo (telemetria, histórico, jornada digital) e entra na conversa já informado — sem perguntar o que já foi registrado.',
-   msg:'Carlos: Oi João, já estou vendo seu caso do AutoTrac. Um segundo.'},
-  {id:'h4',who:'especialista',lane:'esp',t:'Diagnóstico remoto',time:'08:20',canal:'Telemetria',
-   platform:'Deere Connect / JDLink',supportType:'Especialista remoto',
-   desc:'O especialista acessa telemetria em tempo real e identifica sinal StarFire fraco (2/5 barras). Sem necessidade de deslocamento — diagnóstico conclusivo a distância.',
-   msg:'Sinal StarFire 2/5 barras. Provável posição de antena — diagnóstico conclusivo.',
-   branches:[
-     {type:'happy',icon:'✅',label:'Conclusivo → propõe solução',desc:'Diagnóstico claro · continua happy path'},
-     {type:'alt',  icon:'❓',label:'Não conclusivo → escala Tier 2',desc:'Engenharia aprofunda análise · não fecha sem resolução'},
-     {type:'empty',icon:'📡',label:'Máquina sem dados (sem JDLink)',desc:'Pede info ao produtor · não gera dead-end'},
-   ]},
-  {id:'h5',who:'csc',lane:'csc',t:'Propõe solução',time:'08:22',canal:'Painel',
-   platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
-   desc:'O dealer apresenta duas opções ao produtor: guia rápido (autoatendimento remoto) ou visita do Field Trainer com diagnóstico presencial.',
-   msg:'Posso te mandar um guia rápido ou agendar o Diego (Field Trainer) no talhão. O que prefere?',
-   branches:[
-     {type:'happy',icon:'🏃',label:'Aceita visita Field Trainer',desc:'Produtor confirma → agenda → Diego vai ao campo'},
-     {type:'alt',  icon:'📄',label:'Aceita guia rápido (remoto)',desc:'Produtor segue o documento → EXIT: Resolvido remoto'},
-     {type:'loop', icon:'🔁',label:'Recusa / adia',desc:'Loop de follow-up conservando contexto → reintento de proposta'},
-   ]},
-  {id:'h6',who:'produtor',lane:'produtor',t:'Confirma visita',time:'08:26',canal:'WhatsApp',
-   platform:'WhatsApp Business',supportType:'Cliente',ret:true,
-   desc:'O produtor confirma a visita para o dia seguinte — ainda no WhatsApp, sem precisar trocar de canal ou baixar nenhum app.',
-   msg:'Perfeito! Amanhã 9h no talhão norte ✅'},
-  {id:'h7',who:'field',lane:'field',t:'Recebe e agenda',time:'08:30',canal:'App de campo',
-   platform:'JD Field App',supportType:'Humano – Field Trainer',
-   desc:'Diego recebe o ticket no app com contexto completo, confirma disponibilidade e a visita é agendada automaticamente no sistema.',
-   msg:'Visita confirmada · amanhã 9h · talhão norte · AutoTrac #BR-4471 📋'},
-  {id:'h8',who:'field',lane:'field',t:'A caminho',time:'09:00',canal:'WhatsApp',
-   platform:'WhatsApp Business',supportType:'Humano – Field Trainer',
-   desc:'Diego avisa o produtor diretamente pelo WhatsApp que está a caminho — no mesmo canal que o produtor já usa, sem apps extras.',
-   msg:'Oi João, estou saindo agora, chego em ~1h 🚙'},
-  {id:'h9',who:'produtor',lane:'produtor',t:'Responde e aguarda',time:'09:02',canal:'WhatsApp',
-   platform:'WhatsApp Business',supportType:'Cliente',ret:true,
-   desc:'João confirma e espera no talhão norte. Todo o fluxo acontece no canal dele, sem nenhum app extra.',
-   msg:'Ótimo Diego! Te espero no talhão norte 👍'},
-  {id:'h10',who:'field',lane:'field',t:'Recalibra em campo',time:'10:48',canal:'Presencial',
-   platform:'Presencial + Deere Connect',supportType:'Humano – Field Trainer',
-   desc:'Diego reposiciona a antena, recalibra o receptor StarFire e valida com uma passada completa. Resultado registrado em tempo real no sistema.',
-   msg:'Recalibrado e validado. AutoTrac 100% 🌱',
-   branches:[
-     {type:'happy',icon:'✅',label:'Resolve em campo',desc:'AutoTrac 100% · fecha o caso → EXIT: Resolvido com visita'},
-     {type:'alt',  icon:'🔩',label:'Falta peça / problema mais profundo',desc:'Reagenda · escala para suporte especializado · sem dead-end'},
-     {type:'error',icon:'⚠️',label:'Solução não funciona pós-visita',desc:'Reabertura automática do caso · prioridade alta'},
-   ]},
-  {id:'h11',who:'csc',lane:'csc',t:'Fecha o caso',time:'11:00',canal:'Painel',
-   platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
-   desc:'O dealer recebe o report do Field Trainer, confere o CSAT e fecha o caso com todas as ações registradas — pronto para auditoria e follow-up da Deere.',
-   msg:'Caso #BR-4471 fechado ✅ CSAT coletado · relatório de campo registrado.'},
-  {id:'h12',who:'produtor',lane:'produtor',t:'Follow-up D+7',time:'D+7',canal:'WhatsApp',
-   platform:'WhatsApp Business',supportType:'Automatizado',ret:true,isLoop:true,
-   desc:'Sete dias depois o Assistente confirma adoção do AutoTrac. Se detectar subutilização de OUTRA tecnologia, dispara novo contato PROATIVO — fechando o loop reativo → proativo.',
-   msg:'Como está usando o AutoTrac? Uso confirmado: 87% ✅',
-   branches:[
-     {type:'happy',icon:'✅',label:'Confirma uso',desc:'Jornada concluída · indicadores atualizados na Deere'},
-     {type:'loop', icon:'↺',label:'Detecta subutilização → PROATIVO',desc:'Dispara novo contato personalizato · fecha o ciclo reativo → proativo'},
-   ]},
-];
-
-const EXITS=[
-  {id:'ex0',icon:'🟢',label:'Resolvido remoto',   desc:'< 15 min · sem visita',           color:'#1A7D4A'},
-  {id:'ex1',icon:'🟢',label:'Resolvido com visita',desc:'Field em campo · CSAT coletado',  color:'#1A7D4A'},
-  {id:'ex2',icon:'🟠',label:'Escalado s/ resolução',desc:'Tier 2 em andamento',             color:'#C05621'},
-  {id:'ex3',icon:'⚫',label:'Inválido / duplicado',desc:'Encerrado · CRM atualizado',       color:'#6B7280'},
-];
-
-const EDGE_CASES=[
-  {icon:'⚡',label:'Urgência: máquina parada na janela de plantio',tag:'Priorização automática'},
-  {icon:'🕐',label:'Fora de horário',tag:'Assistente 24h · escalona manhã'},
-  {icon:'📱',label:'IA não entende áudio ou foto',tag:'Fallback humano (CSC)'},
-  {icon:'🔀',label:'Múltiplos problemas na mesma conversa',tag:'Multi-chamado guiado pelo bot'},
-  {icon:'📋',label:'Caso duplicado (CEM em paralelo)',tag:'Deduplicação automática'},
-];
-
-const PROATIVO_NODE={
-  msg:'João, notei que o AutoPath ainda não foi ativado 🌾 Posso te ajudar agora?',
-  note:'Taxa de conversão PROATIVO: 18% vs REATIVO: 2–3%',
+/* ── Cores por tipo de nó ── */
+const NODE_COLORS = {
+  happy:  { fill:'#F0FDF4', stroke:'#22C55E', text:'#15803D', badge:'#22C55E'  },
+  entry:  { fill:'#EFF6FF', stroke:'#3B82F6', text:'#1D4ED8', badge:'#3B82F6'  },
+  proat:  { fill:'#F0FDF4', stroke:'#16A34A', text:'#15803D', badge:'#16A34A'  },
+  alt:    { fill:'#F9FAFB', stroke:'#9CA3AF', text:'#374151', badge:'#9CA3AF'  },
+  exit_ok:{ fill:'#F0FDF4', stroke:'#16A34A', text:'#15803D', badge:'#16A34A'  },
+  exit_ko:{ fill:'#FEF9EE', stroke:'#D97706', text:'#92400E', badge:'#D97706'  },
+  exit_x: { fill:'#F9FAFB', stroke:'#6B7280', text:'#374151', badge:'#6B7280'  },
+  decision:{fill:'#F5F3FF', stroke:'#7C3AED', text:'#5B21B6', badge:'#7C3AED' },
+  error:  { fill:'#FFFBEB', stroke:'#D97706', text:'#92400E', badge:'#D97706'  },
+  loop:   { fill:'#FFF7ED', stroke:'#EA580C', text:'#C2410C', badge:'#EA580C'  },
+  deere:  { fill:'#F0FDF4', stroke:'#166534', text:'#14532D', badge:'#166534'  },
 };
+
+/* ── Layout constants ── */
+const GW = 1640;  // total SVG width
+const GH = 1980;  // total SVG height
+
+/* ── Node definitions (id, type, label, sub, x, y, w, h) ── */
+const GNODES = [
+  // ── ENTRADAS (top) ──────────────────────────────────────
+  {id:'entR', type:'entry',   x:200,  y:60,  w:210, h:54, icon:'📲',
+   label:'REATIVO', sub:'Produtor inicia · 08:11'},
+  {id:'entP', type:'proat',   x:480,  y:60,  w:240, h:54, icon:'🤖',
+   label:'PROATIVO', sub:'Sistema detecta · 18% conversão', hi:true},
+
+  // ── HAPPY PATH (coluna central) ─────────────────────────
+  {id:'h0',  type:'happy',  x:270,  y:174, w:200, h:58, actor:'produtor',
+   icon:'💬', label:'Inicia o contato',     sub:'08:11 · WhatsApp', time:'08:11'},
+  {id:'h1',  type:'happy',  x:270,  y:292, w:200, h:58, actor:'bot',
+   icon:'🤖', label:'Identifica máquinas',  sub:'08:12 · WhatsApp', time:'08:12'},
+  {id:'h2',  type:'decision',x:270,  y:410, w:200, h:58, actor:'bot',
+   icon:'🔀', label:'Triagem automática',   sub:'3 arquétipos', time:'08:12'},
+  {id:'h3',  type:'happy',  x:270,  y:542, w:200, h:58, actor:'csc',
+   icon:'🖥️', label:'CSC entra na conversa',sub:'08:17 · Painel', time:'08:17'},
+  {id:'h4',  type:'decision',x:270,  y:662, w:200, h:58, actor:'esp',
+   icon:'📡', label:'Diagnóstico remoto',   sub:'08:20 · Telemetria', time:'08:20'},
+  {id:'h5',  type:'decision',x:270,  y:786, w:200, h:58, actor:'csc',
+   icon:'💡', label:'Propõe solução',       sub:'08:22 · Painel', time:'08:22'},
+  {id:'h6',  type:'happy',  x:270,  y:910, w:200, h:58, actor:'produtor',
+   icon:'✅', label:'Confirma visita',      sub:'08:26 · WhatsApp', time:'08:26'},
+  {id:'h7',  type:'happy',  x:270,  y:1024,w:200, h:58, actor:'field',
+   icon:'📋', label:'Recebe e agenda',      sub:'08:30 · App', time:'08:30'},
+  {id:'h8',  type:'happy',  x:270,  y:1138,w:200, h:58, actor:'field',
+   icon:'🚗', label:'A caminho',            sub:'09:00 · WhatsApp', time:'09:00'},
+  {id:'h9',  type:'happy',  x:270,  y:1252,w:200, h:58, actor:'produtor',
+   icon:'👋', label:'Responde e aguarda',   sub:'09:02 · WhatsApp', time:'09:02'},
+  {id:'h10', type:'decision',x:270,  y:1370,w:200, h:58, actor:'field',
+   icon:'🔧', label:'Recalibra em campo',   sub:'10:48 · Presencial', time:'10:48'},
+  {id:'h11', type:'happy',  x:270,  y:1504,w:200, h:58, actor:'csc',
+   icon:'✅', label:'Fecha o caso',         sub:'11:00 · Painel', time:'11:00'},
+  {id:'h12', type:'loop',   x:270,  y:1624,w:200, h:58, actor:'produtor',
+   icon:'↺',  label:'Follow-up D+7',       sub:'D+7 · WhatsApp', time:'D+7'},
+
+  // ── RAMOS — Identifica máquinas (h1) ────────────────────
+  {id:'b1a', type:'alt',  x:560,  y:280, w:175, h:48, icon:'📷',
+   label:'Sem JDLink', sub:'pede foto/vídeo'},
+  {id:'b1b', type:'error',x:560,  y:336, w:175, h:48, icon:'🔑',
+   label:'Ghost Login', sub:'recuperação de acesso'},
+
+  // ── RAMOS — Triagem (h2) ─────────────────────────────────
+  {id:'b2a', type:'alt',  x:560,  y:398, w:175, h:48, icon:'🔄',
+   label:'Não sincronizado', sub:'→ resolução remota'},
+  {id:'b2b', type:'alt',  x:560,  y:454, w:175, h:48, icon:'🐛',
+   label:'Bug software', sub:'→ escala Tier 2'},
+  // b2c = continua happy (h3 - máquina/hardware)
+
+  // ── RAMOS — Diagnóstico (h4) ─────────────────────────────
+  {id:'b4a', type:'alt',  x:560,  y:650, w:175, h:48, icon:'❓',
+   label:'Não conclusivo', sub:'→ escala Tier 2'},
+  {id:'b4b', type:'error',x:560,  y:706, w:175, h:48, icon:'📡',
+   label:'Máq. sem dados', sub:'pede info ao produtor'},
+
+  // ── RAMOS — Propõe solução (h5) ─────────────────────────
+  {id:'b5a', type:'alt',  x:560,  y:774, w:175, h:48, icon:'📄',
+   label:'Aceita guia remoto', sub:'→ resolvido sem visita'},
+  {id:'b5b', type:'error',x:560,  y:830, w:175, h:48, icon:'🔁',
+   label:'Recusa / adia', sub:'loop follow-up conservando ctx'},
+
+  // ── RAMOS — Recalibra (h10) ─────────────────────────────
+  {id:'b10a',type:'alt',  x:560, y:1358, w:175, h:48, icon:'🔩',
+   label:'Falta peça', sub:'→ reagenda/escala'},
+  {id:'b10b',type:'error',x:560, y:1414, w:175, h:48, icon:'⚠️',
+   label:'Pós-visita falha', sub:'→ reabertura do caso'},
+
+  // ── ERROR PATHS (coluna esquerda) ───────────────────────
+  {id:'errA',type:'error', x:24,  y:600, w:175, h:48, icon:'🔇',
+   label:'IA não entende', sub:'→ fallback CSC humano'},
+  {id:'errB',type:'error', x:24,  y:660, w:175, h:48, icon:'⚡',
+   label:'Urgência: plantio', sub:'→ priorização imediata'},
+  {id:'errC',type:'error', x:24,  y:720, w:175, h:48, icon:'🕐',
+   label:'Fora de horário', sub:'→ Assistente 24h'},
+
+  // ── EXITS (bottom) ────────────────────────────────────────
+  {id:'ex0', type:'exit_ok',x:55,  y:1900,w:180, h:48, icon:'🟢',
+   label:'Resolvido remoto', sub:'< 15 min · sem visita'},
+  {id:'ex1', type:'exit_ok',x:270, y:1900,w:180, h:48, icon:'🟢',
+   label:'Resolvido c/ visita', sub:'CSAT coletado'},
+  {id:'ex2', type:'exit_ko',x:490, y:1900,w:180, h:48, icon:'🟠',
+   label:'Escalado Tier 2', sub:'Engenharia em andamento'},
+  {id:'ex3', type:'exit_x', x:710, y:1900,w:180, h:48, icon:'⚫',
+   label:'Inválido/duplicado', sub:'CRM atualizado'},
+
+  // ── DEERE cross-view (top strip) ─────────────────────────
+  {id:'dg',  type:'deere', x:880, y:60,  w:200, h:54, icon:'🛡️',
+   label:'John Deere', sub:'governança cross · tempo real'},
+
+  // ── LOOP DE ATIVAÇÃO ────────────────────────────────────
+  {id:'loopAct',type:'loop',x:880, y:1624,w:200, h:54, icon:'↺',
+   label:'Loop de ativação', sub:'subutilização detectada → PROATIVO'},
+];
+
+/* ── Edge definitions (from, to, type, label) ── */
+const GEDGES = [
+  // Entry → h0
+  {f:'entR',t:'h0',  type:'happy', label:''},
+  {f:'entP',t:'h0',  type:'proat', label:''},
+
+  // Happy path backbone
+  {f:'h0', t:'h1',  type:'happy', label:''},
+  {f:'h1', t:'h2',  type:'happy', label:'com JDLink ✓'},
+  {f:'h2', t:'h3',  type:'happy', label:'hardware → campo'},
+  {f:'h3', t:'h4',  type:'happy', label:''},
+  {f:'h4', t:'h5',  type:'happy', label:'conclusivo ✓'},
+  {f:'h5', t:'h6',  type:'happy', label:'aceita visita'},
+  {f:'h6', t:'h7',  type:'happy', label:''},
+  {f:'h7', t:'h8',  type:'happy', label:''},
+  {f:'h8', t:'h9',  type:'happy', label:''},
+  {f:'h9', t:'h10', type:'happy', label:''},
+  {f:'h10',t:'h11', type:'happy', label:'resolve ✓'},
+  {f:'h11',t:'h12', type:'happy', label:''},
+  {f:'h12',t:'ex1', type:'happy', label:'confirma uso'},
+
+  // h1 branches
+  {f:'h1', t:'b1a', type:'alt',   label:'sem telemetria'},
+  {f:'h1', t:'b1b', type:'error', label:'sem acesso'},
+
+  // h2 branches
+  {f:'h2', t:'b2a', type:'alt',   label:'não sincronizado'},
+  {f:'h2', t:'b2b', type:'alt',   label:'bug software'},
+  {f:'b2a',t:'ex0', type:'alt',   label:'guia rápido'},
+  {f:'b2b',t:'ex2', type:'alt',   label:'Tier 2'},
+
+  // h4 branches
+  {f:'h4', t:'b4a', type:'alt',   label:'inconclusivo'},
+  {f:'h4', t:'b4b', type:'error', label:'sem dados'},
+  {f:'b4a',t:'ex2', type:'alt',   label:'escala'},
+
+  // h5 branches
+  {f:'h5', t:'b5a', type:'alt',   label:'guia remoto'},
+  {f:'h5', t:'b5b', type:'error', label:'recusa'},
+  {f:'b5a',t:'ex0', type:'alt',   label:''},
+  {f:'b5b',t:'h5',  type:'loop',  label:'reintento'},
+
+  // h10 branches
+  {f:'h10',t:'b10a',type:'alt',   label:'falta peça'},
+  {f:'h10',t:'b10b',type:'error', label:'pós-visita'},
+  {f:'b10a',t:'ex2', type:'alt',  label:'escala'},
+
+  // Loop de ativação
+  {f:'h12',t:'loopAct',type:'loop',label:'detecta subutilização'},
+  {f:'loopAct',t:'entP',type:'loop',label:'→ novo PROATIVO'},
+
+  // Error edges
+  {f:'errA',t:'h3',  type:'error', label:'fallback'},
+  {f:'errB',t:'h3',  type:'error', label:'urgência'},
+
+  // Exits
+  {f:'h11',t:'ex1',  type:'exit_ok', label:''},
+  {f:'b1a',t:'h3',   type:'alt',  label:'CSC manual'},
+  {f:'b1b',t:'ex3',  type:'exit_x',label:''},
+];
+
+/* ── Actor avatars config ── */
+const ACTOR_CONF={
+  produtor:  {emoji:'👨‍🌾', label:'Produtor',           color:'#15803D'},
+  bot:       {emoji:'🤖', label:'Assistente Digital',   color:'#6D28D9'},
+  csc:       {emoji:'🖥️', label:'Dealer · CSC',         color:'#1D4ED8'},
+  esp:       {emoji:'📡', label:'Especialista',          color:'#7B3F00'},
+  field:     {emoji:'🏃', label:'Field Trainer',         color:'#C05621'},
+  deere:     {emoji:'🛡️', label:'John Deere',            color:'#166534'},
+};
+
+/* ── Edge color ── */
+const EDGE_COLOR={
+  happy:  '#22C55E',
+  proat:  '#16A34A',
+  alt:    '#94A3B8',
+  error:  '#F59E0B',
+  loop:   '#EA580C',
+  exit_ok:'#22C55E',
+  exit_ko:'#D97706',
+  exit_x: '#9CA3AF',
+};
+
+function getNodeCenter(n){ return { x: n.x + n.w/2, y: n.y + n.h/2 }; }
+function getNodePort(n, side){
+  if(side==='bottom') return {x: n.x+n.w/2, y: n.y+n.h};
+  if(side==='top')    return {x: n.x+n.w/2, y: n.y};
+  if(side==='right')  return {x: n.x+n.w,   y: n.y+n.h/2};
+  if(side==='left')   return {x: n.x,        y: n.y+n.h/2};
+}
+
+function edgePath(src,tgt,fromSide,toSide){
+  const a=getNodePort(src,fromSide), b=getNodePort(tgt,toSide);
+  const dx=b.x-a.x, dy=b.y-a.y;
+  if(fromSide==='bottom'&&toSide==='top'){
+    const cy=Math.abs(dy)*0.45;
+    return 'M'+a.x+','+a.y+' C'+a.x+','+(a.y+cy)+' '+b.x+','+(b.y-cy)+' '+b.x+','+b.y;
+  }
+  if(fromSide==='right'&&toSide==='top'){
+    return 'M'+a.x+','+a.y+' C'+(a.x+60)+','+a.y+' '+b.x+','+(b.y-40)+' '+b.x+','+b.y;
+  }
+  if(fromSide==='right'&&toSide==='left'){
+    const mx=(a.x+b.x)/2;
+    return 'M'+a.x+','+a.y+' C'+mx+','+a.y+' '+mx+','+b.y+' '+b.x+','+b.y;
+  }
+  if(fromSide==='left'&&toSide==='left'){
+    const lx=Math.min(a.x,b.x)-40;
+    return 'M'+a.x+','+a.y+' C'+lx+','+a.y+' '+lx+','+b.y+' '+b.x+','+b.y;
+  }
+  if(fromSide==='bottom'&&toSide==='left'){
+    return 'M'+a.x+','+a.y+' C'+a.x+','+(a.y+40)+' '+(b.x-40)+','+b.y+' '+b.x+','+b.y;
+  }
+  if(fromSide==='right'&&toSide==='bottom'){
+    return 'M'+a.x+','+a.y+' C'+(a.x+40)+','+a.y+' '+b.x+','+(b.y-40)+' '+b.x+','+b.y;
+  }
+  // default: cubic
+  return 'M'+a.x+','+a.y+' C'+(a.x+dx*0.4)+','+(a.y+dy*0.1)+' '+(b.x-dx*0.4)+','+(b.y-dy*0.1)+' '+b.x+','+b.y;
+}
+
+/* ── Determine edge ports ── */
+function getEdgePorts(f,t,type){
+  const fNode=GNODES.find(n=>n.id===f);
+  const tNode=GNODES.find(n=>n.id===t);
+  if(!fNode||!tNode) return ['bottom','top'];
+
+  // branches go right→left
+  if(['b1a','b1b','b2a','b2b','b4a','b4b','b5a','b5b','b10a','b10b'].includes(t)) return['right','left'];
+  // errors on the left
+  if(['errA','errB','errC'].includes(f)) return['right','left'];
+  // loop arc
+  if(type==='loop') return['right','top'];
+  // exits at bottom
+  if(t.startsWith('ex')) return['bottom','top'];
+  // entry to h0
+  if(f.startsWith('ent')) return['bottom','top'];
+  // default happy path
+  if(fNode.y < tNode.y) return['bottom','top'];
+  if(fNode.y > tNode.y) return['top','bottom'];
+  return['right','left'];
+}
 
 function Fluxo({lang='pt'}){
   const tl=key=>tg(lang,key);
-  const [entry,setEntry]=useState('reativo');
-  const [step,setStep]=useState(0);
-  const scrollRef=useRef(null);
-  const N=HAPPY.length;
-  const cur=HAPPY[step];
+  const [entry,setEntry]=React.useState('reativo');
+  const [selNode,setSelNode]=React.useState(null);
+  const [showEdge,setShowEdge]=React.useState('all'); // 'all'|'happy'
 
-  useEffect(()=>{
-    const el=scrollRef.current;
-    if(el) el.scrollTo({left:Math.max(0,NODE_X(step)-el.clientWidth/2+60),behavior:'smooth'});
-  },[step]);
+  const nodeMap={};
+  GNODES.forEach(n=>nodeMap[n.id]=n);
 
-  const plotW=NODE_X(N-1)+140;
+  const selN=selNode?nodeMap[selNode]:null;
 
-  const bezier=(ax,ay,bx,by)=>{
-    const c=Math.min(Math.abs(bx-ax)*0.44,58);
-    return 'M'+ax+' '+ay+' C'+(ax+c)+' '+ay+','+(bx-c)+' '+by+','+bx+' '+by;
-  };
+  // Build SVG paths
+  const paths=GEDGES.map((e,idx)=>{
+    const src=nodeMap[e.f], tgt=nodeMap[e.t];
+    if(!src||!tgt) return null;
+    const [fs,ts]=getEdgePorts(e.f,e.t,e.type);
+    const d=edgePath(src,tgt,fs,ts);
+    const col=EDGE_COLOR[e.type]||'#94A3B8';
+    const dash=e.type==='alt'?'6,3':e.type==='error'?'4,3':e.type==='loop'?'8,4':'none';
+    const isHP=e.type==='happy'||e.type==='proat'||e.type==='exit_ok';
+    const hide=showEdge==='happy'&&!isHP;
+    return {idx,d,col,dash,hide,label:e.label,src,tgt,type:e.type};
+  }).filter(Boolean);
 
-  const laneBg=k=>({
-    deere:'rgba(54,83,20,.05)',produtor:'rgba(26,125,74,.05)',
-    bot:'rgba(106,27,154,.04)',csc:'rgba(21,101,192,.04)',
-    esp:'rgba(123,63,0,.04)',field:'rgba(192,86,33,.05)',
-  }[k]||'transparent');
+  // Edge label midpoint
+  function edgeMid(p){ const m=p.d.match(/M([d.]+),([d.]+).*?([d.]+),([d.]+)$/); return m?{x:(+m[1]+m[3])/2,y:(+m[2]+m[4])/2}:{x:0,y:0}; }
 
   return(
-    <div className="fluxo-wrap">
-      {/* ── Header ── */}
-      <div style={{marginBottom:8,flexShrink:0}}>
-        <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:2}}>
-          {tl('flowHow')||'Como funciona'}
-        </div>
-        <h1 style={{fontSize:20,fontWeight:800,margin:'0 0 3px',fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em',textTransform:'uppercase',lineHeight:1.1}}>
-          Fluxo completo · João Mendes · Faz. Santa Mônica · "AutoTrac não engata"
-        </h1>
-        <div style={{fontSize:12.5,color:C.ink2}}>
-          6 atores · 13 passos · 7 classes de bifurcação · 4 exits · loop de ativação
-          <span style={{marginLeft:10,fontSize:11,color:C.ink3}}>← → navegar · clique no nó para detalhe</span>
-        </div>
-      </div>
-
-      {/* ── Entry toggle ── */}
-      <div style={{display:'flex',gap:8,marginBottom:8,flexShrink:0,flexWrap:'wrap'}}>
-        {[
-          {k:'reativo', emoji:'📲', label:'A) REATIVO', sub:'Produtor inicia · 08:11 · WhatsApp', rate:'2–3%', rateBg:'#FEE2E2', rateC:'#B91C1C', activeBg:C.greenL, activeBorder:C.green},
-          {k:'proativo',emoji:'🤖', label:'B) PROATIVO',sub:'Sistema detecta subutilização · AutoPath nunca ativado', rate:'18%', rateBg:'#DCFCE7', rateC:'#15803D', activeBg:'#F0FDF4', activeBorder:'#15803D', highlight:true},
-        ].map(opt=>(
-          <button key={opt.k} onClick={()=>{setEntry(opt.k);setStep(0);}}
-            style={{display:'flex',alignItems:'center',gap:8,background:entry===opt.k?opt.activeBg:'#fff',border:'1.5px solid '+(entry===opt.k?opt.activeBorder:'#D6DDCF'),borderRadius:8,padding:'8px 14px',cursor:'pointer',transition:'all 150ms',position:'relative'}}>
-            {opt.highlight&&<span style={{position:'absolute',top:-7,right:-7,fontSize:8.5,fontWeight:800,background:'#15803D',color:'#fff',padding:'2px 6px',borderRadius:9,letterSpacing:'.04em'}}>MAIOR CONVERSÃO</span>}
-            <span style={{fontSize:15}}>{opt.emoji}</span>
-            <div style={{textAlign:'left'}}>
-              <div style={{fontSize:12,fontWeight:700,color:entry===opt.k?opt.activeBorder:C.ink}}>{opt.label}</div>
-              <div style={{fontSize:10,color:C.ink3}}>{opt.sub}</div>
-            </div>
-            <span style={{fontSize:9,fontWeight:800,background:opt.rateBg,color:opt.rateC,padding:'2px 5px',borderRadius:4,letterSpacing:'.04em'}}>{opt.rate}</span>
-          </button>
-        ))}
-
-        {entry==='proativo'&&(
-          <div style={{flex:1,minWidth:220,background:'#DCFCE7',border:'1px solid #86EFAC',borderRadius:8,padding:'7px 12px',display:'flex',gap:8,alignItems:'center'}}>
-            <Avatar who="bot" size={28}/>
-            <div>
-              <div style={{fontSize:10.5,fontWeight:700,color:'#15803D',marginBottom:1}}>🤖 Assistente Digital → João Mendes</div>
-              <div style={{fontSize:12,lineHeight:1.35}}>{PROATIVO_NODE.msg}</div>
-              <div style={{fontSize:9.5,color:'#15803D',fontWeight:600,marginTop:2}}>{PROATIVO_NODE.note}</div>
-            </div>
+    <div className="fluxo-wrap" style={{userSelect:'none'}}>
+      {/* ── Toolbar ── */}
+      <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,flexShrink:0,flexWrap:'wrap'}}>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:1}}>{tl('flowHow')||'Como funciona'}</div>
+          <div style={{fontSize:14,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",textTransform:'uppercase',lineHeight:1.1}}>
+            Fluxo completo · João Mendes · "AutoTrac não engata" · todos os caminhos visíveis
           </div>
-        )}
-      </div>
-
-      {/* ── Swimlane map ── */}
-      <div className="fluxo-map-area">
-        <div style={{display:'flex',border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:C.card,boxShadow:'var(--shadow-sm)',flex:1,minHeight:0}}>
-
-          {/* Left labels */}
-          <div style={{position:'relative',width:166,flexShrink:0,borderRight:'1px solid '+C.line,background:C.page}}>
-            <div style={{position:'absolute',left:8,top:FLY.deere-14,right:4}}>
-              <div style={{display:'flex',alignItems:'center',gap:4}}><JDBadge size={14}/><span style={{fontSize:10,fontWeight:800,color:'#365314',fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.05em'}}>JOHN DEERE</span></div>
-              <div style={{fontSize:8.5,color:'#365314',marginLeft:19,fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase'}}>visão cross · governança</div>
-            </div>
-            {FLANES.filter(l=>l.k!=='deere').map(l=>(
-              <div key={l.k} style={{position:'absolute',left:8,top:FLY[l.k]-16,right:4}}>
-                <div style={{display:'flex',alignItems:'center',gap:4}}><Avatar who={l.who} size={18}/><span style={{fontSize:11,fontWeight:600,lineHeight:1.1,color:l.color}}>{l.t}</span></div>
-                <div style={{fontSize:9,color:C.ink3,marginTop:1,marginLeft:22}}>{l.s}</div>
-              </div>
+        </div>
+        <div style={{display:'flex',gap:6,flexShrink:0,flexWrap:'wrap'}}>
+          {/* Entry toggle */}
+          {[{k:'reativo',e:'📲',l:'A) REATIVO',r:'2–3%',rb:'#FEE2E2',rc:'#B91C1C'},
+            {k:'proativo',e:'🤖',l:'B) PROATIVO',r:'18%',rb:'#DCFCE7',rc:'#15803D',hi:true}
+          ].map(opt=>(
+            <button key={opt.k} onClick={()=>setEntry(opt.k)}
+              style={{display:'flex',alignItems:'center',gap:5,background:entry===opt.k?C.greenL:'#fff',border:'1.5px solid '+(entry===opt.k?C.green:'#E5E7EB'),borderRadius:7,padding:'6px 12px',cursor:'pointer',fontSize:11.5,fontWeight:600,position:'relative',transition:'all 150ms'}}>
+              {opt.hi&&<span style={{position:'absolute',top:-7,right:-7,fontSize:8,fontWeight:800,background:'#15803D',color:'#fff',padding:'1px 5px',borderRadius:8}}>+18%</span>}
+              {opt.e} {opt.l}
+              <span style={{fontSize:9,fontWeight:800,background:opt.rb,color:opt.rc,padding:'1px 5px',borderRadius:4,marginLeft:2}}>{opt.r}</span>
+            </button>
+          ))}
+          {/* Edge filter */}
+          <div style={{display:'flex',border:'1px solid #E5E7EB',borderRadius:7,overflow:'hidden'}}>
+            {[['all','Todos os caminhos'],['happy','Só happy path']].map(([k,l])=>(
+              <button key={k} onClick={()=>setShowEdge(k)}
+                style={{background:showEdge===k?C.side:'#fff',color:showEdge===k?'#fff':C.ink2,border:'none',padding:'6px 11px',cursor:'pointer',fontSize:11,fontWeight:600,transition:'all 130ms'}}>
+                {l}
+              </button>
             ))}
           </div>
+        </div>
+      </div>
 
-          {/* Scrollable canvas */}
-          <div ref={scrollRef} style={{overflowX:'auto',flex:1,overflowY:'hidden'}}>
-            <div style={{position:'relative',width:plotW,height:TOTAL_H}}>
+      {/* ── Legend ── */}
+      <div style={{display:'flex',gap:12,marginBottom:8,flexShrink:0,flexWrap:'wrap',alignItems:'center'}}>
+        <span style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.06em'}}>Legenda:</span>
+        {[
+          {col:'#22C55E',dash:false,label:'Happy path'},
+          {col:'#94A3B8',dash:true, label:'Ramo alternativo'},
+          {col:'#F59E0B',dash:true, label:'Erro / empty state'},
+          {col:'#EA580C',dash:true, label:'Loop de ativação'},
+          {col:'#22C55E',dash:false,label:'Exit OK',fill:'#F0FDF4'},
+          {col:'#D97706',dash:false,label:'Exit escalado',fill:'#FEF9EE'},
+        ].map((l,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
+            <svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke={l.col} strokeWidth="2" strokeDasharray={l.dash?'5,2':'none'}/></svg>
+            {l.label}
+          </div>
+        ))}
+        {[
+          {fill:'#F0FDF4',stroke:'#22C55E',label:'Ação OK'},
+          {fill:'#F5F3FF',stroke:'#7C3AED',label:'Decisão'},
+          {fill:'#FFFBEB',stroke:'#D97706',label:'Erro/empty'},
+          {fill:'#FFF7ED',stroke:'#EA580C',label:'Loop'},
+        ].map((l,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
+            <div style={{width:14,height:14,borderRadius:3,background:l.fill,border:'1.5px solid '+l.stroke}}/>
+            {l.label}
+          </div>
+        ))}
+      </div>
 
-              {/* Lane stripes */}
-              {FLANES.map(l=>(
-                <div key={l.k} style={{
-                  position:'absolute',left:0,top:FLY[l.k]-LANE_H/2,width:plotW,height:LANE_H,
-                  background:l.k==='deere'?'rgba(54,83,20,.06)':laneBg(l.k),
-                  borderTop:'1px solid '+(l.k==='deere'?'rgba(54,83,20,.18)':C.line2),
-                  borderBottom:l.k==='deere'?'1.5px dashed rgba(54,83,20,.28)':'none',
-                }}/>
-              ))}
+      {/* ── Scrollable SVG canvas ── */}
+      <div className="fluxo-map-area" style={{position:'relative'}}>
+        <div style={{overflow:'auto',flex:1,borderRadius:8,border:'1px solid '+C.line,background:'#FAFAF9',boxShadow:'var(--shadow-sm)'}}>
+          <svg
+            viewBox={'0 0 '+GW+' '+GH}
+            width={GW} height={GH}
+            style={{display:'block',fontFamily:"Inter,system-ui,sans-serif"}}
+          >
+            {/* Deere governance band */}
+            <rect x="0" y="0" width={GW} height="130" fill="rgba(54,83,20,.04)" rx="0"/>
+            <text x="900" y="42" fontSize="9.5" fontWeight="700" fill="#365314" letterSpacing=".08em" textAnchor="middle" style={{textTransform:'uppercase'}}>JOHN DEERE · VISÃO CROSS · GOVERNANÇA · MONITORA MÉTRICAS E COORDENAÇÃO EM TEMPO REAL</text>
+            <line x1="0" y1="130" x2={GW} y2="130" stroke="rgba(54,83,20,.2)" strokeWidth="1" strokeDasharray="6,3"/>
 
-              {/* Deere ribbon text */}
-              <div style={{position:'absolute',left:14,top:FLY.deere-15,pointerEvents:'none',zIndex:0}}>
-                <span style={{fontSize:9.5,color:'#365314',fontWeight:600,letterSpacing:'.05em',opacity:.55}}>
-                  Deere monitora métricas, satisfação e coordenação cross em tempo real
-                </span>
-              </div>
+            {/* Swimlane column headers */}
+            {[
+              {label:'Produtor · WhatsApp',     x:150, color:'#15803D'},
+              {label:'Assistente Digital · Automação', x:370, color:'#6D28D9'},
+              {label:'Dealer · CSC · Painel',   x:595, color:'#1D4ED8'},
+              {label:'Especialista · Telemetria',x:810, color:'#7B3F00'},
+              {label:'Field Trainer · Campo',    x:1020,color:'#C05621'},
+            ].map((col,i)=>(
+              <g key={i}>
+                <rect x={col.x-90} y="134" width="180" height="24" fill="none"/>
+                <text x={col.x} y="150" fontSize="9" fontWeight="700" fill={col.color} textAnchor="middle" letterSpacing=".05em">{col.label.toUpperCase()}</text>
+                <line x1={col.x} y1="160" x2={col.x} y2={GH-80} stroke={col.color+'22'} strokeWidth="1" strokeDasharray="4,4"/>
+              </g>
+            ))}
 
-              {/* SVG connectors */}
-              <svg width={plotW} height={TOTAL_H} viewBox={'0 0 '+plotW+' '+TOTAL_H} style={{position:'absolute',inset:0,zIndex:1,pointerEvents:'none'}}>
-                <defs>
-                  <marker id="arG" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                    <path d="M2 2L8 5L2 8" fill="none" stroke="#2D6A4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </marker>
-                  <marker id="arO" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                    <path d="M2 2L8 5L2 8" fill="none" stroke="#C05621" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </marker>
-                </defs>
+            {/* Proativo entry callout */}
+            {entry==='proativo'&&(
+              <g>
+                <rect x="460" y="130" width="260" height="36" rx="6" fill="#DCFCE7" stroke="#86EFAC" strokeWidth="1.5"/>
+                <text x="590" y="148" fontSize="10" fontWeight="700" fill="#15803D" textAnchor="middle">🤖 Assistente Digital → João Mendes</text>
+                <text x="590" y="162" fontSize="9.5" fill="#166534" textAnchor="middle">"João, o AutoPath ainda não foi ativado 🌾 Posso ajudar?"</text>
+              </g>
+            )}
 
-                {/* Happy path connectors */}
-                {HAPPY.slice(0,-1).map((n,i)=>{
-                  const ax=NODE_X(i)+62,ay=FLY[n.lane];
-                  const bx=NODE_X(i+1)-62,by=FLY[HAPPY[i+1].lane];
-                  const done=step>i,isCur=step===i+1;
-                  return(
-                    <path key={i} d={bezier(ax,ay,bx,by)} fill="none"
-                      stroke={done||isCur?C.green:'#D6DDCF'}
-                      strokeWidth={done||isCur?2.5:1.5}
-                      markerEnd="url(#arG)"
-                      style={{transition:'stroke .3s,stroke-width .2s'}}
-                    />
-                  );
-                })}
+            {/* ── Arrows/Edges ── */}
+            <defs>
+              <marker id="arH"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M1,2 L8,5 L1,8" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </marker>
+              <marker id="arA"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M1,2 L8,5 L1,8" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </marker>
+              <marker id="arE"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M1,2 L8,5 L1,8" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </marker>
+              <marker id="arL"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M1,2 L8,5 L1,8" fill="none" stroke="#EA580C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </marker>
+              <marker id="arX"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M1,2 L8,5 L1,8" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </marker>
+            </defs>
 
-                {/* Activation loop arc (visible at step 12) */}
-                {step===12&&(
-                  <path
-                    d={'M'+NODE_X(12)+' '+(FLY.produtor-18)+' C'+NODE_X(12)+' '+(FLY.deere-28)+','+NODE_X(0)+' '+(FLY.deere-28)+','+NODE_X(0)+' '+(FLY.bot+20)}
-                    fill="none" stroke="#C05621" strokeWidth="2" strokeDasharray="7 3"
-                    markerEnd="url(#arO)"
+            {paths.map(p=>{
+              if(p.hide) return null;
+              const markerMap={happy:'url(#arH)',proat:'url(#arH)',alt:'url(#arA)',error:'url(#arE)',loop:'url(#arL)',exit_ok:'url(#arH)',exit_ko:'url(#arE)',exit_x:'url(#arX)'};
+              const mid=edgeMid(p);
+              return(
+                <g key={p.idx}>
+                  <path d={p.d} fill="none"
+                    stroke={p.col} strokeWidth={p.type==='happy'||p.type==='proat'?2.5:1.5}
+                    strokeDasharray={p.dash==='none'?undefined:p.dash}
+                    markerEnd={markerMap[p.type]||'url(#arA)'}
+                    opacity={p.hide?0:1}
+                    style={{transition:'opacity 200ms'}}
                   />
-                )}
-              </svg>
+                  {p.label&&(
+                    <g>
+                      <rect x={mid.x-p.label.length*2.8} y={mid.y-9} width={p.label.length*5.6} height="14" rx="3" fill="white" opacity=".88"/>
+                      <text x={mid.x} y={mid.y+1} fontSize="8.5" fill={p.col} textAnchor="middle" fontWeight="600">{p.label}</text>
+                    </g>
+                  )}
+                </g>
+              );
+            })}
 
-              {/* Happy path nodes */}
-              {HAPPY.map((n,i)=>{
-                const done=i<step,sel=i===step,fut=i>step;
-                const x=NODE_X(i),y=FLY[n.lane];
-                const nb=n.branches?n.branches.length:0;
-                return(
-                  <div key={n.id} onClick={()=>setStep(i)}
-                    style={{position:'absolute',left:x-62,top:y-23,width:124,zIndex:2,cursor:'pointer',
-                      opacity:fut?0.28:1,transform:sel?'translateY(-3px)':'none',transition:'all 200ms'}}>
-                    <div style={{
-                      borderRadius:8,padding:'6px 8px',position:'relative',
-                      border:(sel?2:1.5)+'px solid '+(sel?C.green:done?C.green:'#D6DDCF'),
-                      background:sel?'#EBF8F1':done?'#F4FCF7':C.card,
-                      boxShadow:sel?'0 4px 16px rgba(54,150,80,.22)':'var(--shadow-sm)',
-                      transition:'all 200ms',
-                    }}>
-                      {done&&<span style={{position:'absolute',top:-6,right:-6,width:15,height:15,borderRadius:15,background:C.green,border:'2px solid #fff',display:'flex',alignItems:'center',justifyContent:'center',zIndex:4}}><Check size={8} style={{color:'#fff'}}/></span>}
-                      {nb>0&&<span style={{position:'absolute',top:-7,left:-5,background:'#7C3AED',color:'#fff',fontSize:7,fontWeight:700,borderRadius:4,padding:'1.5px 4px',letterSpacing:'.03em',border:'1.5px solid #fff',zIndex:4}}>{nb} caminhos</span>}
-                      {n.isLoop&&<span style={{position:'absolute',bottom:-7,left:'50%',transform:'translateX(-50%)',background:'#C05621',color:'#fff',fontSize:7,fontWeight:700,borderRadius:4,padding:'1.5px 5px',letterSpacing:'.03em',border:'1.5px solid #fff',zIndex:4}}>↺ loop</span>}
-                      {n.ret&&<div style={{display:'flex',alignItems:'center',gap:2,marginBottom:1}}><ArrowLeft size={8} style={{color:C.waHead}}/><span style={{fontSize:7,fontWeight:700,color:C.waHead,letterSpacing:'.04em',textTransform:'uppercase'}}>volta ao produtor</span></div>}
-                      <div style={{display:'flex',alignItems:'center',gap:3,marginBottom:2}}><Avatar who={n.who} size={15}/><span style={{fontSize:11,fontWeight:700,lineHeight:1.15,color:C.ink}}>{n.t}</span></div>
-                      <div style={{fontSize:9,color:C.ink3}}>{n.time} · {n.canal}</div>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* ── Nodes ── */}
+            {GNODES.map(n=>{
+              const col=NODE_COLORS[n.type]||NODE_COLORS.alt;
+              const isSel=selNode===n.id;
+              const actor=n.actor?ACTOR_CONF[n.actor]:null;
+              const isDecision=n.type==='decision';
+              return(
+                <g key={n.id} onClick={()=>setSelNode(selNode===n.id?null:n.id)}
+                  style={{cursor:'pointer',transition:'all 150ms'}}>
+                  {/* Shadow if selected */}
+                  {isSel&&<rect x={n.x-3} y={n.y-3} width={n.w+6} height={n.h+6} rx="10" fill={col.stroke} opacity=".18"/>}
+                  {/* Node body */}
+                  <rect x={n.x} y={n.y} width={n.w} height={n.h} rx={isDecision?12:8}
+                    fill={isSel?col.stroke+'22':col.fill}
+                    stroke={isSel?col.stroke:col.stroke}
+                    strokeWidth={isSel?2.5:n.hi?2:1.5}
+                    strokeDasharray={n.type==='alt'?'4,2':undefined}
+                  />
+                  {/* Diamond marker for decision nodes */}
+                  {isDecision&&<polygon
+                    points={(n.x+n.w/2)+','+(n.y-8)+' '+(n.x+n.w/2+8)+','+n.y+' '+(n.x+n.w/2)+','+(n.y+8)+' '+(n.x+n.w/2-8)+','+n.y}
+                    fill={col.stroke} opacity="0"
+                  />}
+                  {/* MAIOR CONVERSÃO badge */}
+                  {n.hi&&<g>
+                    <rect x={n.x+n.w-68} y={n.y-10} width="72" height="14" rx="7" fill="#15803D"/>
+                    <text x={n.x+n.w-32} y={n.y-1} fontSize="7.5" fontWeight="800" fill="white" textAnchor="middle">MAIOR CONVERSÃO</text>
+                  </g>}
+                  {/* Actor badge */}
+                  {actor&&<g>
+                    <circle cx={n.x+14} cy={n.y+14} r="10" fill={actor.color+'22'} stroke={actor.color} strokeWidth="1"/>
+                    <text x={n.x+14} y={n.y+18} fontSize="9" textAnchor="middle">{actor.emoji}</text>
+                  </g>}
+                  {/* Icon */}
+                  {!actor&&n.icon&&<text x={n.x+10} y={n.y+n.h/2+4} fontSize="13" textAnchor="middle">{n.icon}</text>}
+                  {/* Decision rhombus indicator */}
+                  {isDecision&&<g>
+                    <rect x={n.x+n.w-22} y={n.y+6} width="18" height="18" rx="4" fill={col.stroke+'22'}/>
+                    <text x={n.x+n.w-13} y={n.y+19} fontSize="10" textAnchor="middle" fill={col.stroke}>⋱</text>
+                  </g>}
+                  {/* Label */}
+                  <text x={actor?n.x+28:n.x+24} y={n.y+n.h/2-4} fontSize="11.5" fontWeight="700" fill={col.text}>
+                    {n.label}
+                  </text>
+                  {/* Sub */}
+                  <text x={actor?n.x+28:n.x+24} y={n.y+n.h/2+10} fontSize="9.5" fill={col.text+'99'}>
+                    {n.sub}
+                  </text>
+                  {/* Time badge */}
+                  {n.time&&<g>
+                    <rect x={n.x+n.w-42} y={n.y+n.h-16} width="38" height="12" rx="6" fill={col.stroke+'1A'}/>
+                    <text x={n.x+n.w-23} y={n.y+n.h-7} fontSize="8.5" fill={col.stroke} textAnchor="middle" fontWeight="700">{n.time}</text>
+                  </g>}
+                </g>
+              );
+            })}
 
-              {/* EXIT panels — right column */}
-              {EXITS.map((ex,i)=>(
-                <div key={ex.id} style={{position:'absolute',right:6,top:90+i*66,width:108,zIndex:2}}>
-                  <div style={{background:'#F9FAFB',border:'1px solid #E5E7EB',borderRadius:7,padding:'6px 8px',opacity:.82}}>
-                    <div style={{fontSize:10,fontWeight:700,color:ex.color,lineHeight:1.2,marginBottom:1}}>{ex.icon} {ex.label}</div>
-                    <div style={{fontSize:9,color:C.ink3,lineHeight:1.3}}>{ex.desc}</div>
-                  </div>
-                </div>
+            {/* ── EXIT section separator ── */}
+            <line x1="0" y1="1875" x2={GW} y2="1875" stroke={C.line} strokeWidth="1" strokeDasharray="6,4"/>
+            <text x="20" y="1892" fontSize="9.5" fontWeight="700" fill={C.ink3} letterSpacing=".06em">EXITS / RESOLUÇÕES</text>
+
+            {/* ── EDGE CASES strip (far right column) ── */}
+            <g>
+              <text x="1160" y="590" fontSize="9.5" fontWeight="700" fill="#92400E" letterSpacing=".06em">EDGE CASES</text>
+              {[
+                {y:610, icon:'⚡', l:'Urgência: plantio', sub:'priorização imediata'},
+                {y:658, icon:'🕐', l:'Fora de horário',   sub:'Assistente 24h'},
+                {y:706, icon:'📱', l:'IA não entende',    sub:'fallback CSC'},
+                {y:754, icon:'🔀', l:'Multi-problema',    sub:'multi-chamado'},
+                {y:802, icon:'📋', l:'Caso duplicado',    sub:'deduplicação'},
+              ].map((e,i)=>(
+                <g key={i}>
+                  <rect x="1150" y={e.y} width="190" height="40" rx="6" fill="#FFFBF0" stroke="#FDE68A" strokeWidth="1"/>
+                  <text x="1163" y={e.y+16} fontSize="10.5">{e.icon}</text>
+                  <text x="1183" y={e.y+16} fontSize="10.5" fontWeight="600" fill="#92400E">{e.l}</text>
+                  <text x="1183" y={e.y+30} fontSize="9" fill={C.ink3}>{e.sub}</text>
+                </g>
               ))}
+            </g>
 
-            </div>
-          </div>
+            {/* ── PROATIVO advantage callout ── */}
+            <g>
+              <rect x="920" y="240" width="210" height="76" rx="8" fill="#F0FDF4" stroke="#86EFAC" strokeWidth="1.5"/>
+              <text x="932" y="260" fontSize="9.5" fontWeight="700" fill="#15803D">PROATIVO vs REATIVO</text>
+              <text x="932" y="276" fontSize="9" fill="#166534">PROATIVO: 18% conversão</text>
+              <text x="932" y="291" fontSize="9" fill="#166534">REATIVO: 2–3% conversão</text>
+              <text x="932" y="308" fontSize="8" fill={C.ink3}>Sistema detecta subutilização</text>
+            </g>
+
+          </svg>
         </div>
       </div>
 
-      {/* ── Navigation ── */}
-      <div style={{display:'flex',alignItems:'center',gap:8,margin:'7px 0 4px',flexShrink:0,flexWrap:'wrap'}}>
-        <button onClick={()=>setStep(x=>Math.max(0,x-1))} className="jd-btn-ghost"
-          disabled={step===0} style={{opacity:step===0?.35:1,cursor:step===0?'not-allowed':'pointer'}}>
-          <ChevronLeft size={14}/>{tl('flowPrev')||'Anterior'}
-        </button>
-        <button onClick={()=>setStep(x=>Math.min(N-1,x+1))} className="jd-btn"
-          disabled={step===N-1} style={{opacity:step===N-1?.5:1,cursor:step===N-1?'not-allowed':'pointer',minWidth:96}}>
-          {tl('flowNext')||'Próximo'}<ChevronRight size={14}/>
-        </button>
-        <span style={{fontSize:12.5,color:C.ink3}}>Passo <b style={{color:C.ink}}>{step+1}</b> de {N}</span>
-        {cur.branches&&<span style={{fontSize:11.5,color:'#7C3AED',fontWeight:600,display:'flex',alignItems:'center',gap:3}}><GitBranch size={12}/>{cur.branches.length} bifurcações</span>}
-        {cur.isLoop&&<span style={{fontSize:11.5,color:'#C05621',fontWeight:700}}>↺ Loop de ativação</span>}
-
-        {/* Legend */}
-        <div style={{display:'flex',gap:8,marginLeft:'auto',flexWrap:'wrap'}}>
-          {[{c:C.green,d:false,l:'Happy path'},{c:C.green,d:true,l:'Ramo válido'},{c:'#D97706',d:true,l:'Erro/empty'},{c:'#C05621',d:true,l:'Loop/ativação'},{c:'#9CA3AF',d:false,l:'Exit'}].map((lg,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:3,fontSize:10,color:C.ink3}}>
-              <div style={{width:16,height:2,background:lg.d?'transparent':lg.c,border:lg.d?'1.5px dashed '+lg.c:'none',borderRadius:1}}/>
-              {lg.l}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Context panel ── */}
-      <div className="fluxo-ctx-area">
-        <div style={{display:'flex',gap:14,flexWrap:'wrap',background:C.page,padding:'12px 16px 16px'}}>
-
-          {/* Actor + desc */}
-          <div style={{flex:'1 1 240px',minWidth:200}}>
-            <div style={{display:'flex',alignItems:'center',gap:9,marginBottom:9}}>
-              <Avatar who={cur.who} size={34}/>
-              <div>
-                <div style={{fontSize:14,fontWeight:700}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</div>
-                <div style={{fontSize:11,color:C.ink3,marginTop:1}}>{cur.t} · {cur.time}</div>
-              </div>
-            </div>
-            <div style={{display:'flex',flexWrap:'wrap',gap:5,marginBottom:9}}>
-              <Pill bg={canalCor(cur.canal).bg} fg={canalCor(cur.canal).fg}><MessageCircle size={10}/>Canal: {cur.canal}</Pill>
-              <Pill bg="#E3F2FD" fg="#1565C0"><Monitor size={10}/>Plataforma: {cur.platform}</Pill>
-              {cur.supportType&&<Pill bg={/Automatizado/.test(cur.supportType)?'#EDE7F6':'#F0FDF4'} fg={/Automatizado/.test(cur.supportType)?'#6A1B9A':'#15803D'}>
-                {/Automatizado/.test(cur.supportType)?<Radio size={10}/>:<Users size={10}/>}{cur.supportType}
-              </Pill>}
-            </div>
-            <div style={{fontSize:13,color:C.ink2,lineHeight:1.7}}>{cur.desc}</div>
-          </div>
-
-          {/* Message card */}
-          <div style={{flex:'0 0 auto',minWidth:190,maxWidth:260}}>
-            <div style={{fontSize:10.5,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:5}}>Mensagem do momento</div>
-            <div style={{background:C.waIn,border:'1px solid '+C.line,borderRadius:10,padding:11,boxShadow:'var(--shadow-sm)'}}>
-              <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:7}}><Avatar who={cur.who} size={20}/><span style={{fontSize:12,fontWeight:600}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</span></div>
-              <div style={{fontSize:12.5,color:C.ink,background:cur.out?C.waOut:'#f0f2f0',borderRadius:8,padding:'7px 9px',lineHeight:1.45}}>{cur.msg}</div>
+      {/* ── Selected node detail panel ── */}
+      {selN&&(
+        <div style={{marginTop:8,padding:'12px 16px',background:C.page,border:'1.5px solid '+(NODE_COLORS[selN.type]||NODE_COLORS.alt).stroke,borderRadius:10,display:'flex',gap:14,alignItems:'flex-start',flexShrink:0}}>
+          <span style={{fontSize:22,flexShrink:0}}>{selN.icon}</span>
+          <div style={{flex:1}}>
+            <div style={{fontSize:14,fontWeight:800,color:(NODE_COLORS[selN.type]||NODE_COLORS.alt).text,marginBottom:2}}>{selN.label}</div>
+            <div style={{fontSize:12,color:C.ink3,marginBottom:4}}>{selN.sub}{selN.actor?' · '+ACTOR_CONF[selN.actor].label:''}{selN.time?' · '+selN.time:''}</div>
+            <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
+              {selN.actor&&<Pill bg={ACTOR_CONF[selN.actor].color+'18'} fg={ACTOR_CONF[selN.actor].color}>{ACTOR_CONF[selN.actor].emoji} {ACTOR_CONF[selN.actor].label}</Pill>}
+              <Pill bg={(NODE_COLORS[selN.type]||NODE_COLORS.alt).fill} fg={(NODE_COLORS[selN.type]||NODE_COLORS.alt).text}>{selN.type==='decision'?'Ponto de decisão':selN.type==='happy'?'Happy path':selN.type==='loop'?'Loop de ativação':selN.type==='error'?'Erro/edge case':selN.type.startsWith('exit')?'Exit':'Alternativo'}</Pill>
             </div>
           </div>
-
-          {/* Branches */}
-          {cur.branches&&(
-            <div style={{flex:'0 0 auto',minWidth:200,maxWidth:310}}>
-              <div style={{fontSize:10.5,fontWeight:700,color:'#7C3AED',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:5,display:'flex',alignItems:'center',gap:4}}><GitBranch size={11}/>Caminhos possíveis</div>
-              <div style={{display:'flex',flexDirection:'column',gap:5}}>
-                {cur.branches.map((b,i)=>{
-                  const COL={happy:{bg:'#F0FDF4',bd:'#86EFAC',fg:'#15803D'},alt:{bg:'#F9FAFB',bd:'#E5E7EB',fg:'#374151'},error:{bg:'#FEF3C7',bd:'#FCD34D',fg:'#92400E'},empty:{bg:'#FFFBEB',bd:'#FDE68A',fg:'#7B3F00'},loop:{bg:'#FFF7ED',bd:'#FDBA74',fg:'#C05621'}}[b.type]||{bg:'#F9FAFB',bd:'#E5E7EB',fg:'#374151'};
-                  return(
-                    <div key={i} style={{background:COL.bg,border:'1px solid '+COL.bd,borderRadius:7,padding:'6px 10px'}}>
-                      <div style={{fontSize:11.5,fontWeight:700,color:COL.fg,marginBottom:1}}>{b.icon} {b.label}</div>
-                      <div style={{fontSize:10.5,color:C.ink3,lineHeight:1.4}}>{b.desc}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          <button onClick={()=>setSelNode(null)} style={{background:'none',border:'none',cursor:'pointer',color:C.ink3,fontSize:16}}>✕</button>
         </div>
+      )}
 
-        {/* Edge cases strip */}
-        <div style={{borderTop:'1px solid '+C.line,padding:'7px 16px',display:'flex',gap:6,flexWrap:'wrap',background:'#FFFBF0',alignItems:'center'}}>
-          <span style={{fontSize:10,fontWeight:700,color:'#92400E',textTransform:'uppercase',letterSpacing:'.06em',flexShrink:0}}>Edge cases:</span>
-          {EDGE_CASES.map((e,i)=>(
-            <span key={i} style={{display:'inline-flex',alignItems:'center',gap:3,background:'#fff',border:'1px solid #FDE68A',borderRadius:5,padding:'2px 7px',fontSize:10,color:'#92400E'}}>
-              {e.icon} {e.label} — <b>{e.tag}</b>
-            </span>
-          ))}
-        </div>
+      {/* ── Keyboard hint ── */}
+      <div style={{marginTop:4,fontSize:10.5,color:C.ink4,flexShrink:0}}>
+        Clique em qualquer nó para ver o detalhe · ramos alternativos sempre visíveis · toggle "Só happy path" para focar no fluxo principal
       </div>
     </div>
   );
@@ -2796,7 +2953,19 @@ function App(){
   /* Active steps based on language */
   const ACTIVE_S = lang==='es' ? STEPS_ES : lang==='en' ? STEPS_EN : STEPS;
 
-  const totalFor=k=>{if(k==='fluxo')return 0;const cu=chat.customer.length;if(k==='produtor')return cu;if(k==='dealer')return cu+chat.dealer.length;if(k==='field')return cu+chat.field.length;return cu+chat.dealer.length+chat.field.length;};
+  const totalFor=k=>{
+    if(k==='fluxo') return 0;
+    if(k==='produtor') return chat.customer.filter(m=>!m.n).length;
+    // dealer sees only messages relevant to dealer (from csc or system milestone events)
+    const dealerMsgs=chat.customer.filter(m=>!m.n&&(m.f==='csc'||m.f==='bot'||m.f==='produtor')).length;
+    if(k==='dealer') return dealerMsgs+chat.dealer.length;
+    // field only sees messages when field is involved (field messages or visit confirmed)
+    const fieldInvolved=flags.agenda!=null||chat.customer.some(m=>m.f==='field');
+    const fieldMsgs=fieldInvolved?chat.customer.filter(m=>!m.n&&m.f==='field').length+chat.field.length:0;
+    if(k==='field') return fieldMsgs;
+    // deere sees dealer+field channels
+    return chat.dealer.length+chat.field.length;
+  };
   useEffect(()=>{setSeen(s=>({...s,[tab]:totalFor(tab)}));},[tab,chat]);
   const unseen=k=>Math.max(0,totalFor(k)-seen[k]);
 
