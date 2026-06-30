@@ -117,6 +117,15 @@
     .step-current{border-color:var(--jd-green-600)!important;background:var(--jd-green-50)!important;animation:pulse-ring 2s ease-out infinite}
     .step-future{opacity:.3}
 
+    /* ── Demo guide numbered steps ── */
+    .demo-step-num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:20px;background:var(--jd-green-600);color:#fff;font-size:11px;font-weight:800;flex-shrink:0}
+    /* ── Action button base ── */
+    .action-btn{text-align:left;background:#fff;border:1.5px solid var(--jd-green-600);color:var(--jd-green-700);border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;transition:all 150ms;width:100%;font-family:'Barlow',sans-serif}
+    .action-btn:hover{background:var(--jd-green-50)}
+    /* ── Next-tab prompt ── */
+    @keyframes pulse-arrow{0%,100%{transform:translateX(0)}50%{transform:translateX(3px)}}
+    .next-tab-arrow{animation:pulse-arrow 1.4s ease-in-out infinite}
+
     /* ── Responsive panel fixes ── */
     @media(max-width:1150px){
       .dealer-panel-side{flex:0 0 290px!important}
@@ -1183,20 +1192,22 @@ function TurnoBanner({on,waitingFor,lang}){
 /* Decisions (non-WA contexts) */
 function Decisions({opts,role,choose,waiting,busy,lang}){
   const tl=key=>tg(lang,key);
-  if(busy) return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Radio size={13} style={{color:C.green}}/>{tl('prodWaiting')}</div>;
+  if(busy) return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Radio size={14} style={{color:C.green}}/>{tl('prodWaiting')}</div>;
   const mine=opts.filter(o=>o.role===role);
   if(mine.length) return (
-    <div style={{display:'flex',flexDirection:'column',gap:6}}>
-      <div style={{fontSize:10,fontWeight:700,color:C.green,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:2}}>{tl('decYourTurn')}</div>
+    <div style={{display:'flex',flexDirection:'column',gap:7}}>
+      <div style={{fontSize:10,fontWeight:700,color:C.green,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:2,display:'flex',alignItems:'center',gap:5}}>
+        <span style={{width:6,height:6,borderRadius:6,background:C.green,display:'inline-block'}}/>{tl('decYourTurn')}
+      </div>
       {mine.map((o,i)=>(
-        <button key={i} onClick={()=>choose(o)} className="opt-btn" style={{textAlign:'left',background:C.card,border:'1px solid '+C.green,color:C.greenD,borderRadius:6,padding:'10px 13px',fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8,transition:'all 150ms'}}>
-          <span>{o.label}</span><ChevronRight size={15}/>
+        <button key={i} onClick={()=>choose(o)} className="opt-btn action-btn">
+          <span>{o.label}</span><ChevronRight size={14}/>
         </button>
       ))}
     </div>
   );
-  if(waiting.length) return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Clock size={13}/>{tl('turnWaiting')} <b style={{color:C.ink2}}>{waiting.map(w=>ROLE_NAME[w]).join(' / ')}</b></div>;
-  return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Check size={13} style={{color:C.ok}}/>{tl('decClosed')}</div>;
+  if(waiting.length) return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Clock size={14}/>{tl('turnWaiting')} <b style={{color:C.ink2}}>{waiting.map(w=>ROLE_NAME[w]).join(' / ')}</b></div>;
+  return <div style={{fontSize:12.5,color:C.ink3,display:'flex',alignItems:'center',gap:6,padding:'8px 0'}}><Check size={14} style={{color:C.ok}}/>{tl('decClosed')}</div>;
 }
 
 /* Coord channel */
@@ -1274,7 +1285,7 @@ function DocResources({role,onSend,sentDocs,lang}){
         <div style={{padding:'8px 14px',borderTop:'1px solid '+C.line2}}>
           <button onClick={()=>setExpanded(e=>!e)} style={{...bGhost,fontSize:11.5,width:'100%',justifyContent:'center'}}>
             {expanded?tl('showLess'):tl('seeAll')+' '+docs.length+' '+tl('recsStr')}
-            <ChevronDown size={13} style={{transform:expanded?'rotate(180deg)':'none',transition:'transform 150ms'}}/>
+            <ChevronDown size={14} style={{transform:expanded?'rotate(180deg)':'none',transition:'transform 150ms'}}/>
           </button>
         </div>
       )}
@@ -1292,7 +1303,7 @@ function CollapsibleCard({title,icon,children,defaultOpen=true,accent,scrollH}){
         style={{width:'100%',background:open?C.page:'#fff',borderBottom:open?'1px solid '+C.line:'none',padding:'10px 14px',display:'flex',alignItems:'center',gap:6,border:'none',cursor:'pointer',transition:'background 150ms'}}
         onMouseEnter={e=>e.currentTarget.style.background='#F0EFED'}
         onMouseLeave={e=>e.currentTarget.style.background=open?C.page:'#fff'}>
-        {Ic&&<Ic size={13} style={{color:accent||C.green,flexShrink:0}}/>}
+        {Ic&&<Ic size={14} style={{color:accent||C.green,flexShrink:0}}/>}
         <span style={{fontSize:13,fontWeight:700,flex:1,textAlign:'left',color:C.ink}}>{title}</span>
         <ChevronDown size={14} style={{color:C.ink3,transform:open?'rotate(180deg)':'none',transition:'transform 250ms ease',flexShrink:0}}/>
       </button>
@@ -1518,10 +1529,10 @@ function VProdutor({lang='pt',log,opts,choose,waiting,busy,typing,turno,onWrite,
               <div style={{display:'flex',flexDirection:'column',gap:7}}>
                 {prodChips.map((o,i)=>(
                   <button key={i} onClick={()=>choose(o)}
-                    style={{textAlign:'left',background:'#fff',border:'1.5px solid '+C.green,color:C.greenD,borderRadius:8,padding:'10px 13px',fontSize:14,fontWeight:600,cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',gap:8,transition:'all 150ms',width:'100%'}}
+                    className="action-btn"
                     onMouseEnter={e=>{e.currentTarget.style.background=C.greenL}}
                     onMouseLeave={e=>{e.currentTarget.style.background='#fff'}}>
-                    <span>{o.label}</span><ChevronRight size={15}/>
+                    <span>{o.label}</span><ChevronRight size={14}/>
                   </button>
                 ))}
               </div>
@@ -1531,23 +1542,31 @@ function VProdutor({lang='pt',log,opts,choose,waiting,busy,typing,turno,onWrite,
           </div>
         )}
         {screen==='chat'&&nextActor&&NEXT_TAB[nextActor]&&setTab&&(
-          <div style={{border:'1px solid #C8E6C0',borderRadius:10,background:'#EDF7EA',padding:'14px 16px'}}>
-            <div style={{fontSize:11,fontWeight:700,color:C.greenD,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:8}}>{tl('prodNextStep')}</div>
-            <div style={{fontSize:13,color:C.ink2,marginBottom:10,lineHeight:1.4}}><b>{ROLE_NAME[nextActor]}</b> {tl('prodActorWaiting')}</div>
-            <button onClick={()=>setTab(NEXT_TAB[nextActor])} style={{width:'100%',background:C.green,color:'#fff',border:'none',borderRadius:7,padding:'9px 12px',fontSize:13,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,transition:'background 150ms'}}
+          <div style={{border:'1.5px solid #86EFAC',borderRadius:10,background:'linear-gradient(135deg,#EDF7EA,#F0FFF4)',padding:'14px 16px',boxShadow:'0 2px 8px rgba(54,124,43,.12)'}}>
+            <div style={{fontSize:10,fontWeight:800,color:C.greenD,textTransform:'uppercase',letterSpacing:'.09em',marginBottom:6,display:'flex',alignItems:'center',gap:5}}>
+              <span style={{width:16,height:16,borderRadius:16,background:C.green,display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:9,color:'#fff',fontWeight:900}}>→</span>
+              {tl('prodNextStep')}
+            </div>
+            <div style={{fontSize:13,color:C.ink2,marginBottom:10,lineHeight:1.4}}><b style={{color:C.greenD}}>{ROLE_NAME[nextActor]}</b> {tl('prodActorWaiting')}</div>
+            <button onClick={()=>setTab(NEXT_TAB[nextActor])} style={{width:'100%',background:C.green,color:'#fff',border:'none',borderRadius:8,padding:'11px 14px',fontSize:13.5,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,transition:'background 150ms',letterSpacing:'.01em'}}
               onMouseEnter={e=>e.currentTarget.style.background=C.greenD}
               onMouseLeave={e=>e.currentTarget.style.background=C.green}>
-              <ExternalLink size={13}/>{NEXT_LABEL[nextActor]}
+              {NEXT_LABEL[nextActor]}<ChevronRight size={14} className="next-tab-arrow"/>
             </button>
           </div>
         )}
         {screen==='list'&&(
-          <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,padding:'14px 16px',boxShadow:'var(--shadow-sm)'}}>
-            <div style={{fontSize:12,color:C.ink3,lineHeight:1.7}}>
-              <b style={{color:C.ink2,display:'block',marginBottom:6}}>{tl('demoHowTitle')}</b>
-              1. {tl('demoStep1')}<br/>
-              2. {tl('demoStep2')}<br/>
-              3. {tl('demoStep3')}
+          <div style={{border:'1.5px solid '+C.green,borderRadius:10,background:'linear-gradient(135deg,#EDF7EA,#F0FFF4)',padding:'16px',boxShadow:'0 2px 8px rgba(54,124,43,.1)'}}>
+            <div style={{fontSize:11,fontWeight:800,color:C.greenD,textTransform:'uppercase',letterSpacing:'.08em',marginBottom:10,display:'flex',alignItems:'center',gap:6}}>
+              <span style={{fontSize:14}}>👋</span>{tl('demoHowTitle')}
+            </div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              {[tl('demoStep1'),tl('demoStep2'),tl('demoStep3')].map((s,i)=>(
+                <div key={i} style={{display:'flex',alignItems:'flex-start',gap:9,fontSize:12.5,color:C.ink2,lineHeight:1.4}}>
+                  <span style={{width:20,height:20,borderRadius:20,background:C.green,color:'#fff',fontSize:11,fontWeight:800,display:'inline-flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>{i+1}</span>
+                  {s}
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -2070,10 +2089,10 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
                   </div>
                   <button onClick={a.ctaFn} style={{
                     background:cols.btn,color:cols.fg,border:'1.5px solid '+cols.border,
-                    borderRadius:7,padding:'6px 13px',fontSize:11.5,fontWeight:700,cursor:'pointer',
-                    flexShrink:0,transition:'all 150ms',display:'flex',alignItems:'center',gap:4,whiteSpace:'nowrap',
+                    borderRadius:7,padding:'7px 14px',fontSize:11.5,fontWeight:700,cursor:'pointer',
+                    flexShrink:0,transition:'all 150ms',display:'flex',alignItems:'center',gap:5,whiteSpace:'nowrap',
                   }}>
-                    {a.cta}<ChevronRight size={12}/>
+                    {a.cta}<ChevronRight size={14}/>
                   </button>
                 </div>
               );
@@ -2085,7 +2104,7 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
         <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
           <button onClick={()=>setZona3Open(o=>!o)} style={{width:'100%',background:C.page,borderBottom:zona3Open?'1px solid '+C.line:'none',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,border:'none',cursor:'pointer',transition:'background 150ms'}}
             onMouseEnter={e=>e.currentTarget.style.background='#F0EFED'} onMouseLeave={e=>e.currentTarget.style.background=C.page}>
-            <Activity size={13} style={{color:C.green}}/>
+            <Activity size={14} style={{color:C.green}}/>
             <span style={{fontSize:13,fontWeight:700,flex:1,textAlign:'left'}}>Operação ao vivo · {casos.filter(c=>c.live||['Alta'].includes(c.prio)).length} casos ativos</span>
             <ChevronDown size={14} style={{color:C.ink3,transform:zona3Open?'rotate(180deg)':'none',transition:'transform 250ms'}}/>
           </button>
@@ -2132,7 +2151,7 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
         <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
           <button onClick={()=>setZona4Open(o=>!o)} style={{width:'100%',background:C.page,borderBottom:zona4Open?'1px solid '+C.line:'none',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,border:'none',cursor:'pointer',transition:'background 150ms'}}
             onMouseEnter={e=>e.currentTarget.style.background='#F0EFED'} onMouseLeave={e=>e.currentTarget.style.background=C.page}>
-            <BarChart3 size={13} style={{color:C.ink3}}/>
+            <BarChart3 size={14} style={{color:C.ink3}}/>
             <span style={{fontSize:13,fontWeight:700,flex:1,textAlign:'left',color:C.ink}}>Diagnóstico · analítica</span>
             <ChevronDown size={14} style={{color:C.ink3,transform:zona4Open?'rotate(180deg)':'none',transition:'transform 250ms'}}/>
           </button>
@@ -2675,11 +2694,15 @@ function Fluxo({lang='pt'}){
   return(
     <div className="fluxo-wrap" style={{userSelect:'none'}}>
       {/* ── Toolbar ── */}
-      <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8,flexShrink:0,flexWrap:'wrap'}}>
+      <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6,flexShrink:0,flexWrap:'wrap'}}>
         <div style={{flex:1,minWidth:0}}>
           <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:1}}>{tl('flowHow')||'Como funciona'}</div>
           <div style={{fontSize:14,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",textTransform:'uppercase',lineHeight:1.1}}>
-            Fluxo completo · João Mendes · "AutoTrac não engata" · todos os caminhos visíveis
+            Fluxo completo · João Mendes · “AutoTrac não engata” · todos os caminhos visíveis
+          </div>
+          <div style={{fontSize:11,color:C.ink3,marginTop:3,display:'flex',alignItems:'center',gap:5}}>
+            <span style={{fontSize:10}}>👆</span>Clique em qualquer nó para ver o detalhe do momento ·
+            <span style={{fontSize:10}}>🔀</span>Alterne entre REATIVO e PROATIVO
           </div>
         </div>
         <div style={{display:'flex',gap:6,flexShrink:0,flexWrap:'wrap'}}>
@@ -2688,17 +2711,17 @@ function Fluxo({lang='pt'}){
             {k:'proativo',e:'🤖',l:'B) PROATIVO',r:'18%',rb:'#DCFCE7',rc:'#15803D',hi:true}
           ].map(opt=>(
             <button key={opt.k} onClick={()=>setEntry(opt.k)}
-              style={{display:'flex',alignItems:'center',gap:5,background:entry===opt.k?C.greenL:'#fff',border:'1.5px solid '+(entry===opt.k?C.green:'#E5E7EB'),borderRadius:7,padding:'6px 12px',cursor:'pointer',fontSize:11.5,fontWeight:600,position:'relative',transition:'all 150ms'}}>
+              style={{display:'flex',alignItems:'center',gap:5,background:entry===opt.k?C.greenL:'#fff',border:'1.5px solid '+(entry===opt.k?C.green:'#E5E7EB'),borderRadius:7,padding:'7px 13px',cursor:'pointer',fontSize:11.5,fontWeight:600,position:'relative',transition:'all 150ms',boxShadow:entry===opt.k?'0 1px 4px rgba(54,124,43,.15)':'none'}}>
               {opt.hi&&<span style={{position:'absolute',top:-7,right:-7,fontSize:8,fontWeight:800,background:'#15803D',color:'#fff',padding:'1px 5px',borderRadius:8}}>+18%</span>}
               {opt.e} {opt.l}
-              <span style={{fontSize:9,fontWeight:800,background:opt.rb,color:opt.rc,padding:'1px 5px',borderRadius:4,marginLeft:2}}>{opt.r}</span>
+              <span style={{fontSize:9,fontWeight:800,background:opt.rb,color:opt.rc,padding:'1px 6px',borderRadius:4,marginLeft:2}}>{opt.r}</span>
             </button>
           ))}
           {/* Edge filter */}
-          <div style={{display:'flex',border:'1px solid #E5E7EB',borderRadius:7,overflow:'hidden'}}>
+          <div style={{display:'flex',border:'1.5px solid #E5E7EB',borderRadius:7,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
             {[['all','Todos os caminhos'],['happy','Só happy path']].map(([k,l])=>(
               <button key={k} onClick={()=>setShowEdge(k)}
-                style={{background:showEdge===k?C.side:'#fff',color:showEdge===k?'#fff':C.ink2,border:'none',padding:'6px 11px',cursor:'pointer',fontSize:11,fontWeight:600,transition:'all 130ms'}}>
+                style={{background:showEdge===k?C.side:'#fff',color:showEdge===k?'#fff':C.ink2,border:'none',padding:'7px 12px',cursor:'pointer',fontSize:11,fontWeight:600,transition:'all 130ms'}}>
                 {l}
               </button>
             ))}
@@ -2706,33 +2729,37 @@ function Fluxo({lang='pt'}){
         </div>
       </div>
 
-      {/* ── Legend ── */}
-      <div style={{display:'flex',gap:12,marginBottom:8,flexShrink:0,flexWrap:'wrap',alignItems:'center'}}>
-        <span style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.06em'}}>Legenda:</span>
-        {[
-          {col:'#22C55E',dash:false,label:'Happy path'},
-          {col:'#94A3B8',dash:true, label:'Ramo alternativo'},
-          {col:'#F59E0B',dash:true, label:'Erro / empty state'},
-          {col:'#EA580C',dash:true, label:'Loop de ativação'},
-          {col:'#22C55E',dash:false,label:'Exit OK',fill:'#F0FDF4'},
-          {col:'#D97706',dash:false,label:'Exit escalado',fill:'#FEF9EE'},
-        ].map((l,i)=>(
-          <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
-            <svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke={l.col} strokeWidth="2" strokeDasharray={l.dash?'5,2':'none'}/></svg>
-            {l.label}
-          </div>
-        ))}
-        {[
-          {fill:'#F0FDF4',stroke:'#22C55E',label:'Ação OK'},
-          {fill:'#F5F3FF',stroke:'#7C3AED',label:'Decisão'},
-          {fill:'#FFFBEB',stroke:'#D97706',label:'Erro/empty'},
-          {fill:'#FFF7ED',stroke:'#EA580C',label:'Loop'},
-        ].map((l,i)=>(
-          <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
-            <div style={{width:14,height:14,borderRadius:3,background:l.fill,border:'1.5px solid '+l.stroke}}/>
-            {l.label}
-          </div>
-        ))}
+      {/* ── Legend + hint bar ── */}
+      <div style={{display:'flex',gap:0,marginBottom:6,flexShrink:0,alignItems:'stretch',borderRadius:8,overflow:'hidden',border:'1px solid '+C.line,background:C.card,boxShadow:'var(--shadow-sm)'}}>
+        <div style={{display:'flex',gap:12,padding:'7px 14px',alignItems:'center',flexWrap:'wrap',flex:1}}>
+          <span style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.06em',flexShrink:0}}>Legenda:</span>
+          {[
+            {col:'#22C55E',dash:false,label:'Happy path'},
+            {col:'#94A3B8',dash:true, label:'Alternativo'},
+            {col:'#F59E0B',dash:true, label:'Erro/edge'},
+            {col:'#EA580C',dash:true, label:'Loop'},
+          ].map((l,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
+              <svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke={l.col} strokeWidth="2" strokeDasharray={l.dash?'5,2':'none'}/></svg>
+              {l.label}
+            </div>
+          ))}
+          {[
+            {fill:'#F0FDF4',stroke:'#22C55E',label:'Ação OK'},
+            {fill:'#F5F3FF',stroke:'#7C3AED',label:'Decisão'},
+            {fill:'#FFFBEB',stroke:'#D97706',label:'Erro'},
+            {fill:'#FFF7ED',stroke:'#EA580C',label:'Loop'},
+          ].map((l,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
+              <div style={{width:13,height:13,borderRadius:3,background:l.fill,border:'1.5px solid '+l.stroke}}/>
+              {l.label}
+            </div>
+          ))}
+        </div>
+        <div style={{background:'#F0FDF4',borderLeft:'1px solid #BBF7D0',padding:'7px 14px',display:'flex',alignItems:'center',gap:7,flexShrink:0}}>
+          <span style={{fontSize:12}}>👆</span>
+          <span style={{fontSize:11.5,fontWeight:600,color:C.greenD,whiteSpace:'nowrap'}}>Clique em qualquer nó para ver o detalhe</span>
+        </div>
       </div>
 
       {/* ── Scrollable SVG canvas ── */}
@@ -2924,8 +2951,20 @@ function Fluxo({lang='pt'}){
       )}
 
       {/* ── Keyboard hint ── */}
-      <div style={{marginTop:4,fontSize:10.5,color:C.ink4,flexShrink:0}}>
-        Clique em qualquer nó para ver o detalhe · ramos alternativos sempre visíveis · toggle "Só happy path" para focar no fluxo principal
+      <div style={{marginTop:5,flexShrink:0,display:'flex',alignItems:'center',gap:12,background:C.page,borderRadius:7,padding:'6px 14px',border:'1px solid '+C.line}}>
+        <span style={{fontSize:10.5,color:C.ink3,flex:1}}>
+          <b style={{color:C.ink2}}>Dica:</b> Clique em qualquer nó para ver o detalhe do momento · toggle "Só happy path" para focar no fluxo principal
+        </span>
+        <div style={{display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
+          {[{col:'#22C55E',label:'Happy path ok'},
+            {col:'#7C3AED',label:'Decisão'},
+            {col:'#EA580C',label:'Loop'},
+          ].map((l,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:3,fontSize:10,color:C.ink3}}>
+              <div style={{width:8,height:8,borderRadius:2,background:l.col}}/>{l.label}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -3132,14 +3171,23 @@ function App(){
         </button>
       </div>
       {/* Modo Demo banner */}
-      <div style={{background:'#EDF7EA',borderBottom:'1px solid #C8E6C0',padding:'6px 24px',display:'flex',alignItems:'center',gap:0,flexShrink:0}}>
-        <div style={{display:'flex',alignItems:'center',gap:8,paddingRight:20,borderRight:'1px solid #C8E6C0',marginRight:20,flexShrink:0}}>
-          <span style={{fontSize:10,fontWeight:800,letterSpacing:'.1em',color:C.greenD,textTransform:'uppercase',background:C.greenL,border:'1px solid #A5D6A7',borderRadius:4,padding:'2px 7px'}}>{tg(lang,'modeDemo')}</span>
+      <div style={{background:'linear-gradient(90deg,#EDF7EA 0%,#F0FFF4 100%)',borderBottom:'2px solid #C8E6C0',padding:'7px 24px',display:'flex',alignItems:'center',gap:0,flexShrink:0,boxShadow:'0 1px 4px rgba(54,124,43,.08)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,paddingRight:20,borderRight:'1.5px solid #A5D6A7',marginRight:20,flexShrink:0}}>
+          <span style={{fontSize:10,fontWeight:900,letterSpacing:'.12em',color:'#fff',textTransform:'uppercase',background:C.green,borderRadius:5,padding:'3px 9px',boxShadow:'0 1px 4px rgba(54,124,43,.25)'}}>{tg(lang,'modeDemo')}</span>
         </div>
-        <span style={{fontSize:13,color:C.ink2,lineHeight:1.4}}>
-          {tg(lang,'demoBanner')}
-          <span style={{color:C.ink3,marginLeft:8}}>{tg(lang,'demoBannerSub')}</span>
-        </span>
+        <div style={{display:'flex',alignItems:'center',gap:16,flex:1,minWidth:0}}>
+          <span style={{fontSize:12.5,color:C.ink2,lineHeight:1.4,flex:1,minWidth:0}}>
+            {tg(lang,'demoBanner')}
+            <span style={{color:C.ink3,marginLeft:6,fontSize:12}}>{tg(lang,'demoBannerSub')}</span>
+          </span>
+          <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+            {[['fluxo','tabFluxo','👁️'],['produtor','tabProdutor','👨‍🌾'],['dealer','tabDealer','🖥️'],['field','tabField','🏃'],['deere','tabDeere','🛡️']].map(([k,tlk,emoji])=>(
+              <div key={k} style={{display:'flex',alignItems:'center',gap:3,fontSize:11,fontWeight:tab===k?700:500,color:tab===k?C.greenD:C.ink3,background:tab===k?'rgba(54,124,43,.1)':'transparent',borderRadius:5,padding:'2px 7px',border:tab===k?'1px solid #A5D6A7':'1px solid transparent',transition:'all 150ms'}}>
+                <span style={{fontSize:10}}>{emoji}</span>{tg(lang,tlk)}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       {/* Content — viewport-locked, no page scroll */}
       <div style={{padding:tab==='fluxo'?'4px 24px 0':'12px 24px',maxWidth:1320,margin:'0 auto',flex:1,minHeight:0,overflow:'hidden',boxSizing:'border-box',display:'flex',flexDirection:'column'}}>
