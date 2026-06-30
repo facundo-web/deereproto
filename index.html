@@ -172,7 +172,7 @@ const MessageCircle=IC('MessageCircle'), Bot=IC('Bot'), Wrench=IC('Wrench'),
   Lock=IC('Lock'), Users=IC('Users'), Radio=IC('Radio'), LayoutGrid=IC('LayoutGrid'),
   Inbox=IC('Inbox'), Server=IC('Server'), CheckCircle=IC('CheckCircle'),
   XCircle=IC('XCircle'), Bell=IC('Bell'), Building2=IC('Building2'),
-  Smartphone=IC('Smartphone'), Monitor=IC('Monitor'),
+  Smartphone=IC('Smartphone'), Monitor=IC('Monitor'), BarChart3=IC('BarChart3'),
   Play=IC('Play'), Pause=IC('Pause'), Search=IC('Search'), MoreVertical=IC('MoreVertical'),
   Camera=IC('Camera'), Mic=IC('Mic'), Smile=IC('Smile'), Video=IC('Video'),
   ArrowLeft=IC('ArrowLeft'), Signal=IC('Signal'), Wifi=IC('Wifi'), Battery=IC('Battery'),
@@ -1303,6 +1303,86 @@ function CollapsibleCard({title,icon,children,defaultOpen=true,accent,scrollH}){
   );
 }
 
+/* ─── Case Timeline ───────────────────────────────────── */
+const CASE_TL=[
+  {time:'08:11',who:'produtor',label:'Produtor inicia contato',     detail:'AutoTrac não engata na X9'},
+  {time:'08:12',who:'bot',     label:'Triagem automática',           detail:'Ramo 4 · prioridade Alta · #BR-4471'},
+  {time:'08:17',who:'csc',     label:'CSC assumiu o caso',           detail:'Carlos verificou telemetria'},
+  {time:'08:22',who:'csc',     label:'Diagnóstico: sinal StarFire 2/5',detail:'Proposta de visita enviada'},
+  {time:'08:26',who:'produtor',label:'Visita confirmada',            detail:'Amanhã 9h · talhão norte'},
+  {time:'10:48',who:'field',   label:'Field Trainer recalibrou',     detail:'Antena reposicionada · AutoTrac 100% ✅'},
+  {time:'11:00',who:'csc',     label:'Fechamento do caso',           detail:'CSAT coletado · caso encerrado'},
+  {time:'D+7',  who:'bot',     label:'Follow-up de adoção',          detail:'Confirmar uso do AutoTrac e AutoPath'},
+];
+function CaseTimeline({flags,step}){
+  const resolved=!!flags.resolved;
+  const fieldDone=['sResolvido','sCsat','sFim','sFimRuim'].includes(step)||resolved;
+  const items=CASE_TL.map((it,i)=>{
+    let done=i<=4;
+    if(i===5) done=fieldDone;
+    if(i===6) done=['sCsat','sFim','sFimRuim'].includes(step)||resolved;
+    if(i===7) done=flags.csat!=null;
+    return{...it,done};
+  });
+  const curIdx=items.reduce((a,it,i)=>it.done?i:a,-1);
+  return(
+    <div style={{padding:'8px 14px 4px'}}>
+      {items.map((it,i)=>{
+        const isCur=i===curIdx+1&&!it.done;
+        return(
+          <div key={i} style={{display:'flex',gap:10,paddingBottom:i<items.length-1?10:4,position:'relative'}}>
+            {i<items.length-1&&<div style={{position:'absolute',left:9,top:20,width:2,height:'calc(100% - 4px)',background:it.done?C.green:C.line2}}/>}
+            <div style={{width:20,height:20,borderRadius:20,background:it.done?C.green:isCur?C.warnBg:C.line2,border:'2px solid '+(it.done?C.green:isCur?C.warn:C.line),display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,zIndex:1,transition:'all 300ms'}}>
+              {it.done&&<Check size={10} style={{color:'#fff'}}/>}
+              {isCur&&<span style={{width:6,height:6,borderRadius:6,background:C.warn,display:'block'}}/>}
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:1}}>
+                <span style={{fontSize:11.5,fontWeight:600,color:it.done?C.ink:isCur?C.warn:C.ink3}}>{it.label}</span>
+                {isCur&&<Pill bg={C.warnBg} fg={C.warn}>atual</Pill>}
+              </div>
+              <div style={{fontSize:10.5,color:C.ink3,lineHeight:1.4}}>{it.detail}</div>
+              <div style={{fontSize:10,color:C.ink4,marginTop:1}}>{it.time}</div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─── Customer 360 ────────────────────────────────────── */
+function Customer360({flags,step}){
+  const journeyStage=flags.resolved?'Usage & Retention — Resolvido':
+    ['sConfirmado','sCaminho','sEmCampo'].includes(step)?'Adoption — Visita em campo':
+    ['sHum','sRemoto','sInfo','sAgenda'].includes(step)?'Adoption — Suporte ativo':
+    ['s1','s2'].includes(step)?'Adoption — 1º uso / problema':'Delivery & Grounding';
+  const stageColor=flags.resolved?{bg:C.okBg,fg:C.ok}:{bg:C.warnBg,fg:C.warn};
+  const rows=[
+    ['Produtor','João Mendes'],['Fazenda','Santa Mônica · Sorriso/MT'],
+    ['Equipamento','X9 Combine · 2023'],['Tecnologias','AutoTrac · AutoPath · StarFire'],
+    ['Licença AutoPath',<span style={{color:flags.resolved?C.ink3:C.warn,fontWeight:600}}>Vence em 30 dias 🔑</span>],
+    ['OpsCenter','Ativo · Fazenda cadastrada ✅'],['Horas de uso','248 h (este equipamento)'],
+    ['Dealer','AgroBaggio · Carlos (CSC)'],
+    ['Último CSAT',flags.csat?'⭐'.repeat(flags.csat)+' ('+flags.csat+'/5)':'—'],
+  ];
+  return(
+    <div>
+      <div style={{padding:'6px 14px 8px',borderBottom:'1px solid '+C.line2,display:'flex',alignItems:'center',gap:6}}>
+        <Pill bg={stageColor.bg} fg={stageColor.fg}>{journeyStage}</Pill>
+      </div>
+      <div style={{padding:'8px 14px 10px'}}>
+        {rows.map(([k,v],i)=>(
+          <div key={i} style={{display:'flex',gap:8,padding:'4px 0',borderBottom:i<rows.length-1?'1px solid '+C.line2:'none'}}>
+            <span style={{fontSize:11,fontWeight:600,color:C.ink3,width:112,flexShrink:0}}>{k}</span>
+            <span style={{fontSize:11.5,color:C.ink,flex:1}}>{v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* Phone Shell — fixed 844px height */
 function PhoneShell({children,bg}){
   return (
@@ -1838,119 +1918,260 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
 
   function Visao(){
     const [filter,setFilter]=React.useState('todos');
+    const [zona3Open,setZona3Open]=React.useState(true);
+    const [zona4Open,setZona4Open]=React.useState(true);
+
+    /* ── Data ── */
     const casos=[
-      {id:'BR-4471',cliente:'João Mendes',dealer:'AgroBaggio',tipo:'campo',prio:'Alta',estado:s.t,canal:'WhatsApp',live:true,tempo:'08:11',problema:'AutoTrac não engata · X9',ec:s},
-      {id:'BR-4468',cliente:'Sandra Rocha',dealer:'Tracbel',tipo:'bot',prio:'Média',estado:'Aberto',canal:'WhatsApp',live:false,tempo:'07:42',problema:'OpsCenter não sincroniza',ec:{bg:C.warnBg,fg:C.warn}},
-      {id:'BR-4455',cliente:'Marcos Dias',dealer:'AgroBaggio',tipo:'agente',prio:'Alta',estado:'Escalado',canal:'WhatsApp',live:false,tempo:'06:20',problema:'AutoPath — licença bloqueada',ec:{bg:C.critBg,fg:C.crit}},
-      {id:'BR-4447',cliente:'Paulo Neto',dealer:'Tracbel',tipo:'bot',prio:'Baixa',estado:'Resolvido',canal:'WhatsApp',live:false,tempo:'ons.',problema:'Relatório de área não gera',ec:{bg:C.okBg,fg:C.ok}},
-      {id:'BR-4439',cliente:'Ana Lima',dealer:'JD Cuiabá',tipo:'campo',prio:'Alta',estado:'Em campo',canal:'App',live:false,tempo:'ons.',problema:'StarFire sem sinal · soja',ec:{bg:C.warnBg,fg:C.warn}},
-      {id:'BR-4431',cliente:'Carlos Faria',dealer:'AgroBaggio',tipo:'agente',prio:'Baixa',estado:'Aguardando',canal:'WhatsApp',live:false,tempo:'seg.',problema:'Setup inicial AutoTrac 5000',ec:{bg:C.line2,fg:C.ink3}},
+      {id:'BR-4471',cliente:'João Mendes',  dealer:'AgroBaggio',tipo:'campo', prio:'Alta',  estado:s.t,         canal:'WhatsApp',live:true, tempo:'08:11',problema:'AutoTrac não engata · X9',     ec:s},
+      {id:'BR-4468',cliente:'Sandra Rocha', dealer:'Tracbel',    tipo:'bot',   prio:'Média', estado:'Aberto',    canal:'WhatsApp',live:false,tempo:'07:42',problema:'OpsCenter não sincroniza',        ec:{bg:C.warnBg,fg:C.warn}},
+      {id:'BR-4455',cliente:'Marcos Dias',  dealer:'AgroBaggio', tipo:'agente',prio:'Alta',  estado:'Escalado',  canal:'WhatsApp',live:false,tempo:'06:20',problema:'AutoPath — licença bloqueada',    ec:{bg:C.critBg,fg:C.crit}},
+      {id:'BR-4447',cliente:'Paulo Neto',   dealer:'Tracbel',    tipo:'bot',   prio:'Baixa', estado:'Resolvido', canal:'WhatsApp',live:false,tempo:'ons.', problema:'Relatório de área não gera',     ec:{bg:C.okBg,fg:C.ok}},
+      {id:'BR-4439',cliente:'Ana Lima',     dealer:'JD Cuiabá',  tipo:'campo', prio:'Alta',  estado:'Em campo',  canal:'App',     live:false,tempo:'ons.', problema:'StarFire sem sinal · soja',      ec:{bg:C.warnBg,fg:C.warn}},
+      {id:'BR-4431',cliente:'Carlos Faria', dealer:'AgroBaggio', tipo:'agente',prio:'Baixa', estado:'Aguardando',canal:'WhatsApp',live:false,tempo:'seg.', problema:'Setup inicial AutoTrac 5000',    ec:{bg:C.line2,fg:C.ink3}},
     ];
     const TIPO_ICON={'bot':'🤖','agente':'👤','campo':'🏃'};
     const TIPO_LABEL={'bot':'Automação','agente':'Agente','campo':'Campo'};
     const TIPO_COLOR={'bot':{bg:'#EDE9FE',fg:'#6D28D9'},'agente':{bg:C.line2,fg:C.ink2},'campo':{bg:C.okBg,fg:C.greenD}};
     const PRIO_COLOR={'Alta':{c:C.crit},'Média':{c:C.warn},'Baixa':{c:C.ink3}};
-    const FILTERS=[['todos','Todos','16'],['campo','🏃 Em campo','2'],['alta','🔴 Alta prior.','3'],['bot','🤖 Automação','8'],['agente','👤 Agente','5']];
+    const FILTERS=[['todos','Todos',16],['campo','🏃 Em campo',2],['alta','🔴 Alta prior.',3],['bot','🤖 Automação',8],['agente','👤 Agente',5]];
     const filtered=filter==='todos'?casos:filter==='alta'?casos.filter(c=>c.prio==='Alta'):casos.filter(c=>c.tipo===filter);
+
+    /* ── Rede health ── */
+    const riscoCount=2; /* Sandra + Marcos em risco crítico */
+    const netHealth=stalled?'red':riscoCount>=2?'amber':'green';
+    const healthLabel={green:'Rede saudável',amber:'Rede em atenção',red:'Atenção crítica'}[netHealth];
+    const healthColor={green:C.green,amber:C.warn,red:C.crit}[netHealth];
+    const healthBg={green:'#F0FDF4',amber:'#FFFBEB',red:'#FEF2F2'}[netHealth];
+    const healthBorder={green:'#86EFAC',amber:'#FDE68A',red:'#FECACA'}[netHealth];
+    const healthReasons=stalled
+      ? ['Caso BR-4471 parado — SLA em risco','2 clientes com adoção zero','1 follow-up de CSAT pendente']
+      : ['2 clientes de alto valor em risco de churn de adoção','Licença AutoPath de João Mendes vence em 30 dias'];
+
+    /* ── KPI data ── */
+    const KPIS=[
+      {icon:'⚡',label:'Subutilização ativa',value:'312',sub:'clientes com tech sem uso',meta:'↓ meta: <280',trend:'↑ +14',trendOk:false,tone:'crit',hi:true,sec:'carteira'},
+      {icon:'📈',label:'Adoção D+7',value:'87%',sub:'usam após visita',meta:'meta: 85%',trend:'↑ +2pp',trendOk:true,tone:'ok',sec:'acomp'},
+      {icon:'🌐',label:'Resolvido remoto',value:'64%',sub:'sem visita de campo',meta:'meta: 60%',trend:'↑ +4pp',trendOk:true,tone:'ok',sec:'consultas'},
+      {icon:'⭐',label:'CSAT médio',value:'4.5',sub:'de 5.0 · rede',meta:'meta: 4.3',trend:'→ estável',trendOk:true,tone:'ok',sec:'carteira'},
+      {icon:'⚡',label:'1ª resposta média',value:'2 min',sub:'tempo até 1ª msg',meta:'meta: 3 min',trend:'→ estável',trendOk:true,tone:'ok',sec:'plataforma'},
+      {icon:'📋',label:'Casos abertos',value:'17',sub:'em andamento',meta:'128 hoje (+12%)',trend:'↑ volume',trendOk:null,tone:'',sec:'consultas'},
+    ];
+
+    /* ── Ação prioritária ── */
+    const ACOES=[
+      {cor:'crit',icon:'🔴',cliente:'Sandra Rocha',dealer:'Tracbel',motivo:'Em risco · nunca usou AutoTrac após 90 dias',cta:'Disparar contato proativo',ctaFn:()=>setSec('carteira')},
+      {cor:'crit',icon:'🔴',cliente:'Marcos Dias', dealer:'AgroBaggio',motivo:'0% adoção · 3 meses pós-entrega',cta:'Disparar contato proativo',ctaFn:()=>setSec('carteira')},
+      {cor:'amber',icon:'🟡',cliente:'João Mendes', dealer:'AgroBaggio',motivo:'Licença AutoPath vence em 30 dias',cta:'Agendar renovação',ctaFn:()=>setSec('acomp')},
+      {cor:'amber',icon:'🟡',cliente:'Paulo Neto',  dealer:'Tracbel',   motivo:'CSAT 2 · follow-up pendente',cta:'Reabrir follow-up',ctaFn:()=>setSec('consultas')},
+    ];
+    const ACOR={crit:{bg:'#FEF2F2',border:'#FECACA',fg:C.crit,btn:'#FEE2E2',btnFg:C.crit},amber:{bg:'#FFFBEB',border:'#FDE68A',fg:'#92400E',btn:'#FEF3C7',btnFg:'#92400E'}};
+
     return (
-      <div style={{display:'flex',flexDirection:'column',gap:16}}>
-        {/* KPI strip */}
-        <div className="kpi-grid">
-          <KPI label="Atendimentos hoje" value="128" sub="+12% vs ontem" Icon={MessageCircle}/>
-          <KPI label="1ª resposta média" value="2 min" sub="meta: 3 min" Icon={Clock} tone="ok"/>
-          <KPI label="Resolvido remoto" value="64%" sub="sem visita de campo" Icon={Bot} tone="ok"/>
-          <KPI label="CSAT médio" value={csatMed} sub="de 5.0 · rede" Icon={Star} tone="ok"/>
-          <KPI label="Casos abertos" value="17" sub="em andamento" Icon={Inbox}/>
-          <KPI label="Adoção D+7" value="87%" sub="usam após visita" Icon={TrendingUp} tone="ok"/>
-        </div>
-        {/* Active case highlight */}
-        <div style={{border:'1px solid '+(stalled?C.crit:C.green),borderRadius:8,padding:'12px 16px',background:stalled?C.critBg:C.okBg,display:'flex',alignItems:'center',gap:14}}>
-          <span style={{fontSize:18}}>📡</span>
-          <div style={{flex:1}}>
-            <div style={{fontSize:12,fontWeight:700,color:stalled?C.crit:C.greenD,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:2}}>Caso ao vivo agora</div>
-            <div style={{fontSize:15,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif"}}>João Mendes · #BR-4471 · AutoTrac · AgroBaggio · {s.t}</div>
+      <div style={{display:'flex',flexDirection:'column',gap:14}}>
+
+        {/* ═══ ZONA 0 — SAÚDE DA REDE ═══ */}
+        <div style={{borderRadius:10,padding:'12px 16px',background:healthBg,border:'1.5px solid '+healthBorder,display:'flex',alignItems:'flex-start',gap:14,boxShadow:'var(--shadow-sm)'}}>
+          {/* Semáforo */}
+          <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4,flexShrink:0}}>
+            {['green','amber','red'].map(l=>(
+              <div key={l} style={{width:14,height:14,borderRadius:14,background:netHealth===l?{green:C.green,amber:C.warn,red:C.crit}[l]:'#E5E7EB',boxShadow:netHealth===l?'0 0 8px '+{green:C.green,amber:C.warn,red:C.crit}[l]+'88':'none',transition:'all 200ms'}}/>
+            ))}
           </div>
-          <button onClick={()=>setSec('acomp')} className="jd-btn-ghost" style={{fontSize:12.5}}>Acompanhar <ChevronRight size={14}/></button>
-        </div>
-        {/* Case list */}
-        <div style={{border:'1px solid '+C.line,borderRadius:8,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
-          <div style={{background:C.page,borderBottom:'1px solid '+C.line,padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
-            <span style={{fontSize:13,fontWeight:700,flex:1}}>Casos ativos · rede</span>
-            <div style={{display:'flex',gap:6}}>
-              {FILTERS.map(([k,label,n])=>(
-                <button key={k} onClick={()=>setFilter(k)} style={{background:filter===k?C.side:'#fff',color:filter===k?'#fff':C.ink2,border:'1px solid '+(filter===k?C.side:C.line),borderRadius:20,padding:'4px 11px',fontSize:11.5,fontWeight:600,cursor:'pointer',transition:'all 130ms'}}>
-                  {label}
-                </button>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:10,fontWeight:800,letterSpacing:'.08em',textTransform:'uppercase',color:healthColor,marginBottom:3}}>Saúde da rede · agora</div>
+            <div style={{fontSize:15,fontWeight:700,color:healthColor,marginBottom:6,fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em'}}>
+              {healthLabel} — {riscoCount} {riscoCount===1?'cliente de alto valor em risco de churn':'clientes de alto valor em risco de churn'}
+            </div>
+            <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+              {healthReasons.map((r,i)=>(
+                <span key={i} style={{fontSize:11,background:'rgba(255,255,255,.7)',border:'1px solid '+healthBorder,borderRadius:5,padding:'2px 8px',color:healthColor}}>
+                  {i===0?'⚠':i===1?'🔑':'📌'} {r}
+                </span>
               ))}
             </div>
           </div>
-          <div>
-            {filtered.map((c,i)=>(
-              <div key={c.id} style={{display:'flex',alignItems:'center',gap:12,padding:'11px 16px',borderBottom:i<filtered.length-1?'1px solid '+C.line2:'none',background:c.live?'#FAFFF8':'#fff',transition:'background 130ms'}}
-                onMouseEnter={e=>e.currentTarget.style.background=c.live?'#F3FBF0':C.page}
-                onMouseLeave={e=>e.currentTarget.style.background=c.live?'#FAFFF8':'#fff'}>
-                <div style={{width:6,height:6,borderRadius:6,background:c.live?C.green:C.line,boxShadow:c.live?'0 0 0 3px '+C.okBg:'none',flexShrink:0}}/>
-                <div style={{width:72,flexShrink:0}}>
-                  <div style={{fontSize:11.5,fontWeight:700,color:C.ink}}>{c.id}</div>
-                  <div style={{fontSize:10.5,color:C.ink3}}>{c.tempo}</div>
+          <div style={{flexShrink:0,textAlign:'right'}}>
+            <div style={{fontSize:9.5,color:C.ink3,marginBottom:2}}>Última sync</div>
+            <div style={{fontSize:11,fontWeight:700,color:C.ink}}>há 4 min</div>
+          </div>
+        </div>
+
+        {/* ═══ ZONA 1 — KPIs COM ESTADO ═══ */}
+        <div>
+          <div style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.08em',marginBottom:7,display:'flex',alignItems:'center',gap:5}}>
+            <TrendingUp size={11}/>Indicadores estratégicos
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(170px,1fr))',gap:10}}>
+            {KPIS.map((k,i)=>{
+              const toneColor={ok:C.ok,crit:C.crit,'':C.ink2}[k.tone]||C.ink2;
+              const toneBg={ok:'#F0FDF4',crit:'#FEF2F2','':'#F9FAFB'}[k.tone]||'#F9FAFB';
+              return(
+                <div key={i} onClick={()=>setSec(k.sec)} style={{
+                  borderRadius:10,padding:'12px 14px',
+                  background:k.hi?'linear-gradient(135deg,#FEF2F2,#FFF7ED)':toneBg,
+                  border:'1.5px solid '+(k.hi?C.crit:k.tone==='ok'?'#86EFAC':C.line),
+                  cursor:'pointer',transition:'all 150ms',
+                  boxShadow:k.hi?'0 2px 12px rgba(220,38,38,.12)':'var(--shadow-sm)',
+                }}
+                  onMouseEnter={e=>e.currentTarget.style.transform='translateY(-2px)'}
+                  onMouseLeave={e=>e.currentTarget.style.transform='none'}>
+                  {k.hi&&<div style={{fontSize:9,fontWeight:800,color:C.crit,textTransform:'uppercase',letterSpacing:'.08em',marginBottom:3}}>KPI central · projeto</div>}
+                  <div style={{fontSize:22,fontWeight:800,color:k.hi?C.crit:toneColor,fontFamily:"'Barlow Condensed',sans-serif",lineHeight:1,marginBottom:2}}>{k.value}</div>
+                  <div style={{fontSize:11,fontWeight:700,color:k.hi?'#92400E':C.ink,marginBottom:1}}>{k.label}</div>
+                  <div style={{fontSize:10,color:C.ink3,marginBottom:5}}>{k.sub}</div>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                    <span style={{fontSize:9.5,color:C.ink4}}>{k.meta}</span>
+                    <span style={{fontSize:10,fontWeight:700,color:k.trendOk===false?C.crit:k.trendOk?C.ok:C.ink3}}>{k.trend}</span>
+                  </div>
                 </div>
-                <div style={{flex:1,minWidth:0}}>
-                  <div style={{fontSize:13,fontWeight:600,color:C.ink}}>{c.cliente}</div>
-                  <div style={{fontSize:11.5,color:C.ink3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.problema}</div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ═══ ZONA 2 — ONDE AGIR HOJE ═══ */}
+        <div>
+          <div style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.08em',marginBottom:7,display:'flex',alignItems:'center',gap:5}}>
+            <Bell size={11}/>Onde agir hoje · prioridade risco × valor
+          </div>
+          <div style={{display:'flex',flexDirection:'column',gap:6}}>
+            {ACOES.map((a,i)=>{
+              const cols=ACOR[a.cor];
+              return(
+                <div key={i} style={{borderRadius:9,padding:'10px 14px',background:cols.bg,border:'1px solid '+cols.border,display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
+                  <span style={{fontSize:14,flexShrink:0}}>{a.icon}</span>
+                  <div style={{flex:1,minWidth:160}}>
+                    <div style={{fontSize:13,fontWeight:700,color:cols.fg,lineHeight:1.2}}>{a.cliente} <span style={{fontWeight:400,color:C.ink3}}>· {a.dealer}</span></div>
+                    <div style={{fontSize:11.5,color:C.ink2,marginTop:1}}>{a.motivo}</div>
+                  </div>
+                  <button onClick={a.ctaFn} style={{
+                    background:cols.btn,color:cols.fg,border:'1.5px solid '+cols.border,
+                    borderRadius:7,padding:'6px 13px',fontSize:11.5,fontWeight:700,cursor:'pointer',
+                    flexShrink:0,transition:'all 150ms',display:'flex',alignItems:'center',gap:4,whiteSpace:'nowrap',
+                  }}>
+                    {a.cta}<ChevronRight size={12}/>
+                  </button>
                 </div>
-                <div style={{flexShrink:0,width:90,fontSize:11.5,color:C.ink3}}>{c.dealer}</div>
-                <div style={{flexShrink:0}}>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ═══ ZONA 3 — OPERAÇÃO AO VIVO (colapsável) ═══ */}
+        <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
+          <button onClick={()=>setZona3Open(o=>!o)} style={{width:'100%',background:C.page,borderBottom:zona3Open?'1px solid '+C.line:'none',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,border:'none',cursor:'pointer',transition:'background 150ms'}}
+            onMouseEnter={e=>e.currentTarget.style.background='#F0EFED'} onMouseLeave={e=>e.currentTarget.style.background=C.page}>
+            <Activity size={13} style={{color:C.green}}/>
+            <span style={{fontSize:13,fontWeight:700,flex:1,textAlign:'left'}}>Operação ao vivo · {casos.filter(c=>c.live||['Alta'].includes(c.prio)).length} casos ativos</span>
+            <ChevronDown size={14} style={{color:C.ink3,transform:zona3Open?'rotate(180deg)':'none',transition:'transform 250ms'}}/>
+          </button>
+          <div style={{maxHeight:zona3Open?'1200px':'0px',overflow:'hidden',transition:'max-height 320ms ease-in-out,opacity 200ms',opacity:zona3Open?1:0}}>
+
+            {/* Live case highlight */}
+            <div style={{margin:'12px 14px 0',borderRadius:8,padding:'11px 14px',background:stalled?C.critBg:C.okBg,border:'1px solid '+(stalled?C.crit:C.green),display:'flex',alignItems:'center',gap:12}}>
+              <span style={{fontSize:17}}>📡</span>
+              <div style={{flex:1}}>
+                <div style={{fontSize:10,fontWeight:800,color:stalled?C.crit:C.greenD,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:1}}>Caso ao vivo agora</div>
+                <div style={{fontSize:14,fontWeight:700,fontFamily:"'Barlow Condensed',sans-serif"}}>João Mendes · #BR-4471 · AutoTrac · AgroBaggio · {s.t}</div>
+              </div>
+              <button onClick={()=>setSec('acomp')} className="jd-btn-ghost" style={{fontSize:12,flexShrink:0}}>Acompanhar<ChevronRight size={13}/></button>
+            </div>
+
+            {/* Case table */}
+            <div style={{padding:'12px 14px 14px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10,flexWrap:'wrap'}}>
+                <span style={{fontSize:12,fontWeight:700,color:C.ink}}>Casos ativos · rede</span>
+                <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+                  {FILTERS.map(([k,label,n])=>(
+                    <button key={k} onClick={()=>setFilter(k)} style={{background:filter===k?C.side:'#fff',color:filter===k?'#fff':C.ink2,border:'1px solid '+(filter===k?C.side:C.line),borderRadius:16,padding:'3px 10px',fontSize:11,fontWeight:600,cursor:'pointer',transition:'all 130ms'}}>
+                      {label} <span style={{opacity:.7}}>{n}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {filtered.map((c,i)=>(
+                <div key={c.id} style={{display:'flex',alignItems:'center',gap:10,padding:'9px 0',borderBottom:i<filtered.length-1?'1px solid '+C.line2:'none',flexWrap:'wrap'}}>
+                  <div style={{width:6,height:6,borderRadius:6,background:c.live?C.green:C.line,boxShadow:c.live?'0 0 0 3px '+C.okBg:'none',flexShrink:0}}/>
+                  <div style={{width:68,flexShrink:0}}><div style={{fontSize:11,fontWeight:700}}>{c.id}</div><div style={{fontSize:9.5,color:C.ink3}}>{c.tempo}</div></div>
+                  <div style={{flex:1,minWidth:100}}><div style={{fontSize:12.5,fontWeight:600}}>{c.cliente}</div><div style={{fontSize:10.5,color:C.ink3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{c.problema}</div></div>
+                  <div style={{flexShrink:0,width:82,fontSize:11,color:C.ink3}}>{c.dealer}</div>
                   <Pill bg={TIPO_COLOR[c.tipo].bg} fg={TIPO_COLOR[c.tipo].fg}>{TIPO_ICON[c.tipo]} {TIPO_LABEL[c.tipo]}</Pill>
-                </div>
-                <div style={{flexShrink:0}}>
-                  <span style={{fontSize:11.5,fontWeight:700,color:PRIO_COLOR[c.prio].c}}>{c.prio}</span>
-                </div>
-                <div style={{flexShrink:0}}>
+                  <span style={{fontSize:11,fontWeight:700,color:PRIO_COLOR[c.prio].c,flexShrink:0,width:34}}>{c.prio}</span>
                   <Pill bg={c.ec.bg} fg={c.ec.fg}>{c.estado}</Pill>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Bottom row: alerts + consultations */}
-        <div style={{display:'flex',gap:14,flexWrap:'wrap'}}>
-          <div style={{flex:'1 1 280px',border:'1px solid '+C.line,borderRadius:8,padding:14,background:C.card,boxShadow:'var(--shadow-sm)'}}>
-            <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10,display:'flex',alignItems:'center',gap:5}}>
-              <Bell size={12}/>Alertas de retenção
+              ))}
             </div>
-            {[
-              {label:'Sandra Rocha · Tracbel',detail:'Em risco · nunca usou AutoTrac',c:C.crit,bg:C.critBg},
-              {label:'Marcos Dias · AgroBaggio',detail:'0% adoção · 3 meses pós-entrega',c:C.crit,bg:C.critBg},
-              {label:'Paulo Neto · Tracbel',detail:'CSAT 2 · follow-up pendente',c:C.warn,bg:C.warnBg},
-              {label:'João Mendes · AgroBaggio',detail:'Licença AutoPath vence em 30 dias',c:C.warn,bg:C.warnBg},
-            ].map((a,i)=>(
-              <div key={i} style={{display:'flex',gap:8,alignItems:'flex-start',padding:'6px 8px',borderRadius:6,background:a.bg,marginBottom:i<3?4:0}}>
-                <AlertTriangle size={12} style={{color:a.c,flexShrink:0,marginTop:1}}/>
-                <div>
-                  <div style={{fontSize:11.5,fontWeight:600,color:a.c}}>{a.label}</div>
-                  <div style={{fontSize:10.5,color:C.ink3}}>{a.detail}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{flex:'1 1 220px',border:'1px solid '+C.line,borderRadius:8,padding:14,background:C.card,boxShadow:'var(--shadow-sm)'}}>
-            <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:10}}>Consultas por ramo · hoje</div>
-            {[['Ramo 1 · Relatórios',28,'#5E7038'],['Ramo 2 · Sinal',41,C.green],['Ramo 3 · Setup',33,C.greenD],['Ramo 4 · Orientação',26,'#767471']].map((r,i)=>(
-              <div key={i} style={{marginBottom:7}}>
-                <div style={{display:'flex',justifyContent:'space-between',marginBottom:2}}>
-                  <span style={{fontSize:11.5,color:C.ink2}}>{r[0]}</span>
-                  <span style={{fontSize:11,fontWeight:700,color:C.ink3}}>{r[1]}</span>
-                </div>
-                <Bar v={r[1]} c={r[2]}/>
-              </div>
-            ))}
           </div>
         </div>
+
+        {/* ═══ ZONA 4 — DIAGNÓSTICO (colapsável) ═══ */}
+        <div style={{border:'1px solid '+C.line,borderRadius:10,background:C.card,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
+          <button onClick={()=>setZona4Open(o=>!o)} style={{width:'100%',background:C.page,borderBottom:zona4Open?'1px solid '+C.line:'none',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,border:'none',cursor:'pointer',transition:'background 150ms'}}
+            onMouseEnter={e=>e.currentTarget.style.background='#F0EFED'} onMouseLeave={e=>e.currentTarget.style.background=C.page}>
+            <BarChart3 size={13} style={{color:C.ink3}}/>
+            <span style={{fontSize:13,fontWeight:700,flex:1,textAlign:'left',color:C.ink}}>Diagnóstico · analítica</span>
+            <ChevronDown size={14} style={{color:C.ink3,transform:zona4Open?'rotate(180deg)':'none',transition:'transform 250ms'}}/>
+          </button>
+          <div style={{maxHeight:zona4Open?'600px':'0px',overflow:'hidden',transition:'max-height 320ms ease-in-out,opacity 200ms',opacity:zona4Open?1:0}}>
+            <div style={{display:'flex',gap:14,padding:'14px',flexWrap:'wrap'}}>
+
+              {/* Ramos chart */}
+              <div style={{flex:'1 1 200px'}}>
+                <div style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:8,display:'flex',justifyContent:'space-between'}}>
+                  <span>Consultas por ramo · hoje</span>
+                  <span style={{color:C.ink,fontWeight:800}}>128 <span style={{color:C.ok,fontWeight:600}}>+12%</span></span>
+                </div>
+                {[
+                  ['Ramo 1 · Relatórios', 28, 22, '#5E7038'],
+                  ['Ramo 2 · Sinal',      41, 32, C.green],
+                  ['Ramo 3 · Setup',      33, 26, C.greenD],
+                  ['Ramo 4 · Orientação', 26, 20, '#767471'],
+                ].map(([label,val,pct,color],i)=>(
+                  <div key={i} style={{marginBottom:8}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                      <span style={{fontSize:11.5,color:C.ink2}}>{label}</span>
+                      <span style={{fontSize:11,fontWeight:700,color:C.ink3}}>{val} <span style={{color:C.ink4}}>({pct}%)</span></span>
+                    </div>
+                    <div style={{height:7,background:C.line2,borderRadius:4,overflow:'hidden'}}>
+                      <div style={{height:'100%',width:pct+'%',background:color,borderRadius:4,transition:'width 500ms ease'}}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Dealer distribution */}
+              <div style={{flex:'1 1 180px'}}>
+                <div style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:8}}>Distribuição por dealer</div>
+                {[
+                  {dealer:'AgroBaggio', n:54, pct:42, color:C.green},
+                  {dealer:'Tracbel',    n:38, pct:30, color:'#5E7038'},
+                  {dealer:'JD Cuiabá', n:36, pct:28, color:C.greenD},
+                ].map((d,i)=>(
+                  <div key={i} style={{marginBottom:8}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}>
+                      <span style={{fontSize:11.5,color:C.ink2}}>{d.dealer}</span>
+                      <span style={{fontSize:11,fontWeight:700,color:C.ink3}}>{d.n} ({d.pct}%)</span>
+                    </div>
+                    <div style={{height:7,background:C.line2,borderRadius:4,overflow:'hidden'}}>
+                      <div style={{height:'100%',width:d.pct+'%',background:d.color,borderRadius:4,transition:'width 500ms ease'}}/>
+                    </div>
+                  </div>
+                ))}
+                <div style={{marginTop:10,padding:'8px 10px',background:'#F0FDF4',borderRadius:7,border:'1px solid #BBF7D0',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <span style={{fontSize:11.5,fontWeight:700,color:C.greenD}}>Atendimentos hoje</span>
+                  <span style={{fontSize:14,fontWeight:800,color:C.greenD,fontFamily:"'Barlow Condensed',sans-serif"}}>128 <span style={{fontSize:10,color:C.ok}}>+12%</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     );
   }
 
-  function Carteira(){return (
+    function Carteira(){return (
     <div>
       <div style={{fontSize:12.5,color:C.ink3,marginBottom:12}}>Base monitorada · {CLIENTES.length} clientes · {CLIENTES.filter(c=>/risco|nunca/i.test(c.status)).length} em risco</div>
       <Tbl head={['Cliente','Região','Dealer','Tecnologia','Uso','CSAT','Estado']}
@@ -2144,189 +2365,409 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
 }
 
 /* ═══════════════════════════════════════════════════════
-   FLUXO SWIMLANE — viewport-locked
+   FLUXO SWIMLANE — redesign completo
 ═══════════════════════════════════════════════════════ */
-const FLANES=[
-  {k:'produtor',who:'produtor',t:'Produtor',s:'WhatsApp'},
-  {k:'bot',who:'bot',t:'Assistente Digital',s:'automação'},
-  {k:'csc',who:'csc',t:'Dealer · CSC',s:'painel'},
-  {k:'esp',who:'especialista',t:'Especialista',s:'telemetria'},
-  {k:'field',who:'field',t:'Field Trainer',s:'app + campo'},
-];
-const FLY={produtor:118,bot:184,csc:250,esp:316,field:384};
-const STG=[
-  {who:'produtor',lane:'produtor',t:'Inicia o contato',time:'08:11',canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Cliente',
-   desc:'O produtor abre o WhatsApp e seleciona a categoria do problema: Maquinaria 🚜, Software 💻 ou Administrativo 📋. Não é necessário descrever nada antes — o bot guia a triagem.',
-   msg:'Tenho um problema com maquinaria 🚜'},
-  {who:'bot',lane:'bot',t:'Identifica máquinas',time:'08:12',canal:'WhatsApp',platform:'JD Operations Support',supportType:'Automatizado',
-   branches:[{icon:'🚜',label:'X9 2024 selecionada',type:'bot'},  {icon:'🌾',label:'S770 2023 selecionada',type:'bot'},{icon:'✍️',label:'Digitou manualmente',type:'bot'}],
-   desc:'O Assistente Digital consulta o OpsCenter e identifica os equipamentos registrados do produtor. Apresenta a lista para seleção — sem supor qual máquina tem o problema. O produtor seleciona ou digita. Pode anexar foto do painel.',
-   msg:'Seus equipamentos: X9 2024 (AutoTrac), S770 2023. Qual está com problema?'},
-  {who:'bot',lane:'bot',t:'Triagem automática',time:'08:12',canal:'Automação',platform:'JD Operations Support',supportType:'Automatizado',
-   desc:'O Assistente Digital identifica a máquina, classifica o problema por categoria (maquinaria / software / administrativo) e abre o caso com ramo e prioridade — sem fila, sem espera.',
-   msg:'Registrei como AutoTrac não engata (Ramo 4). Caso #BR-4471 aberto.',
-   branches:[
-     {icon:'🤖',label:'Automação resolve',desc:'Bot entrega guia rápido → caso fechado em < 5 min'},
-     {icon:'👤',label:'Escala para agente',desc:'Bot identifica complexidade e chama CSC humano'}
-   ]},
-  {who:'csc',lane:'csc',t:'CSC entra na conversa',time:'08:17',canal:'Painel',platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
-   desc:'O CSC do dealer recebe alerta no painel, vê contexto completo (telemetria, histórico) e entra na conversa já informado.',
-   msg:'Carlos: Oi João, já tô vendo seu caso do AutoTrac.'},
-  {who:'especialista',lane:'esp',t:'Diagnóstico remoto',time:'08:20',canal:'Telemetria',platform:'Deere Connect / JDLink',supportType:'Especialista remoto',
-   desc:'O especialista remoto acessa a telemetria e identifica sinal StarFire fraco (2/5 barras). Sem necessidade de visita ainda.',
-   msg:'Sinal StarFire fraco (2/5). Provável posição de antena.'},
-  {who:'csc',lane:'csc',t:'Propõe solução',time:'08:22',canal:'Painel',platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
-   desc:'O dealer apresenta duas opções ao produtor: guia rápido (auto-atendimento) ou visita do Field Trainer.',
-   msg:'Posso mandar um guia ou agendar o Diego (Field Trainer) aí.',
-   branches:[
-     {icon:'📄',label:'Guia rápido (remoto)',desc:'Produtor resolve sozinho seguindo o documento → caso fechado remotamente'},
-     {icon:'🏃',label:'Visita Field Trainer',desc:'Diego vai ao talhão → diagnóstico presencial e recalibração'}
-   ]},
-  {who:'produtor',lane:'produtor',t:'Confirma visita',time:'08:26',ret:true,canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Cliente',
-   desc:'O produtor confirma a visita para o dia seguinte — ainda no WhatsApp, sem precisar trocar de canal.',
-   msg:'Perfeito! 9h tá ótimo ✅'},
-  {who:'field',lane:'field',t:'Recebe e agenda',time:'08:30',canal:'App de campo',platform:'JD Field App',supportType:'Humano – Field Trainer',
-   desc:'Diego recebe o ticket no app, confirma disponibilidade e agenda a visita automaticamente.',
-   msg:'Visita confirmada · amanhã 9h · talhão norte.'},
-  {who:'field',lane:'field',t:'A caminho',time:'09:00',canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Humano – Field Trainer',
-   desc:'Diego avisa o produtor diretamente pelo WhatsApp que está a caminho — mesmo canal que o produtor já usa.',
-   msg:'Oi João, estou saindo agora, chego em ~1h 🚙'},
-  {who:'produtor',lane:'produtor',t:'Responde e aguarda',time:'09:02',ret:true,canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Cliente',
-   desc:'João confirma e espera no talhão norte. Todo o fluxo acontece no canal dele, sem apps extras.',
-   msg:'Ótimo Diego! Te espero no talhão norte 👍'},
-  {who:'field',lane:'field',t:'Recalibra em campo',time:'10:48',canal:'Presencial',platform:'Presencial + Deere Connect',supportType:'Humano – Field Trainer',
-   desc:'Diego recalibra a antena e valida com uma passada completa. AutoTrac 100%. Resultado registrado no sistema.',
-   msg:'Recalibrado e validado. AutoTrac 100% 🌱'},
-  {who:'csc',lane:'csc',t:'Fecha o caso',time:'11:00',canal:'Painel',platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
-   desc:'O dealer recebe o report do Field, confere o CSAT e fecha o caso no painel com todas as ações registradas.',
-   msg:'Tudo resolvido! Fechando o caso #BR-4471.'},
-  {who:'produtor',lane:'produtor',t:'Follow-up D+7',time:'D+7',ret:true,canal:'WhatsApp',platform:'WhatsApp Business',supportType:'Automatizado',
-   desc:'Sete dias depois, o assistente confirma adoção. A Deere acompanha o uso real do AutoTrac pós-visita.',
-   msg:'Como está usando o AutoTrac? (uso confirmado: 87%)'},
-];
-const canalCor=c=>/WhatsApp/i.test(c)?{bg:'#DFF3E8',fg:'#1A7D4A'}:/Painel/i.test(c)?{bg:C.okBg,fg:C.greenD}:{bg:C.line2,fg:C.ink2};
 
-function Fluxo(){
-  const X=i=>60+i*152;const N=STG.length;
+/* ── Swimlanes ── */
+const FLANES=[
+  {k:'deere',   who:'deere',       t:'John Deere',        s:'visão cross · governança', color:'#365314'},
+  {k:'produtor',who:'produtor',    t:'Produtor',           s:'WhatsApp',                 color:'#1A7D4A'},
+  {k:'bot',     who:'bot',         t:'Assistente Digital', s:'automação',                color:'#6A1B9A'},
+  {k:'csc',     who:'csc',         t:'Dealer · CSC',       s:'painel',                   color:'#1565C0'},
+  {k:'esp',     who:'especialista',t:'Especialista',       s:'telemetria',               color:'#7B3F00'},
+  {k:'field',   who:'field',       t:'Field Trainer',      s:'app + campo',              color:'#C05621'},
+];
+
+const LANE_H=72;
+const FLY={deere:44,produtor:116,bot:188,csc:260,esp:332,field:404};
+const TOTAL_H=448;
+const NODE_W=148;
+const NODE_X=i=>80+i*NODE_W;
+
+const canalCor=c=>/WhatsApp/i.test(c)?{bg:'#DFF3E8',fg:'#1A7D4A'}:/Painel/i.test(c)?{bg:'#E3F2FD',fg:'#1565C0'}:/Telemetria/i.test(c)?{bg:'#FFF3E0',fg:'#7B3F00'}:/Presencial/i.test(c)?{bg:'#F3E8FF',fg:'#6D28D9'}:/Automação/i.test(c)?{bg:'#EDE7F6',fg:'#6A1B9A'}:{bg:'#F4F4F4',fg:'#555'};
+
+/* ── 13 happy-path nodes ── */
+const HAPPY=[
+  {id:'h0',who:'produtor',lane:'produtor',t:'Inicia o contato',time:'08:11',canal:'WhatsApp',
+   platform:'WhatsApp Business',supportType:'Cliente',
+   desc:'O produtor abre o WhatsApp e toca numa das categorias de problema — sem precisar descrever nada. O Assistente Digital guia toda a triagem desde o início.',
+   msg:'Tenho um problema com maquinaria 🚜',
+   branches:[
+     {type:'happy',icon:'📲',label:'REATIVO (este path)',desc:'Produtor inicia · conversão 2–3% · happy path continua'},
+     {type:'loop', icon:'🤖',label:'PROATIVO (entrada B)',desc:'Sistema detecta subutilização → aborda primeiro · conversão 18%'},
+   ]},
+  {id:'h1',who:'bot',lane:'bot',t:'Identifica máquinas',time:'08:12',canal:'WhatsApp',
+   platform:'JD Operations Support',supportType:'Automatizado',
+   desc:'O Assistente Digital consulta o OpsCenter e lista os equipamentos registrados. O produtor seleciona ou digita o modelo. Pode anexar foto do painel diretamente pelo WhatsApp.',
+   msg:'Seus equipamentos: 🚜 X9 2024 (AutoTrac) · 🌾 S770 2023. Qual está com problema?',
+   branches:[
+     {type:'happy',icon:'🚜',label:'Com telemetria (JDLink)',desc:'Diagnóstico remoto disponível → continua happy path'},
+     {type:'alt',  icon:'📷',label:'Sem JDLink — pede foto/vídeo',desc:'CSC recebe mídia → triagem manual sem telemetria'},
+     {type:'empty',icon:'🔑',label:'Ghost Login / sem acesso OpsCenter',desc:'Fluxo de recuperação de acesso → suporte especializado'},
+   ]},
+  {id:'h2',who:'bot',lane:'bot',t:'Triagem automática',time:'08:12',canal:'Automação',
+   platform:'JD Operations Support',supportType:'Automatizado',
+   desc:'O Assistente classifica o problema por arquétipo e abre o caso com ramo e prioridade. Nenhuma fila, nenhuma espera humana nesse momento.',
+   msg:'Caso #BR-4471 aberto · Ramo 4 · AutoTrac não engata · Prioridade Alta ⚡',
+   branches:[
+     {type:'happy',icon:'🔧',label:'Máquina / hardware → campo',desc:'Sinal StarFire fraco · continua para diagnóstico remoto'},
+     {type:'alt',  icon:'🔄',label:'Dados não sincronizados → remoto',desc:'Bot entrega guia de resync → EXIT: Resolvido sem visita'},
+     {type:'alt',  icon:'🐛',label:'Bug de software → Tier 2',desc:'Escala para Engenharia → EXIT conforme resposta'},
+   ]},
+  {id:'h3',who:'csc',lane:'csc',t:'CSC entra na conversa',time:'08:17',canal:'Painel',
+   platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
+   desc:'O CSC recebe alerta no painel com contexto completo (telemetria, histórico, jornada digital) e entra na conversa já informado — sem perguntar o que já foi registrado.',
+   msg:'Carlos: Oi João, já estou vendo seu caso do AutoTrac. Um segundo.'},
+  {id:'h4',who:'especialista',lane:'esp',t:'Diagnóstico remoto',time:'08:20',canal:'Telemetria',
+   platform:'Deere Connect / JDLink',supportType:'Especialista remoto',
+   desc:'O especialista acessa telemetria em tempo real e identifica sinal StarFire fraco (2/5 barras). Sem necessidade de deslocamento — diagnóstico conclusivo a distância.',
+   msg:'Sinal StarFire 2/5 barras. Provável posição de antena — diagnóstico conclusivo.',
+   branches:[
+     {type:'happy',icon:'✅',label:'Conclusivo → propõe solução',desc:'Diagnóstico claro · continua happy path'},
+     {type:'alt',  icon:'❓',label:'Não conclusivo → escala Tier 2',desc:'Engenharia aprofunda análise · não fecha sem resolução'},
+     {type:'empty',icon:'📡',label:'Máquina sem dados (sem JDLink)',desc:'Pede info ao produtor · não gera dead-end'},
+   ]},
+  {id:'h5',who:'csc',lane:'csc',t:'Propõe solução',time:'08:22',canal:'Painel',
+   platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
+   desc:'O dealer apresenta duas opções ao produtor: guia rápido (autoatendimento remoto) ou visita do Field Trainer com diagnóstico presencial.',
+   msg:'Posso te mandar um guia rápido ou agendar o Diego (Field Trainer) no talhão. O que prefere?',
+   branches:[
+     {type:'happy',icon:'🏃',label:'Aceita visita Field Trainer',desc:'Produtor confirma → agenda → Diego vai ao campo'},
+     {type:'alt',  icon:'📄',label:'Aceita guia rápido (remoto)',desc:'Produtor segue o documento → EXIT: Resolvido remoto'},
+     {type:'loop', icon:'🔁',label:'Recusa / adia',desc:'Loop de follow-up conservando contexto → reintento de proposta'},
+   ]},
+  {id:'h6',who:'produtor',lane:'produtor',t:'Confirma visita',time:'08:26',canal:'WhatsApp',
+   platform:'WhatsApp Business',supportType:'Cliente',ret:true,
+   desc:'O produtor confirma a visita para o dia seguinte — ainda no WhatsApp, sem precisar trocar de canal ou baixar nenhum app.',
+   msg:'Perfeito! Amanhã 9h no talhão norte ✅'},
+  {id:'h7',who:'field',lane:'field',t:'Recebe e agenda',time:'08:30',canal:'App de campo',
+   platform:'JD Field App',supportType:'Humano – Field Trainer',
+   desc:'Diego recebe o ticket no app com contexto completo, confirma disponibilidade e a visita é agendada automaticamente no sistema.',
+   msg:'Visita confirmada · amanhã 9h · talhão norte · AutoTrac #BR-4471 📋'},
+  {id:'h8',who:'field',lane:'field',t:'A caminho',time:'09:00',canal:'WhatsApp',
+   platform:'WhatsApp Business',supportType:'Humano – Field Trainer',
+   desc:'Diego avisa o produtor diretamente pelo WhatsApp que está a caminho — no mesmo canal que o produtor já usa, sem apps extras.',
+   msg:'Oi João, estou saindo agora, chego em ~1h 🚙'},
+  {id:'h9',who:'produtor',lane:'produtor',t:'Responde e aguarda',time:'09:02',canal:'WhatsApp',
+   platform:'WhatsApp Business',supportType:'Cliente',ret:true,
+   desc:'João confirma e espera no talhão norte. Todo o fluxo acontece no canal dele, sem nenhum app extra.',
+   msg:'Ótimo Diego! Te espero no talhão norte 👍'},
+  {id:'h10',who:'field',lane:'field',t:'Recalibra em campo',time:'10:48',canal:'Presencial',
+   platform:'Presencial + Deere Connect',supportType:'Humano – Field Trainer',
+   desc:'Diego reposiciona a antena, recalibra o receptor StarFire e valida com uma passada completa. Resultado registrado em tempo real no sistema.',
+   msg:'Recalibrado e validado. AutoTrac 100% 🌱',
+   branches:[
+     {type:'happy',icon:'✅',label:'Resolve em campo',desc:'AutoTrac 100% · fecha o caso → EXIT: Resolvido com visita'},
+     {type:'alt',  icon:'🔩',label:'Falta peça / problema mais profundo',desc:'Reagenda · escala para suporte especializado · sem dead-end'},
+     {type:'error',icon:'⚠️',label:'Solução não funciona pós-visita',desc:'Reabertura automática do caso · prioridade alta'},
+   ]},
+  {id:'h11',who:'csc',lane:'csc',t:'Fecha o caso',time:'11:00',canal:'Painel',
+   platform:'JD Operations Support · Painel CSC',supportType:'Humano – CSC',
+   desc:'O dealer recebe o report do Field Trainer, confere o CSAT e fecha o caso com todas as ações registradas — pronto para auditoria e follow-up da Deere.',
+   msg:'Caso #BR-4471 fechado ✅ CSAT coletado · relatório de campo registrado.'},
+  {id:'h12',who:'produtor',lane:'produtor',t:'Follow-up D+7',time:'D+7',canal:'WhatsApp',
+   platform:'WhatsApp Business',supportType:'Automatizado',ret:true,isLoop:true,
+   desc:'Sete dias depois o Assistente confirma adoção do AutoTrac. Se detectar subutilização de OUTRA tecnologia, dispara novo contato PROATIVO — fechando o loop reativo → proativo.',
+   msg:'Como está usando o AutoTrac? Uso confirmado: 87% ✅',
+   branches:[
+     {type:'happy',icon:'✅',label:'Confirma uso',desc:'Jornada concluída · indicadores atualizados na Deere'},
+     {type:'loop', icon:'↺',label:'Detecta subutilização → PROATIVO',desc:'Dispara novo contato personalizato · fecha o ciclo reativo → proativo'},
+   ]},
+];
+
+const EXITS=[
+  {id:'ex0',icon:'🟢',label:'Resolvido remoto',   desc:'< 15 min · sem visita',           color:'#1A7D4A'},
+  {id:'ex1',icon:'🟢',label:'Resolvido com visita',desc:'Field em campo · CSAT coletado',  color:'#1A7D4A'},
+  {id:'ex2',icon:'🟠',label:'Escalado s/ resolução',desc:'Tier 2 em andamento',             color:'#C05621'},
+  {id:'ex3',icon:'⚫',label:'Inválido / duplicado',desc:'Encerrado · CRM atualizado',       color:'#6B7280'},
+];
+
+const EDGE_CASES=[
+  {icon:'⚡',label:'Urgência: máquina parada na janela de plantio',tag:'Priorização automática'},
+  {icon:'🕐',label:'Fora de horário',tag:'Assistente 24h · escalona manhã'},
+  {icon:'📱',label:'IA não entende áudio ou foto',tag:'Fallback humano (CSC)'},
+  {icon:'🔀',label:'Múltiplos problemas na mesma conversa',tag:'Multi-chamado guiado pelo bot'},
+  {icon:'📋',label:'Caso duplicado (CEM em paralelo)',tag:'Deduplicação automática'},
+];
+
+const PROATIVO_NODE={
+  msg:'João, notei que o AutoPath ainda não foi ativado 🌾 Posso te ajudar agora?',
+  note:'Taxa de conversão PROATIVO: 18% vs REATIVO: 2–3%',
+};
+
+function Fluxo({lang='pt'}){
+  const tl=key=>tg(lang,key);
+  const [entry,setEntry]=useState('reativo');
   const [step,setStep]=useState(0);
   const scrollRef=useRef(null);
-  useEffect(()=>{const el=scrollRef.current;if(el)el.scrollTo({left:Math.max(0,X(step)-el.clientWidth/2),behavior:'smooth'});},[step]);
-  const segs=STG.slice(0,-1).map((n,i)=>({from:i,a:[X(i)+69,FLY[n.lane]],b:[X(i+1)-69,FLY[STG[i+1].lane]]}));
-  const plotW=X(N-1)+130;const pathd=(a,b)=>'M '+a[0]+' '+a[1]+' C '+(a[0]+48)+' '+a[1]+', '+(b[0]-48)+' '+b[1]+', '+b[0]+' '+b[1];
-  const cur=STG[step];const cc=canalCor(cur.canal);
-  const stCor=t=>/Automatizado/.test(t)?{bg:'#EDE7F6',fg:'#6A1B9A'}:/Field/.test(t)?{bg:'#FFF3E0',fg:'#E65100'}:/CSC/.test(t)?{bg:C.okBg,fg:C.greenD}:{bg:C.line2,fg:C.ink2};
-  return (
+  const N=HAPPY.length;
+  const cur=HAPPY[step];
+
+  useEffect(()=>{
+    const el=scrollRef.current;
+    if(el) el.scrollTo({left:Math.max(0,NODE_X(step)-el.clientWidth/2+60),behavior:'smooth'});
+  },[step]);
+
+  const plotW=NODE_X(N-1)+140;
+
+  const bezier=(ax,ay,bx,by)=>{
+    const c=Math.min(Math.abs(bx-ax)*0.44,58);
+    return 'M'+ax+' '+ay+' C'+(ax+c)+' '+ay+','+(bx-c)+' '+by+','+bx+' '+by;
+  };
+
+  const laneBg=k=>({
+    deere:'rgba(54,83,20,.05)',produtor:'rgba(26,125,74,.05)',
+    bot:'rgba(106,27,154,.04)',csc:'rgba(21,101,192,.04)',
+    esp:'rgba(123,63,0,.04)',field:'rgba(192,86,33,.05)',
+  }[k]||'transparent');
+
+  return(
     <div className="fluxo-wrap">
-      {/* Header */}
-      <div style={{marginBottom:10,flexShrink:0}}>
-        <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:3}}>Como funciona</div>
-        <h1 style={{fontSize:24,fontWeight:800,margin:'0 0 4px',fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em',textTransform:'uppercase'}}>O fluxo completo — clique em cada momento</h1>
-        <div style={{fontSize:13.5,color:C.ink2,lineHeight:1.5,maxWidth:700}}>O produtor sempre <b>inicia</b> o contato. Cada ator entra no canal certo. A Deere acompanha tudo em tempo real.</div>
+      {/* ── Header ── */}
+      <div style={{marginBottom:8,flexShrink:0}}>
+        <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:2}}>
+          {tl('flowHow')||'Como funciona'}
+        </div>
+        <h1 style={{fontSize:20,fontWeight:800,margin:'0 0 3px',fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.01em',textTransform:'uppercase',lineHeight:1.1}}>
+          Fluxo completo · João Mendes · Faz. Santa Mônica · "AutoTrac não engata"
+        </h1>
+        <div style={{fontSize:12.5,color:C.ink2}}>
+          6 atores · 13 passos · 7 classes de bifurcação · 4 exits · loop de ativação
+          <span style={{marginLeft:10,fontSize:11,color:C.ink3}}>← → navegar · clique no nó para detalhe</span>
+        </div>
       </div>
-      {/* Map area */}
+
+      {/* ── Entry toggle ── */}
+      <div style={{display:'flex',gap:8,marginBottom:8,flexShrink:0,flexWrap:'wrap'}}>
+        {[
+          {k:'reativo', emoji:'📲', label:'A) REATIVO', sub:'Produtor inicia · 08:11 · WhatsApp', rate:'2–3%', rateBg:'#FEE2E2', rateC:'#B91C1C', activeBg:C.greenL, activeBorder:C.green},
+          {k:'proativo',emoji:'🤖', label:'B) PROATIVO',sub:'Sistema detecta subutilização · AutoPath nunca ativado', rate:'18%', rateBg:'#DCFCE7', rateC:'#15803D', activeBg:'#F0FDF4', activeBorder:'#15803D', highlight:true},
+        ].map(opt=>(
+          <button key={opt.k} onClick={()=>{setEntry(opt.k);setStep(0);}}
+            style={{display:'flex',alignItems:'center',gap:8,background:entry===opt.k?opt.activeBg:'#fff',border:'1.5px solid '+(entry===opt.k?opt.activeBorder:'#D6DDCF'),borderRadius:8,padding:'8px 14px',cursor:'pointer',transition:'all 150ms',position:'relative'}}>
+            {opt.highlight&&<span style={{position:'absolute',top:-7,right:-7,fontSize:8.5,fontWeight:800,background:'#15803D',color:'#fff',padding:'2px 6px',borderRadius:9,letterSpacing:'.04em'}}>MAIOR CONVERSÃO</span>}
+            <span style={{fontSize:15}}>{opt.emoji}</span>
+            <div style={{textAlign:'left'}}>
+              <div style={{fontSize:12,fontWeight:700,color:entry===opt.k?opt.activeBorder:C.ink}}>{opt.label}</div>
+              <div style={{fontSize:10,color:C.ink3}}>{opt.sub}</div>
+            </div>
+            <span style={{fontSize:9,fontWeight:800,background:opt.rateBg,color:opt.rateC,padding:'2px 5px',borderRadius:4,letterSpacing:'.04em'}}>{opt.rate}</span>
+          </button>
+        ))}
+
+        {entry==='proativo'&&(
+          <div style={{flex:1,minWidth:220,background:'#DCFCE7',border:'1px solid #86EFAC',borderRadius:8,padding:'7px 12px',display:'flex',gap:8,alignItems:'center'}}>
+            <Avatar who="bot" size={28}/>
+            <div>
+              <div style={{fontSize:10.5,fontWeight:700,color:'#15803D',marginBottom:1}}>🤖 Assistente Digital → João Mendes</div>
+              <div style={{fontSize:12,lineHeight:1.35}}>{PROATIVO_NODE.msg}</div>
+              <div style={{fontSize:9.5,color:'#15803D',fontWeight:600,marginTop:2}}>{PROATIVO_NODE.note}</div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Swimlane map ── */}
       <div className="fluxo-map-area">
         <div style={{display:'flex',border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:C.card,boxShadow:'var(--shadow-sm)',flex:1,minHeight:0}}>
-          <div style={{position:'relative',width:176,flexShrink:0,borderRight:'1px solid '+C.line,background:C.page}}>
-            <div style={{position:'absolute',left:12,top:30,right:8}}>
-              <div style={{display:'flex',alignItems:'center',gap:6}}><JDBadge size={20}/><span style={{fontSize:12,fontWeight:700,color:C.side,fontFamily:"'Barlow Condensed',sans-serif"}}>JOHN DEERE</span></div>
-              <div style={{fontSize:9.5,color:C.ink3,marginTop:1,marginLeft:28}}>visão cross</div>
+
+          {/* Left labels */}
+          <div style={{position:'relative',width:166,flexShrink:0,borderRight:'1px solid '+C.line,background:C.page}}>
+            <div style={{position:'absolute',left:8,top:FLY.deere-14,right:4}}>
+              <div style={{display:'flex',alignItems:'center',gap:4}}><JDBadge size={14}/><span style={{fontSize:10,fontWeight:800,color:'#365314',fontFamily:"'Barlow Condensed',sans-serif",letterSpacing:'.05em'}}>JOHN DEERE</span></div>
+              <div style={{fontSize:8.5,color:'#365314',marginLeft:19,fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase'}}>visão cross · governança</div>
             </div>
-            {FLANES.map(l=>(
-              <div key={l.k} style={{position:'absolute',left:12,top:FLY[l.k]-18,right:6}}>
-                <div style={{display:'flex',alignItems:'center',gap:6}}><Avatar who={l.who} size={22}/><span style={{fontSize:13,fontWeight:600,lineHeight:1.1}}>{l.t}</span></div>
-                <div style={{fontSize:10,color:C.ink3,marginTop:1,marginLeft:30}}>{l.s}</div>
+            {FLANES.filter(l=>l.k!=='deere').map(l=>(
+              <div key={l.k} style={{position:'absolute',left:8,top:FLY[l.k]-16,right:4}}>
+                <div style={{display:'flex',alignItems:'center',gap:4}}><Avatar who={l.who} size={18}/><span style={{fontSize:11,fontWeight:600,lineHeight:1.1,color:l.color}}>{l.t}</span></div>
+                <div style={{fontSize:9,color:C.ink3,marginTop:1,marginLeft:22}}>{l.s}</div>
               </div>
             ))}
           </div>
-          <div ref={scrollRef} style={{overflowX:'auto',flex:1}}>
-            <div style={{position:'relative',width:plotW,height:440}}>
-              <div style={{position:'absolute',left:0,top:26,width:plotW,height:34,background:'#F2F5F1',borderBottom:'1px dashed '+C.side,display:'flex',alignItems:'center',paddingLeft:14}}>
-                <span style={{fontSize:10.5,color:C.side,fontWeight:600}}>Deere acompanha cada passo — métricas, satisfação e coordenação cross</span>
+
+          {/* Scrollable canvas */}
+          <div ref={scrollRef} style={{overflowX:'auto',flex:1,overflowY:'hidden'}}>
+            <div style={{position:'relative',width:plotW,height:TOTAL_H}}>
+
+              {/* Lane stripes */}
+              {FLANES.map(l=>(
+                <div key={l.k} style={{
+                  position:'absolute',left:0,top:FLY[l.k]-LANE_H/2,width:plotW,height:LANE_H,
+                  background:l.k==='deere'?'rgba(54,83,20,.06)':laneBg(l.k),
+                  borderTop:'1px solid '+(l.k==='deere'?'rgba(54,83,20,.18)':C.line2),
+                  borderBottom:l.k==='deere'?'1.5px dashed rgba(54,83,20,.28)':'none',
+                }}/>
+              ))}
+
+              {/* Deere ribbon text */}
+              <div style={{position:'absolute',left:14,top:FLY.deere-15,pointerEvents:'none',zIndex:0}}>
+                <span style={{fontSize:9.5,color:'#365314',fontWeight:600,letterSpacing:'.05em',opacity:.55}}>
+                  Deere monitora métricas, satisfação e coordenação cross em tempo real
+                </span>
               </div>
-              {FLANES.map(l=><div key={l.k} style={{position:'absolute',left:0,top:FLY[l.k]-27,width:plotW,height:54,borderTop:'1px solid '+C.line2}}/>)}
-              <svg width={plotW} height="440" viewBox={'0 0 '+plotW+' 440'} style={{position:'absolute',inset:0,zIndex:1,pointerEvents:'none'}}>
-                <defs><marker id="fah" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></marker></defs>
-                {segs.map((sg,i)=>{const done=step>sg.from;const cur2=step===sg.from+1;return <path key={i} d={pathd(sg.a,sg.b)} fill="none" stroke={done||cur2?C.green:'#D6DDCF'} strokeWidth={done||cur2?2.5:1.5} markerEnd="url(#fah)" style={{transition:'stroke .35s,stroke-width .2s'}}/>;  })}
+
+              {/* SVG connectors */}
+              <svg width={plotW} height={TOTAL_H} viewBox={'0 0 '+plotW+' '+TOTAL_H} style={{position:'absolute',inset:0,zIndex:1,pointerEvents:'none'}}>
+                <defs>
+                  <marker id="arG" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                    <path d="M2 2L8 5L2 8" fill="none" stroke="#2D6A4F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </marker>
+                  <marker id="arO" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                    <path d="M2 2L8 5L2 8" fill="none" stroke="#C05621" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </marker>
+                </defs>
+
+                {/* Happy path connectors */}
+                {HAPPY.slice(0,-1).map((n,i)=>{
+                  const ax=NODE_X(i)+62,ay=FLY[n.lane];
+                  const bx=NODE_X(i+1)-62,by=FLY[HAPPY[i+1].lane];
+                  const done=step>i,isCur=step===i+1;
+                  return(
+                    <path key={i} d={bezier(ax,ay,bx,by)} fill="none"
+                      stroke={done||isCur?C.green:'#D6DDCF'}
+                      strokeWidth={done||isCur?2.5:1.5}
+                      markerEnd="url(#arG)"
+                      style={{transition:'stroke .3s,stroke-width .2s'}}
+                    />
+                  );
+                })}
+
+                {/* Activation loop arc (visible at step 12) */}
+                {step===12&&(
+                  <path
+                    d={'M'+NODE_X(12)+' '+(FLY.produtor-18)+' C'+NODE_X(12)+' '+(FLY.deere-28)+','+NODE_X(0)+' '+(FLY.deere-28)+','+NODE_X(0)+' '+(FLY.bot+20)}
+                    fill="none" stroke="#C05621" strokeWidth="2" strokeDasharray="7 3"
+                    markerEnd="url(#arO)"
+                  />
+                )}
               </svg>
-              {STG.map((n,i)=>{
-                const done=i<step;const sel=i===step;const fut=i>step;
-                const x=X(i),y=FLY[n.lane];
+
+              {/* Happy path nodes */}
+              {HAPPY.map((n,i)=>{
+                const done=i<step,sel=i===step,fut=i>step;
+                const x=NODE_X(i),y=FLY[n.lane];
+                const nb=n.branches?n.branches.length:0;
                 return(
-                  <div key={i} onClick={()=>setStep(i)} style={{position:'absolute',left:x-70,top:y-27,width:140,zIndex:2,cursor:'pointer',transition:'opacity .25s,transform .2s',transform:sel?'translateY(-3px)':'none',opacity:fut?.28:1}}>
-                    <div style={{background:sel?C.greenL:done?'#f0f8ee':C.card,border:(sel?2:1.5)+'px solid '+(sel?C.green:done?C.green:'#D6DDCF'),borderRadius:8,padding:'7px 10px',boxShadow:sel?'var(--shadow-md)':'var(--shadow-sm)',transition:'all 150ms',animation:sel?'pulse-ring 2s ease-out infinite':undefined,position:'relative'}}>
-                      {done&&<span style={{position:'absolute',top:-6,right:-6,width:16,height:16,borderRadius:16,background:C.green,border:'2px solid #fff',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        <Check size={9} style={{color:'#fff'}}/>
-                      </span>}
-                      {n.branches&&<span style={{position:'absolute',top:-6,left:-6,background:'#7C3AED',color:'#fff',fontSize:8,fontWeight:700,borderRadius:4,padding:'1px 5px',letterSpacing:'.03em',border:'1.5px solid #fff'}}>2 caminhos</span>}
-                      {n.ret&&<div style={{display:'flex',alignItems:'center',gap:4,marginBottom:3}}><ArrowLeft size={10} style={{color:C.waHead}}/><span style={{fontSize:8,fontWeight:700,color:C.waHead,letterSpacing:'.04em',textTransform:'uppercase'}}>volta ao produtor</span></div>}
-                      <div style={{display:'flex',alignItems:'center',gap:5}}><Avatar who={n.who} size={18}/><span style={{fontSize:13,fontWeight:600,lineHeight:1.15}}>{n.t}</span></div>
-                      <div style={{fontSize:10,color:C.ink3,marginTop:3}}>{n.time} · {n.canal}</div>
+                  <div key={n.id} onClick={()=>setStep(i)}
+                    style={{position:'absolute',left:x-62,top:y-23,width:124,zIndex:2,cursor:'pointer',
+                      opacity:fut?0.28:1,transform:sel?'translateY(-3px)':'none',transition:'all 200ms'}}>
+                    <div style={{
+                      borderRadius:8,padding:'6px 8px',position:'relative',
+                      border:(sel?2:1.5)+'px solid '+(sel?C.green:done?C.green:'#D6DDCF'),
+                      background:sel?'#EBF8F1':done?'#F4FCF7':C.card,
+                      boxShadow:sel?'0 4px 16px rgba(54,150,80,.22)':'var(--shadow-sm)',
+                      transition:'all 200ms',
+                    }}>
+                      {done&&<span style={{position:'absolute',top:-6,right:-6,width:15,height:15,borderRadius:15,background:C.green,border:'2px solid #fff',display:'flex',alignItems:'center',justifyContent:'center',zIndex:4}}><Check size={8} style={{color:'#fff'}}/></span>}
+                      {nb>0&&<span style={{position:'absolute',top:-7,left:-5,background:'#7C3AED',color:'#fff',fontSize:7,fontWeight:700,borderRadius:4,padding:'1.5px 4px',letterSpacing:'.03em',border:'1.5px solid #fff',zIndex:4}}>{nb} caminhos</span>}
+                      {n.isLoop&&<span style={{position:'absolute',bottom:-7,left:'50%',transform:'translateX(-50%)',background:'#C05621',color:'#fff',fontSize:7,fontWeight:700,borderRadius:4,padding:'1.5px 5px',letterSpacing:'.03em',border:'1.5px solid #fff',zIndex:4}}>↺ loop</span>}
+                      {n.ret&&<div style={{display:'flex',alignItems:'center',gap:2,marginBottom:1}}><ArrowLeft size={8} style={{color:C.waHead}}/><span style={{fontSize:7,fontWeight:700,color:C.waHead,letterSpacing:'.04em',textTransform:'uppercase'}}>volta ao produtor</span></div>}
+                      <div style={{display:'flex',alignItems:'center',gap:3,marginBottom:2}}><Avatar who={n.who} size={15}/><span style={{fontSize:11,fontWeight:700,lineHeight:1.15,color:C.ink}}>{n.t}</span></div>
+                      <div style={{fontSize:9,color:C.ink3}}>{n.time} · {n.canal}</div>
                     </div>
                   </div>
-                );})}
+                );
+              })}
+
+              {/* EXIT panels — right column */}
+              {EXITS.map((ex,i)=>(
+                <div key={ex.id} style={{position:'absolute',right:6,top:90+i*66,width:108,zIndex:2}}>
+                  <div style={{background:'#F9FAFB',border:'1px solid #E5E7EB',borderRadius:7,padding:'6px 8px',opacity:.82}}>
+                    <div style={{fontSize:10,fontWeight:700,color:ex.color,lineHeight:1.2,marginBottom:1}}>{ex.icon} {ex.label}</div>
+                    <div style={{fontSize:9,color:C.ink3,lineHeight:1.3}}>{ex.desc}</div>
+                  </div>
+                </div>
+              ))}
+
             </div>
           </div>
         </div>
       </div>
-      {/* Controls */}
-      <div style={{display:'flex',alignItems:'center',gap:10,margin:'10px 0 4px',flexShrink:0}}>
-        <button onClick={()=>setStep(x=>Math.max(0,x-1))} className="jd-btn-ghost" disabled={step===0}
-          style={{opacity:step===0?.35:1,cursor:step===0?'not-allowed':'pointer'}}>
-          <ChevronLeft size={15}/>Anterior
+
+      {/* ── Navigation ── */}
+      <div style={{display:'flex',alignItems:'center',gap:8,margin:'7px 0 4px',flexShrink:0,flexWrap:'wrap'}}>
+        <button onClick={()=>setStep(x=>Math.max(0,x-1))} className="jd-btn-ghost"
+          disabled={step===0} style={{opacity:step===0?.35:1,cursor:step===0?'not-allowed':'pointer'}}>
+          <ChevronLeft size={14}/>{tl('flowPrev')||'Anterior'}
         </button>
-        <button onClick={()=>setStep(x=>Math.min(N-1,x+1))} className="jd-btn" disabled={step===N-1}
-          style={{opacity:step===N-1?.5:1,cursor:step===N-1?'not-allowed':'pointer',minWidth:110}}>
-          Próximo<ChevronRight size={15}/>
+        <button onClick={()=>setStep(x=>Math.min(N-1,x+1))} className="jd-btn"
+          disabled={step===N-1} style={{opacity:step===N-1?.5:1,cursor:step===N-1?'not-allowed':'pointer',minWidth:96}}>
+          {tl('flowNext')||'Próximo'}<ChevronRight size={14}/>
         </button>
-        <span style={{fontSize:13,color:C.ink3,marginLeft:4}}>Passo <b style={{color:C.ink}}>{step+1}</b> de {N}</span>
-        {cur.branches&&<span style={{fontSize:12,color:'#7C3AED',fontWeight:600,marginLeft:8,display:'flex',alignItems:'center',gap:4}}><GitBranch size={13}/>Passo com bifurcação</span>}
+        <span style={{fontSize:12.5,color:C.ink3}}>Passo <b style={{color:C.ink}}>{step+1}</b> de {N}</span>
+        {cur.branches&&<span style={{fontSize:11.5,color:'#7C3AED',fontWeight:600,display:'flex',alignItems:'center',gap:3}}><GitBranch size={12}/>{cur.branches.length} bifurcações</span>}
+        {cur.isLoop&&<span style={{fontSize:11.5,color:'#C05621',fontWeight:700}}>↺ Loop de ativação</span>}
+
+        {/* Legend */}
+        <div style={{display:'flex',gap:8,marginLeft:'auto',flexWrap:'wrap'}}>
+          {[{c:C.green,d:false,l:'Happy path'},{c:C.green,d:true,l:'Ramo válido'},{c:'#D97706',d:true,l:'Erro/empty'},{c:'#C05621',d:true,l:'Loop/ativação'},{c:'#9CA3AF',d:false,l:'Exit'}].map((lg,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:3,fontSize:10,color:C.ink3}}>
+              <div style={{width:16,height:2,background:lg.d?'transparent':lg.c,border:lg.d?'1.5px dashed '+lg.c:'none',borderRadius:1}}/>
+              {lg.l}
+            </div>
+          ))}
+        </div>
       </div>
-      {/* Context panel */}
+
+      {/* ── Context panel ── */}
       <div className="fluxo-ctx-area">
-        <div style={{display:'flex',gap:16,flexWrap:'wrap',background:C.page,padding:'16px 16px 20px'}}>
-          {/* Left: actor + description */}
-          <div style={{flex:'1 1 280px',minWidth:240}}>
-            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
-              <Avatar who={cur.who} size={38}/>
+        <div style={{display:'flex',gap:14,flexWrap:'wrap',background:C.page,padding:'12px 16px 16px'}}>
+
+          {/* Actor + desc */}
+          <div style={{flex:'1 1 240px',minWidth:200}}>
+            <div style={{display:'flex',alignItems:'center',gap:9,marginBottom:9}}>
+              <Avatar who={cur.who} size={34}/>
               <div>
-                <div style={{fontSize:16,fontWeight:700}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</div>
-                <div style={{fontSize:12,color:C.ink3,marginTop:1}}>{cur.t} · {cur.time}</div>
+                <div style={{fontSize:14,fontWeight:700}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</div>
+                <div style={{fontSize:11,color:C.ink3,marginTop:1}}>{cur.t} · {cur.time}</div>
               </div>
             </div>
-            {/* Channel + Platform + Support type chips */}
-            <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:12}}>
-              <Pill bg={cc.bg} fg={cc.fg}><MessageCircle size={11}/>Canal: {cur.canal}</Pill>
-              <Pill bg='#E3F2FD' fg='#1565C0'><Monitor size={11}/>Plataforma: {cur.platform}</Pill>
-              <Pill bg={stCor(cur.supportType).bg} fg={stCor(cur.supportType).fg}>
-                {/Automatizado/.test(cur.supportType)?<Radio size={11}/>:<Users size={11}/>}
-                {cur.supportType}
-              </Pill>
+            <div style={{display:'flex',flexWrap:'wrap',gap:5,marginBottom:9}}>
+              <Pill bg={canalCor(cur.canal).bg} fg={canalCor(cur.canal).fg}><MessageCircle size={10}/>Canal: {cur.canal}</Pill>
+              <Pill bg="#E3F2FD" fg="#1565C0"><Monitor size={10}/>Plataforma: {cur.platform}</Pill>
+              {cur.supportType&&<Pill bg={/Automatizado/.test(cur.supportType)?'#EDE7F6':'#F0FDF4'} fg={/Automatizado/.test(cur.supportType)?'#6A1B9A':'#15803D'}>
+                {/Automatizado/.test(cur.supportType)?<Radio size={10}/>:<Users size={10}/>}{cur.supportType}
+              </Pill>}
             </div>
-            <div style={{fontSize:14,color:C.ink2,lineHeight:1.7}}>{cur.desc}</div>
+            <div style={{fontSize:13,color:C.ink2,lineHeight:1.7}}>{cur.desc}</div>
           </div>
-          {/* Right: message card + branches */}
-          <div style={{flex:'0 0 auto',display:'flex',flexDirection:'column',gap:10,minWidth:220}}>
-            <div>
-              <div style={{fontSize:11,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6}}>Mensagem do momento</div>
-              <div style={{background:C.waIn,border:'1px solid '+C.line,borderRadius:10,padding:14,boxShadow:'var(--shadow-sm)',minWidth:220}}>
-                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}><Avatar who={cur.who} size={24}/><span style={{fontSize:13,fontWeight:600}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</span></div>
-                <div style={{fontSize:13.5,color:C.ink,background:cur.out?C.waOut:'#f0f2f0',borderRadius:8,padding:'8px 10px',lineHeight:1.4}}>{cur.msg}</div>
-              </div>
+
+          {/* Message card */}
+          <div style={{flex:'0 0 auto',minWidth:190,maxWidth:260}}>
+            <div style={{fontSize:10.5,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.07em',marginBottom:5}}>Mensagem do momento</div>
+            <div style={{background:C.waIn,border:'1px solid '+C.line,borderRadius:10,padding:11,boxShadow:'var(--shadow-sm)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:7}}><Avatar who={cur.who} size={20}/><span style={{fontSize:12,fontWeight:600}}>{PROF[cur.who]?PROF[cur.who].name.split(' · ')[0]:cur.who}</span></div>
+              <div style={{fontSize:12.5,color:C.ink,background:cur.out?C.waOut:'#f0f2f0',borderRadius:8,padding:'7px 9px',lineHeight:1.45}}>{cur.msg}</div>
             </div>
-            {cur.branches&&(
-              <div>
-                <div style={{fontSize:11,fontWeight:700,color:'#7C3AED',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:6,display:'flex',alignItems:'center',gap:5}}><GitBranch size={12}/>Caminhos possíveis</div>
-                <div style={{display:'flex',flexDirection:'column',gap:6}}>
-                  {cur.branches.map((b,i)=>(
-                    <div key={i} style={{background:i===0?'#F3E8FF':'#FFF3E0',border:'1px solid '+(i===0?'#DDD6FE':'#FFCC80'),borderRadius:8,padding:'8px 12px'}}>
-                      <div style={{fontSize:13,fontWeight:700,color:i===0?'#6D28D9':'#C05621',marginBottom:2}}>{b.icon} {b.label}</div>
-                      <div style={{fontSize:11.5,color:C.ink3,lineHeight:1.4}}>{b.desc}</div>
+          </div>
+
+          {/* Branches */}
+          {cur.branches&&(
+            <div style={{flex:'0 0 auto',minWidth:200,maxWidth:310}}>
+              <div style={{fontSize:10.5,fontWeight:700,color:'#7C3AED',textTransform:'uppercase',letterSpacing:'.07em',marginBottom:5,display:'flex',alignItems:'center',gap:4}}><GitBranch size={11}/>Caminhos possíveis</div>
+              <div style={{display:'flex',flexDirection:'column',gap:5}}>
+                {cur.branches.map((b,i)=>{
+                  const COL={happy:{bg:'#F0FDF4',bd:'#86EFAC',fg:'#15803D'},alt:{bg:'#F9FAFB',bd:'#E5E7EB',fg:'#374151'},error:{bg:'#FEF3C7',bd:'#FCD34D',fg:'#92400E'},empty:{bg:'#FFFBEB',bd:'#FDE68A',fg:'#7B3F00'},loop:{bg:'#FFF7ED',bd:'#FDBA74',fg:'#C05621'}}[b.type]||{bg:'#F9FAFB',bd:'#E5E7EB',fg:'#374151'};
+                  return(
+                    <div key={i} style={{background:COL.bg,border:'1px solid '+COL.bd,borderRadius:7,padding:'6px 10px'}}>
+                      <div style={{fontSize:11.5,fontWeight:700,color:COL.fg,marginBottom:1}}>{b.icon} {b.label}</div>
+                      <div style={{fontSize:10.5,color:C.ink3,lineHeight:1.4}}>{b.desc}</div>
                     </div>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
+
+        {/* Edge cases strip */}
+        <div style={{borderTop:'1px solid '+C.line,padding:'7px 16px',display:'flex',gap:6,flexWrap:'wrap',background:'#FFFBF0',alignItems:'center'}}>
+          <span style={{fontSize:10,fontWeight:700,color:'#92400E',textTransform:'uppercase',letterSpacing:'.06em',flexShrink:0}}>Edge cases:</span>
+          {EDGE_CASES.map((e,i)=>(
+            <span key={i} style={{display:'inline-flex',alignItems:'center',gap:3,background:'#fff',border:'1px solid #FDE68A',borderRadius:5,padding:'2px 7px',fontSize:10,color:'#92400E'}}>
+              {e.icon} {e.label} — <b>{e.tag}</b>
+            </span>
+          ))}
         </div>
       </div>
     </div>
