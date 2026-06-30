@@ -2407,528 +2407,406 @@ function VDeere({lang='pt',log,flags,step,typing,chDealer,chField,sendDealer,sen
 }
 
 /* ═══════════════════════════════════════════════════════
-   FLUXO — grafo completo, todos ramos sempre visíveis
+   FLUXO — swimlane HORIZONTAL (esquerda → direita)
 ═══════════════════════════════════════════════════════ */
 
-/* ── Cores por tipo de nó ── */
-const NODE_COLORS = {
-  happy:  { fill:'#F0FDF4', stroke:'#22C55E', text:'#15803D', badge:'#22C55E'  },
-  entry:  { fill:'#EFF6FF', stroke:'#3B82F6', text:'#1D4ED8', badge:'#3B82F6'  },
-  proat:  { fill:'#F0FDF4', stroke:'#16A34A', text:'#15803D', badge:'#16A34A'  },
-  alt:    { fill:'#F9FAFB', stroke:'#9CA3AF', text:'#374151', badge:'#9CA3AF'  },
-  exit_ok:{ fill:'#F0FDF4', stroke:'#16A34A', text:'#15803D', badge:'#16A34A'  },
-  exit_ko:{ fill:'#FEF9EE', stroke:'#D97706', text:'#92400E', badge:'#D97706'  },
-  exit_x: { fill:'#F9FAFB', stroke:'#6B7280', text:'#374151', badge:'#6B7280'  },
-  decision:{fill:'#F5F3FF', stroke:'#7C3AED', text:'#5B21B6', badge:'#7C3AED' },
-  error:  { fill:'#FFFBEB', stroke:'#D97706', text:'#92400E', badge:'#D97706'  },
-  loop:   { fill:'#FFF7ED', stroke:'#EA580C', text:'#C2410C', badge:'#EA580C'  },
-  deere:  { fill:'#F0FDF4', stroke:'#166534', text:'#14532D', badge:'#166534'  },
-};
-
 /* ── Layout constants ── */
-const GW = 1640;  // total SVG width
-const GH = 1980;  // total SVG height
+const FL_LABEL_W  = 168;
+const FL_LANE_H   = 86;
+const FL_DEERE_H  = 44;
+const FL_NODE_W   = 164;
+const FL_NODE_H   = 50;
+const FL_BR_W     = 148;
+const FL_BR_H     = 38;
 
-/* ── Node definitions (id, type, label, sub, x, y, w, h) ── */
-const GNODES = [
-  // ── ENTRADAS (top) ──────────────────────────────────────
-  {id:'entR', type:'entry',   x:200,  y:60,  w:210, h:54, icon:'📲',
-   label:'REATIVO', sub:'Produtor inicia · 08:11'},
-  {id:'entP', type:'proat',   x:480,  y:60,  w:240, h:54, icon:'🤖',
-   label:'PROATIVO', sub:'Sistema detecta · 18% conversão', hi:true},
-
-  // ── HAPPY PATH (coluna central) ─────────────────────────
-  {id:'h0',  type:'happy',  x:270,  y:174, w:200, h:58, actor:'produtor',
-   icon:'💬', label:'Inicia o contato',     sub:'08:11 · WhatsApp', time:'08:11'},
-  {id:'h1',  type:'happy',  x:270,  y:292, w:200, h:58, actor:'bot',
-   icon:'🤖', label:'Identifica máquinas',  sub:'08:12 · WhatsApp', time:'08:12'},
-  {id:'h2',  type:'decision',x:270,  y:410, w:200, h:58, actor:'bot',
-   icon:'🔀', label:'Triagem automática',   sub:'3 arquétipos', time:'08:12'},
-  {id:'h3',  type:'happy',  x:270,  y:542, w:200, h:58, actor:'csc',
-   icon:'🖥️', label:'CSC entra na conversa',sub:'08:17 · Painel', time:'08:17'},
-  {id:'h4',  type:'decision',x:270,  y:662, w:200, h:58, actor:'esp',
-   icon:'📡', label:'Diagnóstico remoto',   sub:'08:20 · Telemetria', time:'08:20'},
-  {id:'h5',  type:'decision',x:270,  y:786, w:200, h:58, actor:'csc',
-   icon:'💡', label:'Propõe solução',       sub:'08:22 · Painel', time:'08:22'},
-  {id:'h6',  type:'happy',  x:270,  y:910, w:200, h:58, actor:'produtor',
-   icon:'✅', label:'Confirma visita',      sub:'08:26 · WhatsApp', time:'08:26'},
-  {id:'h7',  type:'happy',  x:270,  y:1024,w:200, h:58, actor:'field',
-   icon:'📋', label:'Recebe e agenda',      sub:'08:30 · App', time:'08:30'},
-  {id:'h8',  type:'happy',  x:270,  y:1138,w:200, h:58, actor:'field',
-   icon:'🚗', label:'A caminho',            sub:'09:00 · WhatsApp', time:'09:00'},
-  {id:'h9',  type:'happy',  x:270,  y:1252,w:200, h:58, actor:'produtor',
-   icon:'👋', label:'Responde e aguarda',   sub:'09:02 · WhatsApp', time:'09:02'},
-  {id:'h10', type:'decision',x:270,  y:1370,w:200, h:58, actor:'field',
-   icon:'🔧', label:'Recalibra em campo',   sub:'10:48 · Presencial', time:'10:48'},
-  {id:'h11', type:'happy',  x:270,  y:1504,w:200, h:58, actor:'csc',
-   icon:'✅', label:'Fecha o caso',         sub:'11:00 · Painel', time:'11:00'},
-  {id:'h12', type:'loop',   x:270,  y:1624,w:200, h:58, actor:'produtor',
-   icon:'↺',  label:'Follow-up D+7',       sub:'D+7 · WhatsApp', time:'D+7'},
-
-  // ── RAMOS — Identifica máquinas (h1) ────────────────────
-  {id:'b1a', type:'alt',  x:560,  y:280, w:175, h:48, icon:'📷',
-   label:'Sem JDLink', sub:'pede foto/vídeo'},
-  {id:'b1b', type:'error',x:560,  y:336, w:175, h:48, icon:'🔑',
-   label:'Ghost Login', sub:'recuperação de acesso'},
-
-  // ── RAMOS — Triagem (h2) ─────────────────────────────────
-  {id:'b2a', type:'alt',  x:560,  y:398, w:175, h:48, icon:'🔄',
-   label:'Não sincronizado', sub:'→ resolução remota'},
-  {id:'b2b', type:'alt',  x:560,  y:454, w:175, h:48, icon:'🐛',
-   label:'Bug software', sub:'→ escala Tier 2'},
-  // b2c = continua happy (h3 - máquina/hardware)
-
-  // ── RAMOS — Diagnóstico (h4) ─────────────────────────────
-  {id:'b4a', type:'alt',  x:560,  y:650, w:175, h:48, icon:'❓',
-   label:'Não conclusivo', sub:'→ escala Tier 2'},
-  {id:'b4b', type:'error',x:560,  y:706, w:175, h:48, icon:'📡',
-   label:'Máq. sem dados', sub:'pede info ao produtor'},
-
-  // ── RAMOS — Propõe solução (h5) ─────────────────────────
-  {id:'b5a', type:'alt',  x:560,  y:774, w:175, h:48, icon:'📄',
-   label:'Aceita guia remoto', sub:'→ resolvido sem visita'},
-  {id:'b5b', type:'error',x:560,  y:830, w:175, h:48, icon:'🔁',
-   label:'Recusa / adia', sub:'loop follow-up conservando ctx'},
-
-  // ── RAMOS — Recalibra (h10) ─────────────────────────────
-  {id:'b10a',type:'alt',  x:560, y:1358, w:175, h:48, icon:'🔩',
-   label:'Falta peça', sub:'→ reagenda/escala'},
-  {id:'b10b',type:'error',x:560, y:1414, w:175, h:48, icon:'⚠️',
-   label:'Pós-visita falha', sub:'→ reabertura do caso'},
-
-  // ── ERROR PATHS (coluna esquerda) ───────────────────────
-  {id:'errA',type:'error', x:24,  y:600, w:175, h:48, icon:'🔇',
-   label:'IA não entende', sub:'→ fallback CSC humano'},
-  {id:'errB',type:'error', x:24,  y:660, w:175, h:48, icon:'⚡',
-   label:'Urgência: plantio', sub:'→ priorização imediata'},
-  {id:'errC',type:'error', x:24,  y:720, w:175, h:48, icon:'🕐',
-   label:'Fora de horário', sub:'→ Assistente 24h'},
-
-  // ── EXITS (bottom) ────────────────────────────────────────
-  {id:'ex0', type:'exit_ok',x:55,  y:1900,w:180, h:48, icon:'🟢',
-   label:'Resolvido remoto', sub:'< 15 min · sem visita'},
-  {id:'ex1', type:'exit_ok',x:270, y:1900,w:180, h:48, icon:'🟢',
-   label:'Resolvido c/ visita', sub:'CSAT coletado'},
-  {id:'ex2', type:'exit_ko',x:490, y:1900,w:180, h:48, icon:'🟠',
-   label:'Escalado Tier 2', sub:'Engenharia em andamento'},
-  {id:'ex3', type:'exit_x', x:710, y:1900,w:180, h:48, icon:'⚫',
-   label:'Inválido/duplicado', sub:'CRM atualizado'},
-
-  // ── DEERE cross-view (top strip) ─────────────────────────
-  {id:'dg',  type:'deere', x:880, y:60,  w:200, h:54, icon:'🛡️',
-   label:'John Deere', sub:'governança cross · tempo real'},
-
-  // ── LOOP DE ATIVAÇÃO ────────────────────────────────────
-  {id:'loopAct',type:'loop',x:880, y:1624,w:200, h:54, icon:'↺',
-   label:'Loop de ativação', sub:'subutilização detectada → PROATIVO'},
+// Swimlane row definitions (top → bottom)
+const FL_LANES = [
+  { k:'produtor', label:'Produtor',           sub:'WhatsApp',      color:'#15803D', emoji:'👨‍🌾' },
+  { k:'bot',      label:'Assistente Digital', sub:'automação',     color:'#6D28D9', emoji:'🤖' },
+  { k:'csc',      label:'Dealer · CSC',       sub:'painel',        color:'#1D4ED8', emoji:'🖥️' },
+  { k:'esp',      label:'Especialista',        sub:'telemetria',   color:'#7B3F00', emoji:'📡' },
+  { k:'field',    label:'Field Trainer',       sub:'app + campo',  color:'#C05621', emoji:'🏃' },
 ];
 
-/* ── Edge definitions (from, to, type, label) ── */
-const GEDGES = [
-  // Entry → h0
-  {f:'entR',t:'h0',  type:'happy', label:''},
-  {f:'entP',t:'h0',  type:'proat', label:''},
+// Y center of a lane in the scrollable canvas
+function flLaneY(k) {
+  const i = FL_LANES.findIndex(l => l.k === k);
+  return FL_DEERE_H + i * FL_LANE_H + FL_LANE_H / 2;
+}
 
-  // Happy path backbone
-  {f:'h0', t:'h1',  type:'happy', label:''},
-  {f:'h1', t:'h2',  type:'happy', label:'com JDLink ✓'},
-  {f:'h2', t:'h3',  type:'happy', label:'hardware → campo'},
-  {f:'h3', t:'h4',  type:'happy', label:''},
-  {f:'h4', t:'h5',  type:'happy', label:'conclusivo ✓'},
-  {f:'h5', t:'h6',  type:'happy', label:'aceita visita'},
-  {f:'h6', t:'h7',  type:'happy', label:''},
-  {f:'h7', t:'h8',  type:'happy', label:''},
-  {f:'h8', t:'h9',  type:'happy', label:''},
-  {f:'h9', t:'h10', type:'happy', label:''},
-  {f:'h10',t:'h11', type:'happy', label:'resolve ✓'},
-  {f:'h11',t:'h12', type:'happy', label:''},
-  {f:'h12',t:'ex1', type:'happy', label:'confirma uso'},
+const FL_TOTAL_H = FL_DEERE_H + FL_LANES.length * FL_LANE_H + 10;
 
-  // h1 branches
-  {f:'h1', t:'b1a', type:'alt',   label:'sem telemetria'},
-  {f:'h1', t:'b1b', type:'error', label:'sem acesso'},
-
-  // h2 branches
-  {f:'h2', t:'b2a', type:'alt',   label:'não sincronizado'},
-  {f:'h2', t:'b2b', type:'alt',   label:'bug software'},
-  {f:'b2a',t:'ex0', type:'alt',   label:'guia rápido'},
-  {f:'b2b',t:'ex2', type:'alt',   label:'Tier 2'},
-
-  // h4 branches
-  {f:'h4', t:'b4a', type:'alt',   label:'inconclusivo'},
-  {f:'h4', t:'b4b', type:'error', label:'sem dados'},
-  {f:'b4a',t:'ex2', type:'alt',   label:'escala'},
-
-  // h5 branches
-  {f:'h5', t:'b5a', type:'alt',   label:'guia remoto'},
-  {f:'h5', t:'b5b', type:'error', label:'recusa'},
-  {f:'b5a',t:'ex0', type:'alt',   label:''},
-  {f:'b5b',t:'h5',  type:'loop',  label:'reintento'},
-
-  // h10 branches
-  {f:'h10',t:'b10a',type:'alt',   label:'falta peça'},
-  {f:'h10',t:'b10b',type:'error', label:'pós-visita'},
-  {f:'b10a',t:'ex2', type:'alt',  label:'escala'},
-
-  // Loop de ativação
-  {f:'h12',t:'loopAct',type:'loop',label:'detecta subutilização'},
-  {f:'loopAct',t:'entP',type:'loop',label:'→ novo PROATIVO'},
-
-  // Error edges
-  {f:'errA',t:'h3',  type:'error', label:'fallback'},
-  {f:'errB',t:'h3',  type:'error', label:'urgência'},
-
-  // Exits
-  {f:'h11',t:'ex1',  type:'exit_ok', label:''},
-  {f:'b1a',t:'h3',   type:'alt',  label:'CSC manual'},
-  {f:'b1b',t:'ex3',  type:'exit_x',label:''},
+// Step X center positions
+const FSX = [
+   80,  // 0  Entry
+  240,  // 1  h0
+  430,  // 2  h1
+  620,  // 3  h2 (decision)
+  810,  // 4  h3
+ 1000,  // 5  h4 (decision)
+ 1190,  // 6  h5 (decision)
+ 1390,  // 7  h6
+ 1565,  // 8  h7
+ 1720,  // 9  h8
+ 1880,  // 10 h9
+ 2060,  // 11 h10 (decision)
+ 2250,  // 12 h11
+ 2420,  // 13 h12
+ 2640,  // 14 exits zone
 ];
 
-/* ── Actor avatars config ── */
-const ACTOR_CONF={
-  produtor:  {emoji:'👨‍🌾', label:'Produtor',           color:'#15803D'},
-  bot:       {emoji:'🤖', label:'Assistente Digital',   color:'#6D28D9'},
-  csc:       {emoji:'🖥️', label:'Dealer · CSC',         color:'#1D4ED8'},
-  esp:       {emoji:'📡', label:'Especialista',          color:'#7B3F00'},
-  field:     {emoji:'🏃', label:'Field Trainer',         color:'#C05621'},
-  deere:     {emoji:'🛡️', label:'John Deere',            color:'#166534'},
+const FL_TOTAL_W = FSX[14] + 220;
+
+// Main happy-path nodes
+const FL_NODES = [
+  { id:'h0',  lane:'produtor', sx:1,  type:'happy',    icon:'💬', label:'Inicia o contato',      time:'08:11', canal:'WhatsApp', desc:'O produtor abre o WhatsApp e toca numa categoria. O Assistente guia toda a triagem.', msg:'Tenho um problema com maquinaria 🚜' },
+  { id:'h1',  lane:'bot',      sx:2,  type:'happy',    icon:'🤖', label:'Identifica máquinas',   time:'08:12', canal:'WhatsApp', desc:'Consulta o OpsCenter e lista equipamentos registrados. Pode receber foto do painel.', msg:'🚜 X9 2023 — AutoTrac + AutoPath. Qual tem problema?' },
+  { id:'h2',  lane:'bot',      sx:3,  type:'decision', icon:'🔀', label:'Triagem automática',     time:'08:12', canal:'Automação',branches:true, desc:'Classifica o problema em Ramo 2 · Sinal. Abre caso #BR-4471 com prioridade Alta.', msg:'Caso #BR-4471 · Ramo 2 · Sinal · prioridade Alta ⚡' },
+  { id:'h3',  lane:'csc',      sx:4,  type:'happy',    icon:'🖥️', label:'CSC entra na conversa', time:'08:17', canal:'Painel',  desc:'Recebe alerta com contexto completo. Entra informado — sem perguntar de novo.', msg:'Carlos: Oi João, já estou vendo seu caso do AutoTrac.' },
+  { id:'h4',  lane:'esp',      sx:5,  type:'decision', icon:'📡', label:'Diagnóstico remoto',     time:'08:20', canal:'Telemetria', branches:true, desc:'Acessa JDLink e identifica sinal StarFire fraco (2/5 barras) a distância.', msg:'Sinal StarFire 2/5 barras — provável posição da antena.' },
+  { id:'h5',  lane:'csc',      sx:6,  type:'decision', icon:'💡', label:'Propõe solução',         time:'08:22', canal:'Painel',  branches:true, desc:'Apresenta opções: guia rápido (autoatendimento) ou visita do Field Trainer.', msg:'Guia rápido ou visita do Diego? O que prefere, João?' },
+  { id:'h6',  lane:'produtor', sx:7,  type:'happy',    icon:'✅', label:'Confirma visita',        time:'08:26', canal:'WhatsApp', desc:'Produtor confirma pelo WhatsApp. Sem trocar de canal nem baixar app.', msg:'Amanhã às 9h no talhão norte ✅' },
+  { id:'h7',  lane:'field',    sx:8,  type:'happy',    icon:'📋', label:'Recebe e agenda',        time:'08:30', canal:'App',     desc:'Diego recebe o ticket com contexto completo e confirma disponibilidade.', msg:'Visita confirmada · amanhã 9h · talhão norte · #BR-4471' },
+  { id:'h8',  lane:'field',    sx:9,  type:'happy',    icon:'🚗', label:'A caminho',              time:'09:00', canal:'WhatsApp', desc:'Diego avisa o produtor que está saindo — no mesmo canal que ele usa.', msg:'Oi João, estou saindo agora, chego em ~1h 🚙' },
+  { id:'h9',  lane:'produtor', sx:10, type:'happy',    icon:'👋', label:'Responde e aguarda',     time:'09:02', canal:'WhatsApp', desc:'João confirma e espera no talhão norte. Todo o fluxo no canal dele.', msg:'Ótimo Diego! Te espero no talhão norte 👍' },
+  { id:'h10', lane:'field',    sx:11, type:'decision', icon:'🔧', label:'Recalibra em campo',     time:'10:48', canal:'Presencial', branches:true, desc:'Diego reposiciona a antena, recalibra o receptor e valida com passada completa.', msg:'Recalibrado e validado. AutoTrac engatando 100% 🌱' },
+  { id:'h11', lane:'csc',      sx:12, type:'happy',    icon:'✅', label:'Fecha o caso',           time:'11:00', canal:'Painel',  desc:'Dealer confere CSAT e fecha o caso com todas as ações registradas.', msg:'Caso #BR-4471 fechado ✅ CSAT coletado · relatório registrado.' },
+  { id:'h12', lane:'produtor', sx:13, type:'loop',     icon:'↺',  label:'Follow-up D+7',          time:'D+7',   canal:'WhatsApp', isLoop:true, desc:'D+7: confirma adoção do AutoTrac. Se detectar subutilização de outra tech → PROATIVO.', msg:'Como está usando o AutoTrac? Uso confirmado: 87% ✅' },
+];
+
+// Branch sub-nodes (shown below decision nodes)
+const FL_BRANCHES = [
+  // h2 Triagem → bot lane, branches hang below into csc lane area
+  { id:'b2a', parent:'h2', type:'alt',   icon:'🔄', label:'Não sincronizado',  sub:'→ resolução remota', dy:+FL_LANE_H*0.60 },
+  { id:'b2b', parent:'h2', type:'alt',   icon:'🐛', label:'Bug de software',   sub:'→ escala Tier 2',    dy:+FL_LANE_H*1.20 },
+  // h4 Diagnóstico → esp lane, branches hang below
+  { id:'b4a', parent:'h4', type:'alt',   icon:'❓', label:'Não conclusivo',    sub:'→ escala Tier 2',    dy:+FL_LANE_H*0.60 },
+  { id:'b4b', parent:'h4', type:'error', icon:'📡', label:'Sem dados (JDLink)',sub:'pede info produtor', dy:+FL_LANE_H*1.20 },
+  // h5 Propõe → csc lane, branches hang between csc and esp
+  { id:'b5a', parent:'h5', type:'alt',   icon:'📄', label:'Guia remoto',       sub:'→ resolve sem visita',dy:+FL_LANE_H*0.60 },
+  { id:'b5b', parent:'h5', type:'loop',  icon:'🔁', label:'Recusa / adia',     sub:'loop de follow-up',  dy:+FL_LANE_H*1.20 },
+  // h10 Recalibra → field, branches hang below
+  { id:'b10a',parent:'h10',type:'alt',   icon:'🔩', label:'Falta peça',        sub:'→ reagenda/escala',  dy:+FL_LANE_H*0.60 },
+  { id:'b10b',parent:'h10',type:'error', icon:'⚠️', label:'Pós-visita falha',  sub:'→ reabertura',       dy:+FL_LANE_H*1.20 },
+];
+
+const FL_EXITS = [
+  { icon:'🟢', label:'Resolvido remoto',   sub:'<15 min · sem visita',   fill:'#F0FDF4', stroke:'#22C55E', tc:'#15803D' },
+  { icon:'🟢', label:'Resolvido c/ visita',sub:'Field in loco · CSAT',   fill:'#F0FDF4', stroke:'#22C55E', tc:'#15803D' },
+  { icon:'🟠', label:'Escalado Tier 2',    sub:'Engenharia em andamento', fill:'#FEF9EE', stroke:'#D97706', tc:'#92400E' },
+  { icon:'⚫', label:'Inválido/duplicado', sub:'CRM atualizado',          fill:'#F9FAFB', stroke:'#9CA3AF', tc:'#374151' },
+];
+
+const FL_COLORS = {
+  happy:   { fill:'#F0FDF4', stroke:'#22C55E', text:'#15803D' },
+  decision:{ fill:'#F5F3FF', stroke:'#7C3AED', text:'#5B21B6' },
+  loop:    { fill:'#FFF7ED', stroke:'#EA580C', text:'#C2410C' },
+  alt:     { fill:'#F9FAFB', stroke:'#94A3B8', text:'#374151' },
+  error:   { fill:'#FFFBEB', stroke:'#F59E0B', text:'#92400E' },
 };
 
-/* ── Edge color ── */
-const EDGE_COLOR={
-  happy:  '#22C55E',
-  proat:  '#16A34A',
-  alt:    '#94A3B8',
-  error:  '#F59E0B',
-  loop:   '#EA580C',
-  exit_ok:'#22C55E',
-  exit_ko:'#D97706',
-  exit_x: '#9CA3AF',
-};
+const FL_EDGE_COL = { happy:'#22C55E', alt:'#94A3B8', error:'#F59E0B', loop:'#EA580C' };
 
-function getNodeCenter(n){ return { x: n.x + n.w/2, y: n.y + n.h/2 }; }
-function getNodePort(n, side){
-  if(side==='bottom') return {x: n.x+n.w/2, y: n.y+n.h};
-  if(side==='top')    return {x: n.x+n.w/2, y: n.y};
-  if(side==='right')  return {x: n.x+n.w,   y: n.y+n.h/2};
-  if(side==='left')   return {x: n.x,        y: n.y+n.h/2};
-}
+function Fluxo({ lang='pt' }) {
+  const tl = key => tg(lang, key);
+  const [entry,   setEntry]   = React.useState('reativo');
+  const [selNode, setSelNode] = React.useState(null);
+  const [showAlt, setShowAlt] = React.useState(true);
 
-function edgePath(src,tgt,fromSide,toSide){
-  const a=getNodePort(src,fromSide), b=getNodePort(tgt,toSide);
-  const dx=b.x-a.x, dy=b.y-a.y;
-  if(fromSide==='bottom'&&toSide==='top'){
-    const cy=Math.abs(dy)*0.45;
-    return 'M'+a.x+','+a.y+' C'+a.x+','+(a.y+cy)+' '+b.x+','+(b.y-cy)+' '+b.x+','+b.y;
-  }
-  if(fromSide==='right'&&toSide==='top'){
-    return 'M'+a.x+','+a.y+' C'+(a.x+60)+','+a.y+' '+b.x+','+(b.y-40)+' '+b.x+','+b.y;
-  }
-  if(fromSide==='right'&&toSide==='left'){
-    const mx=(a.x+b.x)/2;
-    return 'M'+a.x+','+a.y+' C'+mx+','+a.y+' '+mx+','+b.y+' '+b.x+','+b.y;
-  }
-  if(fromSide==='left'&&toSide==='left'){
-    const lx=Math.min(a.x,b.x)-40;
-    return 'M'+a.x+','+a.y+' C'+lx+','+a.y+' '+lx+','+b.y+' '+b.x+','+b.y;
-  }
-  if(fromSide==='bottom'&&toSide==='left'){
-    return 'M'+a.x+','+a.y+' C'+a.x+','+(a.y+40)+' '+(b.x-40)+','+b.y+' '+b.x+','+b.y;
-  }
-  if(fromSide==='right'&&toSide==='bottom'){
-    return 'M'+a.x+','+a.y+' C'+(a.x+40)+','+a.y+' '+b.x+','+(b.y-40)+' '+b.x+','+b.y;
-  }
-  // default: cubic
-  return 'M'+a.x+','+a.y+' C'+(a.x+dx*0.4)+','+(a.y+dy*0.1)+' '+(b.x-dx*0.4)+','+(b.y-dy*0.1)+' '+b.x+','+b.y;
-}
+  const nodeMap = {};
+  FL_NODES.forEach(n => nodeMap[n.id] = n);
 
-/* ── Determine edge ports ── */
-function getEdgePorts(f,t,type){
-  const fNode=GNODES.find(n=>n.id===f);
-  const tNode=GNODES.find(n=>n.id===t);
-  if(!fNode||!tNode) return ['bottom','top'];
+  // Pixel helpers
+  const nodeLeft  = n => FSX[n.sx] - FL_NODE_W / 2;
+  const nodeTop   = n => flLaneY(n.lane) - FL_NODE_H / 2;
+  const brLeft    = b => FSX[FL_NODES.find(n=>n.id===b.parent).sx] - FL_BR_W / 2;
+  const brTop     = b => flLaneY(FL_NODES.find(n=>n.id===b.parent).lane) + b.dy - FL_BR_H / 2;
 
-  // branches go right→left
-  if(['b1a','b1b','b2a','b2b','b4a','b4b','b5a','b5b','b10a','b10b'].includes(t)) return['right','left'];
-  // errors on the left
-  if(['errA','errB','errC'].includes(f)) return['right','left'];
-  // loop arc
-  if(type==='loop') return['right','top'];
-  // exits at bottom
-  if(t.startsWith('ex')) return['bottom','top'];
-  // entry to h0
-  if(f.startsWith('ent')) return['bottom','top'];
-  // default happy path
-  if(fNode.y < tNode.y) return['bottom','top'];
-  if(fNode.y > tNode.y) return['top','bottom'];
-  return['right','left'];
-}
+  // Bezier helpers (template literals safe inside JSX — babel handles them)
+  const hBez = (x1,y1,x2,y2) => {
+    const cx = Math.abs(x2-x1)*0.45;
+    return 'M'+x1+','+y1+' C'+(x1+cx)+','+y1+' '+(x2-cx)+','+y2+' '+x2+','+y2;
+  };
+  const vBez = (x1,y1,x2,y2) => {
+    const cy = Math.abs(y2-y1)*0.5;
+    return 'M'+x1+','+y1+' C'+x1+','+(y1+cy)+' '+x2+','+(y2-cy)+' '+x2+','+y2;
+  };
+  const cBez = (x1,y1,x2,y2) => {
+    const mx=(x1+x2)/2;
+    return 'M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2;
+  };
 
-function Fluxo({lang='pt'}){
-  const tl=key=>tg(lang,key);
-  const [entry,setEntry]=React.useState('reativo');
-  const [selNode,setSelNode]=React.useState(null);
-  const [showEdge,setShowEdge]=React.useState('all'); // 'all'|'happy'
-
-  const nodeMap={};
-  GNODES.forEach(n=>nodeMap[n.id]=n);
-
-  const selN=selNode?nodeMap[selNode]:null;
-
-  // Build SVG paths
-  const paths=GEDGES.map((e,idx)=>{
-    const src=nodeMap[e.f], tgt=nodeMap[e.t];
-    if(!src||!tgt) return null;
-    const [fs,ts]=getEdgePorts(e.f,e.t,e.type);
-    const d=edgePath(src,tgt,fs,ts);
-    const col=EDGE_COLOR[e.type]||'#94A3B8';
-    const dash=e.type==='alt'?'6,3':e.type==='error'?'4,3':e.type==='loop'?'8,4':'none';
-    const isHP=e.type==='happy'||e.type==='proat'||e.type==='exit_ok';
-    const hide=showEdge==='happy'&&!isHP;
-    return {idx,d,col,dash,hide,label:e.label,src,tgt,type:e.type};
-  }).filter(Boolean);
-
-  // Edge label midpoint
-  function edgeMid(p){ const m=p.d.match(/M([d.]+),([d.]+).*?([d.]+),([d.]+)$/); return m?{x:(+m[1]+m[3])/2,y:(+m[2]+m[4])/2}:{x:0,y:0}; }
+  const selN = FL_NODES.find(n=>n.id===selNode) || FL_BRANCHES.find(b=>b.id===selNode);
 
   return(
     <div className="fluxo-wrap" style={{userSelect:'none'}}>
+
       {/* ── Toolbar ── */}
       <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6,flexShrink:0,flexWrap:'wrap'}}>
         <div style={{flex:1,minWidth:0}}>
-          <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:1}}>{tl('flowHow')||'Como funciona'}</div>
-          <div style={{fontSize:14,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",textTransform:'uppercase',lineHeight:1.1}}>
-            Fluxo completo · João Mendes · “AutoTrac não engata” · todos os caminhos visíveis
+          <div style={{fontSize:11,fontWeight:700,letterSpacing:'.1em',textTransform:'uppercase',color:C.green,marginBottom:1}}>
+            {tl('flowHow')||'Como funciona'}
           </div>
-          <div style={{fontSize:11,color:C.ink3,marginTop:3,display:'flex',alignItems:'center',gap:5}}>
-            <span style={{fontSize:10}}>👆</span>Clique em qualquer nó para ver o detalhe do momento ·
-            <span style={{fontSize:10}}>🔀</span>Alterne entre REATIVO e PROATIVO
+          <div style={{fontSize:14,fontWeight:800,fontFamily:"'Barlow Condensed',sans-serif",textTransform:'uppercase',lineHeight:1.1}}>
+            Fluxo completo · João Mendes · "AutoTrac não engata" · 6 atores · todos os caminhos
           </div>
         </div>
         <div style={{display:'flex',gap:6,flexShrink:0,flexWrap:'wrap'}}>
-          {/* Entry toggle */}
-          {[{k:'reativo',e:'📲',l:'A) REATIVO',r:'2–3%',rb:'#FEE2E2',rc:'#B91C1C'},
-            {k:'proativo',e:'🤖',l:'B) PROATIVO',r:'18%',rb:'#DCFCE7',rc:'#15803D',hi:true}
+          {[
+            {k:'reativo', e:'📲', l:'A) REATIVO',  r:'2–3%', rb:'#FEE2E2', rc:'#B91C1C'},
+            {k:'proativo',e:'🤖', l:'B) PROATIVO', r:'18%',  rb:'#DCFCE7', rc:'#15803D', hi:true},
           ].map(opt=>(
-            <button key={opt.k} onClick={()=>setEntry(opt.k)}
-              style={{display:'flex',alignItems:'center',gap:5,background:entry===opt.k?C.greenL:'#fff',border:'1.5px solid '+(entry===opt.k?C.green:'#E5E7EB'),borderRadius:7,padding:'7px 13px',cursor:'pointer',fontSize:11.5,fontWeight:600,position:'relative',transition:'all 150ms',boxShadow:entry===opt.k?'0 1px 4px rgba(54,124,43,.15)':'none'}}>
+            <button key={opt.k} onClick={()=>setEntry(opt.k)} style={{
+              display:'flex',alignItems:'center',gap:5,position:'relative',
+              background:entry===opt.k?C.greenL:'#fff',
+              border:'1.5px solid '+(entry===opt.k?C.green:'#E5E7EB'),
+              borderRadius:7,padding:'6px 12px',cursor:'pointer',fontSize:11.5,fontWeight:600,transition:'all 150ms',
+            }}>
               {opt.hi&&<span style={{position:'absolute',top:-7,right:-7,fontSize:8,fontWeight:800,background:'#15803D',color:'#fff',padding:'1px 5px',borderRadius:8}}>+18%</span>}
               {opt.e} {opt.l}
               <span style={{fontSize:9,fontWeight:800,background:opt.rb,color:opt.rc,padding:'1px 6px',borderRadius:4,marginLeft:2}}>{opt.r}</span>
             </button>
           ))}
-          {/* Edge filter */}
-          <div style={{display:'flex',border:'1.5px solid #E5E7EB',borderRadius:7,overflow:'hidden',boxShadow:'var(--shadow-sm)'}}>
-            {[['all','Todos os caminhos'],['happy','Só happy path']].map(([k,l])=>(
-              <button key={k} onClick={()=>setShowEdge(k)}
-                style={{background:showEdge===k?C.side:'#fff',color:showEdge===k?'#fff':C.ink2,border:'none',padding:'7px 12px',cursor:'pointer',fontSize:11,fontWeight:600,transition:'all 130ms'}}>
-                {l}
-              </button>
-            ))}
+          <div style={{display:'flex',border:'1.5px solid #E5E7EB',borderRadius:7,overflow:'hidden'}}>
+            {[['all','Todos os caminhos'],['happy','Só happy path']].map(([k,l])=>{
+              const isActive=(k==='all')===showAlt;
+              return(
+                <button key={k} onClick={()=>setShowAlt(k==='all')} style={{
+                  background:isActive?C.side:'#fff',color:isActive?'#fff':C.ink2,
+                  border:'none',padding:'6px 11px',cursor:'pointer',fontSize:11,fontWeight:600,transition:'all 130ms',
+                }}>{l}</button>
+              );
+            })}
           </div>
         </div>
       </div>
 
-      {/* ── Legend + hint bar ── */}
-      <div style={{display:'flex',gap:0,marginBottom:6,flexShrink:0,alignItems:'stretch',borderRadius:8,overflow:'hidden',border:'1px solid '+C.line,background:C.card,boxShadow:'var(--shadow-sm)'}}>
-        <div style={{display:'flex',gap:12,padding:'7px 14px',alignItems:'center',flexWrap:'wrap',flex:1}}>
-          <span style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.06em',flexShrink:0}}>Legenda:</span>
-          {[
-            {col:'#22C55E',dash:false,label:'Happy path'},
-            {col:'#94A3B8',dash:true, label:'Alternativo'},
-            {col:'#F59E0B',dash:true, label:'Erro/edge'},
-            {col:'#EA580C',dash:true, label:'Loop'},
-          ].map((l,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
-              <svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke={l.col} strokeWidth="2" strokeDasharray={l.dash?'5,2':'none'}/></svg>
-              {l.label}
-            </div>
-          ))}
-          {[
-            {fill:'#F0FDF4',stroke:'#22C55E',label:'Ação OK'},
-            {fill:'#F5F3FF',stroke:'#7C3AED',label:'Decisão'},
-            {fill:'#FFFBEB',stroke:'#D97706',label:'Erro'},
-            {fill:'#FFF7ED',stroke:'#EA580C',label:'Loop'},
-          ].map((l,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
-              <div style={{width:13,height:13,borderRadius:3,background:l.fill,border:'1.5px solid '+l.stroke}}/>
-              {l.label}
-            </div>
-          ))}
-        </div>
-        <div style={{background:'#F0FDF4',borderLeft:'1px solid #BBF7D0',padding:'7px 14px',display:'flex',alignItems:'center',gap:7,flexShrink:0}}>
-          <span style={{fontSize:12}}>👆</span>
-          <span style={{fontSize:11.5,fontWeight:600,color:C.greenD,whiteSpace:'nowrap'}}>Clique em qualquer nó para ver o detalhe</span>
-        </div>
+      {/* ── Legend ── */}
+      <div style={{display:'flex',gap:12,marginBottom:6,padding:'6px 12px',background:C.card,border:'1px solid '+C.line,borderRadius:7,flexShrink:0,flexWrap:'wrap',alignItems:'center'}}>
+        <span style={{fontSize:10,fontWeight:700,color:C.ink3,textTransform:'uppercase',letterSpacing:'.06em'}}>Legenda:</span>
+        {[
+          {col:'#22C55E',dash:false,l:'Happy path'},
+          {col:'#94A3B8',dash:true, l:'Alternativo'},
+          {col:'#F59E0B',dash:true, l:'Erro/edge'},
+          {col:'#EA580C',dash:true, l:'Loop'},
+        ].map((lg,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
+            <svg width="22" height="10"><line x1="0" y1="5" x2="22" y2="5" stroke={lg.col} strokeWidth="2" strokeDasharray={lg.dash?'5,2':'none'}/></svg>
+            {lg.l}
+          </div>
+        ))}
+        {[
+          {f:'#F0FDF4',s:'#22C55E',l:'OK'},
+          {f:'#F5F3FF',s:'#7C3AED',l:'Decisão'},
+          {f:'#FFFBEB',s:'#F59E0B',l:'Erro'},
+          {f:'#FFF7ED',s:'#EA580C',l:'Loop'},
+        ].map((lg,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:4,fontSize:10.5,color:C.ink3}}>
+            <div style={{width:13,height:13,borderRadius:3,background:lg.f,border:'1.5px solid '+lg.s}}/>
+            {lg.l}
+          </div>
+        ))}
+        <span style={{marginLeft:'auto',fontSize:11,color:C.greenD,fontWeight:600,display:'flex',alignItems:'center',gap:4}}>
+          <span>👆</span>Clique em qualquer nó para detalhes
+        </span>
       </div>
 
-      {/* ── Scrollable SVG canvas ── */}
-      <div className="fluxo-map-area" style={{position:'relative'}}>
-        <div style={{overflow:'auto',flex:1,borderRadius:8,border:'1px solid '+C.line,background:'#FAFAF9',boxShadow:'var(--shadow-sm)'}}>
-          <svg
-            viewBox={'0 0 '+GW+' '+GH}
-            width={GW} height={GH}
-            style={{display:'block',fontFamily:"Inter,system-ui,sans-serif"}}
-          >
-            {/* Deere governance band */}
-            <rect x="0" y="0" width={GW} height="130" fill="rgba(54,83,20,.04)" rx="0"/>
-            <text x="900" y="42" fontSize="9.5" fontWeight="700" fill="#365314" letterSpacing=".08em" textAnchor="middle" style={{textTransform:'uppercase'}}>JOHN DEERE · VISÃO CROSS · GOVERNANÇA · MONITORA MÉTRICAS E COORDENAÇÃO EM TEMPO REAL</text>
-            <line x1="0" y1="130" x2={GW} y2="130" stroke="rgba(54,83,20,.2)" strokeWidth="1" strokeDasharray="6,3"/>
+      {/* ── Canvas ── */}
+      <div className="fluxo-map-area" style={{display:'flex',border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:'#FAFAF9',boxShadow:'var(--shadow-sm)',flexShrink:0}}>
 
-            {/* Swimlane column headers */}
-            {[
-              {label:'Produtor · WhatsApp',     x:150, color:'#15803D'},
-              {label:'Assistente Digital · Automação', x:370, color:'#6D28D9'},
-              {label:'Dealer · CSC · Painel',   x:595, color:'#1D4ED8'},
-              {label:'Especialista · Telemetria',x:810, color:'#7B3F00'},
-              {label:'Field Trainer · Campo',    x:1020,color:'#C05621'},
-            ].map((col,i)=>(
-              <g key={i}>
-                <rect x={col.x-90} y="134" width="180" height="24" fill="none"/>
-                <text x={col.x} y="150" fontSize="9" fontWeight="700" fill={col.color} textAnchor="middle" letterSpacing=".05em">{col.label.toUpperCase()}</text>
-                <line x1={col.x} y1="160" x2={col.x} y2={GH-80} stroke={col.color+'22'} strokeWidth="1" strokeDasharray="4,4"/>
-              </g>
-            ))}
+        {/* Fixed lane labels column */}
+        <div style={{width:FL_LABEL_W+'px',flexShrink:0,background:'#F0EFED',borderRight:'1px solid '+C.line,display:'flex',flexDirection:'column'}}>
+          {/* Deere band */}
+          <div style={{height:FL_DEERE_H+'px',flexShrink:0,background:'rgba(54,83,20,.07)',borderBottom:'1px dashed rgba(54,83,20,.25)',display:'flex',alignItems:'center',gap:5,padding:'0 10px'}}>
+            <JDBadge size={14}/>
+            <div>
+              <div style={{fontSize:8.5,fontWeight:800,color:'#365314',letterSpacing:'.05em',textTransform:'uppercase'}}>John Deere</div>
+              <div style={{fontSize:7.5,color:'#365314',opacity:.7}}>visão cross · governança</div>
+            </div>
+          </div>
+          {FL_LANES.map((ln,i)=>(
+            <div key={ln.k} style={{height:FL_LANE_H+'px',flexShrink:0,borderBottom:i<FL_LANES.length-1?'1px solid '+C.line2:'none',display:'flex',alignItems:'center',gap:7,padding:'0 10px',background:i%2===0?'#F8F7F5':'#F2F1EF'}}>
+              <div style={{width:22,height:22,borderRadius:22,background:ln.color+'18',border:'1.5px solid '+ln.color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,flexShrink:0}}>{ln.emoji}</div>
+              <div>
+                <div style={{fontSize:11,fontWeight:700,color:ln.color,lineHeight:1.2}}>{ln.label}</div>
+                <div style={{fontSize:9,color:C.ink3}}>{ln.sub}</div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-            {/* Proativo entry callout */}
-            {entry==='proativo'&&(
-              <g>
-                <rect x="460" y="130" width="260" height="36" rx="6" fill="#DCFCE7" stroke="#86EFAC" strokeWidth="1.5"/>
-                <text x="590" y="148" fontSize="10" fontWeight="700" fill="#15803D" textAnchor="middle">🤖 Assistente Digital → João Mendes</text>
-                <text x="590" y="162" fontSize="9.5" fill="#166534" textAnchor="middle">"João, o AutoPath ainda não foi ativado 🌾 Posso ajudar?"</text>
-              </g>
-            )}
-
-            {/* ── Arrows/Edges ── */}
+        {/* Horizontal-scrolling SVG */}
+        <div style={{overflowX:'auto',flex:1,overflowY:'hidden'}}>
+          <svg width={FL_TOTAL_W} height={FL_TOTAL_H} viewBox={'0 0 '+FL_TOTAL_W+' '+FL_TOTAL_H} style={{display:'block',fontFamily:"Inter,system-ui,sans-serif"}}>
             <defs>
-              <marker id="arH"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <marker id="flArH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M1,2 L8,5 L1,8" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </marker>
-              <marker id="arA"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <marker id="flArA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M1,2 L8,5 L1,8" fill="none" stroke="#94A3B8" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </marker>
-              <marker id="arE"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <marker id="flArE" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M1,2 L8,5 L1,8" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </marker>
-              <marker id="arL"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <marker id="flArL" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M1,2 L8,5 L1,8" fill="none" stroke="#EA580C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </marker>
-              <marker id="arX"  viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                <path d="M1,2 L8,5 L1,8" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </marker>
             </defs>
 
-            {paths.map(p=>{
-              if(p.hide) return null;
-              const markerMap={happy:'url(#arH)',proat:'url(#arH)',alt:'url(#arA)',error:'url(#arE)',loop:'url(#arL)',exit_ok:'url(#arH)',exit_ko:'url(#arE)',exit_x:'url(#arX)'};
-              const mid=edgeMid(p);
+            {/* Deere governance band */}
+            <rect x="0" y="0" width={FL_TOTAL_W} height={FL_DEERE_H} fill="rgba(54,83,20,.04)"/>
+            <text x={FL_TOTAL_W/2} y={FL_DEERE_H/2+4} fontSize="8.5" fontWeight="700" fill="#365314" textAnchor="middle" letterSpacing=".08em">
+              JOHN DEERE · VISÃO CROSS · GOVERNANÇA · MONITORA MÉTRICAS, SATISFAÇÃO E COORDENAÇÃO EM TEMPO REAL
+            </text>
+            <line x1="0" y1={FL_DEERE_H} x2={FL_TOTAL_W} y2={FL_DEERE_H} stroke="rgba(54,83,20,.2)" strokeWidth="1" strokeDasharray="6,3"/>
+
+            {/* Lane stripes */}
+            {FL_LANES.map((ln,i)=>{
+              const y=FL_DEERE_H+i*FL_LANE_H;
               return(
-                <g key={p.idx}>
-                  <path d={p.d} fill="none"
-                    stroke={p.col} strokeWidth={p.type==='happy'||p.type==='proat'?2.5:1.5}
-                    strokeDasharray={p.dash==='none'?undefined:p.dash}
-                    markerEnd={markerMap[p.type]||'url(#arA)'}
-                    opacity={p.hide?0:1}
-                    style={{transition:'opacity 200ms'}}
+                <g key={ln.k}>
+                  <rect x="0" y={y} width={FL_TOTAL_W} height={FL_LANE_H} fill={i%2===0?'rgba(255,255,255,.5)':'rgba(240,239,237,.35)'}/>
+                  <line x1="0" y1={y+FL_LANE_H} x2={FL_TOTAL_W} y2={y+FL_LANE_H} stroke={C.line2} strokeWidth="0.5"/>
+                </g>
+              );
+            })}
+
+            {/* PROATIVO callout */}
+            {entry==='proativo'&&(
+              <g>
+                <rect x={FSX[0]-85} y={FL_DEERE_H+5} width="172" height="34" rx="6" fill="#DCFCE7" stroke="#86EFAC" strokeWidth="1.5"/>
+                <text x={FSX[0]+1} y={FL_DEERE_H+19} fontSize="8.5" fontWeight="700" fill="#15803D" textAnchor="middle">🤖 Sistema detecta subutilização</text>
+                <text x={FSX[0]+1} y={FL_DEERE_H+31} fontSize="8" fill="#166534" textAnchor="middle">"AutoPath nunca ativado" → aborda · 18%</text>
+              </g>
+            )}
+
+            {/* Happy path edges */}
+            {FL_NODES.slice(0,-1).map((n,i)=>{
+              const next=FL_NODES[i+1];
+              const ax=FSX[n.sx]+FL_NODE_W/2, ay=flLaneY(n.lane);
+              const bx=FSX[next.sx]-FL_NODE_W/2, by=flLaneY(next.lane);
+              const d=ay===by?hBez(ax,ay,bx,by):cBez(ax,ay,bx,by);
+              return <path key={n.id} d={d} fill="none" stroke="#22C55E" strokeWidth="2.5" markerEnd="url(#flArH)"/>;
+            })}
+
+            {/* Exit edge from h12 */}
+            {(()=>{
+              const last=FL_NODES[FL_NODES.length-1];
+              const ax=FSX[last.sx]+FL_NODE_W/2, ay=flLaneY(last.lane);
+              const bx=FSX[14]-60;
+              return <path d={hBez(ax,ay,bx,ay)} fill="none" stroke="#22C55E" strokeWidth="2" markerEnd="url(#flArH)"/>;
+            })()}
+
+            {/* Branch edges + nodes */}
+            {showAlt&&FL_BRANCHES.map(b=>{
+              const parent=FL_NODES.find(n=>n.id===b.parent);
+              const px=FSX[parent.sx];
+              const py=flLaneY(parent.lane)+FL_NODE_H/2;
+              const bcy=brTop(b)-4;
+              const bcx=brLeft(b)+FL_BR_W/2;
+              const col=FL_COLORS[b.type]||FL_COLORS.alt;
+              const ecol=FL_EDGE_COL[b.type]||'#94A3B8';
+              const dash=b.type==='loop'?'8,4':'5,3';
+              const marker=b.type==='loop'?'url(#flArL)':b.type==='error'?'url(#flArE)':'url(#flArA)';
+              const isSel=selNode===b.id;
+              const bx_=brLeft(b), by_=brTop(b);
+              return(
+                <g key={b.id}>
+                  <path d={vBez(px,py,bcx,bcy)} fill="none" stroke={ecol} strokeWidth="1.5" strokeDasharray={dash} markerEnd={marker} opacity=".9"/>
+                  <g onClick={()=>setSelNode(selNode===b.id?null:b.id)} style={{cursor:'pointer'}}>
+                    {isSel&&<rect x={bx_-2} y={by_-2} width={FL_BR_W+4} height={FL_BR_H+4} rx="8" fill={col.stroke} opacity=".15"/>}
+                    <rect x={bx_} y={by_} width={FL_BR_W} height={FL_BR_H} rx="6" fill={col.fill} stroke={col.stroke} strokeWidth="1.5" strokeDasharray="4,2"/>
+                    <text x={bx_+10} y={by_+FL_BR_H/2+4} fontSize="10">{b.icon}</text>
+                    <text x={bx_+24} y={by_+FL_BR_H/2-4} fontSize="9.5" fontWeight="700" fill={col.text}>{b.label}</text>
+                    <text x={bx_+24} y={by_+FL_BR_H/2+8} fontSize="8.5" fill={col.text+'88'}>{b.sub}</text>
+                  </g>
+                </g>
+              );
+            })}
+
+            {/* Main nodes */}
+            {FL_NODES.map(n=>{
+              const col=FL_COLORS[n.type]||FL_COLORS.happy;
+              const x=nodeLeft(n), y=nodeTop(n);
+              const isSel=selNode===n.id;
+              const lnConf=FL_LANES.find(l=>l.k===n.lane);
+              return(
+                <g key={n.id} onClick={()=>setSelNode(selNode===n.id?null:n.id)} style={{cursor:'pointer'}}>
+                  {isSel&&<rect x={x-3} y={y-3} width={FL_NODE_W+6} height={FL_NODE_H+6} rx="10" fill={col.stroke} opacity=".15"/>}
+                  <rect x={x} y={y} width={FL_NODE_W} height={FL_NODE_H} rx="8"
+                    fill={isSel?col.stroke+'22':col.fill} stroke={col.stroke}
+                    strokeWidth={isSel?2.5:1.5}
+                    strokeDasharray={n.isLoop?'6,3':undefined}
                   />
-                  {p.label&&(
+                  {/* Decision diamond badge */}
+                  {n.branches&&(
                     <g>
-                      <rect x={mid.x-p.label.length*2.8} y={mid.y-9} width={p.label.length*5.6} height="14" rx="3" fill="white" opacity=".88"/>
-                      <text x={mid.x} y={mid.y+1} fontSize="8.5" fill={p.col} textAnchor="middle" fontWeight="600">{p.label}</text>
+                      <rect x={x+2} y={y-11} width="56" height="13" rx="6" fill="#7C3AED"/>
+                      <text x={x+30} y={y-2} fontSize="7.5" fontWeight="800" fill="white" textAnchor="middle">↓ bifurcação</text>
                     </g>
                   )}
-                </g>
-              );
-            })}
-
-            {/* ── Nodes ── */}
-            {GNODES.map(n=>{
-              const col=NODE_COLORS[n.type]||NODE_COLORS.alt;
-              const isSel=selNode===n.id;
-              const actor=n.actor?ACTOR_CONF[n.actor]:null;
-              const isDecision=n.type==='decision';
-              return(
-                <g key={n.id} onClick={()=>setSelNode(selNode===n.id?null:n.id)}
-                  style={{cursor:'pointer',transition:'all 150ms'}}>
-                  {/* Shadow if selected */}
-                  {isSel&&<rect x={n.x-3} y={n.y-3} width={n.w+6} height={n.h+6} rx="10" fill={col.stroke} opacity=".18"/>}
-                  {/* Node body */}
-                  <rect x={n.x} y={n.y} width={n.w} height={n.h} rx={isDecision?12:8}
-                    fill={isSel?col.stroke+'22':col.fill}
-                    stroke={isSel?col.stroke:col.stroke}
-                    strokeWidth={isSel?2.5:n.hi?2:1.5}
-                    strokeDasharray={n.type==='alt'?'4,2':undefined}
-                  />
-                  {/* Diamond marker for decision nodes */}
-                  {isDecision&&<polygon
-                    points={(n.x+n.w/2)+','+(n.y-8)+' '+(n.x+n.w/2+8)+','+n.y+' '+(n.x+n.w/2)+','+(n.y+8)+' '+(n.x+n.w/2-8)+','+n.y}
-                    fill={col.stroke} opacity="0"
-                  />}
-                  {/* MAIOR CONVERSÃO badge */}
-                  {n.hi&&<g>
-                    <rect x={n.x+n.w-68} y={n.y-10} width="72" height="14" rx="7" fill="#15803D"/>
-                    <text x={n.x+n.w-32} y={n.y-1} fontSize="7.5" fontWeight="800" fill="white" textAnchor="middle">MAIOR CONVERSÃO</text>
-                  </g>}
-                  {/* Actor badge */}
-                  {actor&&<g>
-                    <circle cx={n.x+14} cy={n.y+14} r="10" fill={actor.color+'22'} stroke={actor.color} strokeWidth="1"/>
-                    <text x={n.x+14} y={n.y+18} fontSize="9" textAnchor="middle">{actor.emoji}</text>
-                  </g>}
+                  {/* Loop badge */}
+                  {n.isLoop&&(
+                    <g>
+                      <rect x={x+FL_NODE_W-52} y={y-11} width="54" height="13" rx="6" fill="#EA580C"/>
+                      <text x={x+FL_NODE_W-25} y={y-2} fontSize="7.5" fontWeight="800" fill="white" textAnchor="middle">↺ loop D+7</text>
+                    </g>
+                  )}
                   {/* Icon */}
-                  {!actor&&n.icon&&<text x={n.x+10} y={n.y+n.h/2+4} fontSize="13" textAnchor="middle">{n.icon}</text>}
-                  {/* Decision rhombus indicator */}
-                  {isDecision&&<g>
-                    <rect x={n.x+n.w-22} y={n.y+6} width="18" height="18" rx="4" fill={col.stroke+'22'}/>
-                    <text x={n.x+n.w-13} y={n.y+19} fontSize="10" textAnchor="middle" fill={col.stroke}>⋱</text>
-                  </g>}
+                  <text x={x+13} y={y+FL_NODE_H/2+5} fontSize="12" textAnchor="middle">{n.icon}</text>
                   {/* Label */}
-                  <text x={actor?n.x+28:n.x+24} y={n.y+n.h/2-4} fontSize="11.5" fontWeight="700" fill={col.text}>
-                    {n.label}
-                  </text>
+                  <text x={x+27} y={y+FL_NODE_H/2-4} fontSize="11" fontWeight="700" fill={col.text}>{n.label}</text>
                   {/* Sub */}
-                  <text x={actor?n.x+28:n.x+24} y={n.y+n.h/2+10} fontSize="9.5" fill={col.text+'99'}>
-                    {n.sub}
+                  <text x={x+27} y={y+FL_NODE_H/2+9} fontSize="8.5" fill={col.text+'88'}>
+                    {n.time}{n.time?' · ':''}{n.canal}{lnConf?' '+lnConf.emoji:''}
                   </text>
-                  {/* Time badge */}
-                  {n.time&&<g>
-                    <rect x={n.x+n.w-42} y={n.y+n.h-16} width="38" height="12" rx="6" fill={col.stroke+'1A'}/>
-                    <text x={n.x+n.w-23} y={n.y+n.h-7} fontSize="8.5" fill={col.stroke} textAnchor="middle" fontWeight="700">{n.time}</text>
-                  </g>}
                 </g>
               );
             })}
 
-            {/* ── EXIT section separator ── */}
-            <line x1="0" y1="1875" x2={GW} y2="1875" stroke={C.line} strokeWidth="1" strokeDasharray="6,4"/>
-            <text x="20" y="1892" fontSize="9.5" fontWeight="700" fill={C.ink3} letterSpacing=".06em">EXITS / RESOLUÇÕES</text>
-
-            {/* ── EDGE CASES strip (far right column) ── */}
-            <g>
-              <text x="1160" y="590" fontSize="9.5" fontWeight="700" fill="#92400E" letterSpacing=".06em">EDGE CASES</text>
-              {[
-                {y:610, icon:'⚡', l:'Urgência: plantio', sub:'priorização imediata'},
-                {y:658, icon:'🕐', l:'Fora de horário',   sub:'Assistente 24h'},
-                {y:706, icon:'📱', l:'IA não entende',    sub:'fallback CSC'},
-                {y:754, icon:'🔀', l:'Multi-problema',    sub:'multi-chamado'},
-                {y:802, icon:'📋', l:'Caso duplicado',    sub:'deduplicação'},
-              ].map((e,i)=>(
+            {/* Exits panel */}
+            {FL_EXITS.map((ex,i)=>{
+              const ex_x=FSX[14]+10, ex_y=FL_DEERE_H+i*56+8;
+              return(
                 <g key={i}>
-                  <rect x="1150" y={e.y} width="190" height="40" rx="6" fill="#FFFBF0" stroke="#FDE68A" strokeWidth="1"/>
-                  <text x="1163" y={e.y+16} fontSize="10.5">{e.icon}</text>
-                  <text x="1183" y={e.y+16} fontSize="10.5" fontWeight="600" fill="#92400E">{e.l}</text>
-                  <text x="1183" y={e.y+30} fontSize="9" fill={C.ink3}>{e.sub}</text>
+                  <rect x={ex_x} y={ex_y} width="185" height="48" rx="7" fill={ex.fill} stroke={ex.stroke} strokeWidth="1.5"/>
+                  <text x={ex_x+10} y={ex_y+18} fontSize="11">{ex.icon}</text>
+                  <text x={ex_x+26} y={ex_y+18} fontSize="10" fontWeight="700" fill={ex.tc}>{ex.label}</text>
+                  <text x={ex_x+26} y={ex_y+32} fontSize="8.5" fill={C.ink3}>{ex.sub}</text>
                 </g>
-              ))}
-            </g>
+              );
+            })}
 
-            {/* ── PROATIVO advantage callout ── */}
-            <g>
-              <rect x="920" y="240" width="210" height="76" rx="8" fill="#F0FDF4" stroke="#86EFAC" strokeWidth="1.5"/>
-              <text x="932" y="260" fontSize="9.5" fontWeight="700" fill="#15803D">PROATIVO vs REATIVO</text>
-              <text x="932" y="276" fontSize="9" fill="#166534">PROATIVO: 18% conversão</text>
-              <text x="932" y="291" fontSize="9" fill="#166534">REATIVO: 2–3% conversão</text>
-              <text x="932" y="308" fontSize="8" fill={C.ink3}>Sistema detecta subutilização</text>
-            </g>
+            {/* PROATIVO vs REATIVO panel */}
+            {(()=>{
+              const px=FSX[14]+10, py=FL_DEERE_H+4*56+14;
+              return(
+                <g>
+                  <rect x={px} y={py} width="185" height="64" rx="7" fill="#DCFCE7" stroke="#86EFAC" strokeWidth="1.5"/>
+                  <text x={px+10} y={py+16} fontSize="9" fontWeight="700" fill="#15803D">PROATIVO vs REATIVO</text>
+                  <text x={px+10} y={py+30} fontSize="8.5" fill="#166534">🤖 PROATIVO: 18% conversão</text>
+                  <text x={px+10} y={py+44} fontSize="8.5" fill="#166534">📲 REATIVO: 2–3% conversão</text>
+                  <text x={px+10} y={py+57} fontSize="7.5" fill={C.ink3}>Sistema detecta → aborda primeiro</text>
+                </g>
+              );
+            })()}
+
+            {/* Activation loop arc */}
+            {(()=>{
+              const last=FL_NODES[FL_NODES.length-1];
+              const lx=FSX[last.sx], ly=flLaneY(last.lane)-FL_NODE_H/2;
+              const ly2=FL_DEERE_H+8;
+              const sx=FSX[0];
+              const sy=FL_DEERE_H+FL_LANE_H*1.5;
+              return(
+                <g>
+                  <path d={'M'+lx+','+ly+' C'+lx+','+(ly2+4)+' '+sx+','+(ly2+4)+' '+sx+','+sy}
+                    fill="none" stroke="#EA580C" strokeWidth="1.8" strokeDasharray="8,4" markerEnd="url(#flArL)" opacity=".7"/>
+                  <rect x={(lx+sx)/2-58} y={ly2-1} width="116" height="13" rx="6" fill="#FFF7ED" stroke="#FDBA74" strokeWidth="1"/>
+                  <text x={(lx+sx)/2} y={ly2+9} fontSize="8" fontWeight="700" fill="#C2410C" textAnchor="middle">↺ Loop ativação D+7 → PROATIVO</text>
+                </g>
+              );
+            })()}
 
           </svg>
         </div>
@@ -2936,39 +2814,27 @@ function Fluxo({lang='pt'}){
 
       {/* ── Selected node detail panel ── */}
       {selN&&(
-        <div style={{marginTop:8,padding:'12px 16px',background:C.page,border:'1.5px solid '+(NODE_COLORS[selN.type]||NODE_COLORS.alt).stroke,borderRadius:10,display:'flex',gap:14,alignItems:'flex-start',flexShrink:0}}>
-          <span style={{fontSize:22,flexShrink:0}}>{selN.icon}</span>
-          <div style={{flex:1}}>
-            <div style={{fontSize:14,fontWeight:800,color:(NODE_COLORS[selN.type]||NODE_COLORS.alt).text,marginBottom:2}}>{selN.label}</div>
-            <div style={{fontSize:12,color:C.ink3,marginBottom:4}}>{selN.sub}{selN.actor?' · '+ACTOR_CONF[selN.actor].label:''}{selN.time?' · '+selN.time:''}</div>
-            <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
-              {selN.actor&&<Pill bg={ACTOR_CONF[selN.actor].color+'18'} fg={ACTOR_CONF[selN.actor].color}>{ACTOR_CONF[selN.actor].emoji} {ACTOR_CONF[selN.actor].label}</Pill>}
-              <Pill bg={(NODE_COLORS[selN.type]||NODE_COLORS.alt).fill} fg={(NODE_COLORS[selN.type]||NODE_COLORS.alt).text}>{selN.type==='decision'?'Ponto de decisão':selN.type==='happy'?'Happy path':selN.type==='loop'?'Loop de ativação':selN.type==='error'?'Erro/edge case':selN.type.startsWith('exit')?'Exit':'Alternativo'}</Pill>
-            </div>
+        <div style={{marginTop:8,padding:'11px 16px',background:C.page,border:'1.5px solid #22C55E',borderRadius:10,display:'flex',gap:12,alignItems:'flex-start',flexShrink:0}}>
+          <span style={{fontSize:20,flexShrink:0}}>{selN.icon}</span>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:13.5,fontWeight:800,color:C.ink,marginBottom:2}}>{selN.label}</div>
+            {selN.canal&&<div style={{fontSize:11.5,color:C.ink3,marginBottom:4}}>{selN.time||''}{selN.time&&selN.canal?' · ':''}{selN.canal}{selN.lane?' · '+FL_LANES.find(l=>l.k===selN.lane)?.label:''}</div>}
+            {selN.sub&&<div style={{fontSize:11.5,color:C.ink2,marginBottom:4}}>{selN.sub}</div>}
+            {selN.desc&&<div style={{fontSize:12,color:C.ink2,lineHeight:1.6,marginBottom:6}}>{selN.desc}</div>}
+            {selN.msg&&(
+              <div style={{background:'#fff',border:'1px solid '+C.line,borderRadius:8,padding:'7px 11px',fontSize:12,color:C.ink,fontStyle:'italic',display:'inline-block',maxWidth:480}}>
+                "{selN.msg}"
+              </div>
+            )}
           </div>
-          <button onClick={()=>setSelNode(null)} style={{background:'none',border:'none',cursor:'pointer',color:C.ink3,fontSize:16}}>✕</button>
+          <button onClick={()=>setSelNode(null)} style={{background:'none',border:'none',cursor:'pointer',color:C.ink3,fontSize:16,flexShrink:0}}>✕</button>
         </div>
       )}
 
-      {/* ── Keyboard hint ── */}
-      <div style={{marginTop:5,flexShrink:0,display:'flex',alignItems:'center',gap:12,background:C.page,borderRadius:7,padding:'6px 14px',border:'1px solid '+C.line}}>
-        <span style={{fontSize:10.5,color:C.ink3,flex:1}}>
-          <b style={{color:C.ink2}}>Dica:</b> Clique em qualquer nó para ver o detalhe do momento · toggle "Só happy path" para focar no fluxo principal
-        </span>
-        <div style={{display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
-          {[{col:'#22C55E',label:'Happy path ok'},
-            {col:'#7C3AED',label:'Decisão'},
-            {col:'#EA580C',label:'Loop'},
-          ].map((l,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:3,fontSize:10,color:C.ink3}}>
-              <div style={{width:8,height:8,borderRadius:2,background:l.col}}/>{l.label}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
+
 
 /* ═══════════════════════════════════════════════════════
    APP ROOT
