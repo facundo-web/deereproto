@@ -107,9 +107,9 @@
     }
 
     /* ── Fluxo viewport lock ── */
-    .fluxo-wrap{display:flex;flex-direction:column;height:calc(100vh - var(--header-h) - var(--subtitle-h) - 60px);min-height:500px}
-    .fluxo-map-area{flex:0 0 58%;overflow:hidden;display:flex;flex-direction:column}
-    .fluxo-ctx-area{flex:1;overflow-y:auto;border-top:1px solid var(--border-subtle)}
+    .fluxo-wrap{display:flex;flex-direction:column;height:calc(100vh - var(--header-h) - var(--subtitle-h) - 60px);min-height:460px;overflow:hidden}
+    .fluxo-map-area{flex:1 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:row}
+    .fluxo-ctx-area{flex:0 0 auto;border-top:1px solid var(--border-subtle)}
     @media(max-height:700px){.fluxo-wrap{height:auto;min-height:auto}.fluxo-map-area{flex:none}}
 
     /* ── Fluxo step states ── */
@@ -2417,7 +2417,7 @@ const FL_DEERE_H  = 44;
 const FL_NODE_W   = 164;
 const FL_NODE_H   = 50;
 const FL_BR_W     = 148;
-const FL_BR_H     = 38;
+const FL_BR_H     = 36;
 
 // Swimlane row definitions (top → bottom)
 const FL_LANES = [
@@ -2434,7 +2434,9 @@ function flLaneY(k) {
   return FL_DEERE_H + i * FL_LANE_H + FL_LANE_H / 2;
 }
 
-const FL_TOTAL_H = FL_DEERE_H + FL_LANES.length * FL_LANE_H + 10;
+// Extra height for branch nodes that hang below the last lane
+// Extra space for branch nodes hanging below the last lane
+const FL_TOTAL_H = FL_DEERE_H + FL_LANES.length * FL_LANE_H + Math.round(FL_LANE_H * 1.4);
 
 // Step X center positions
 const FSX = [
@@ -2485,9 +2487,9 @@ const FL_BRANCHES = [
   // h5 Propõe → csc lane, branches hang between csc and esp
   { id:'b5a', parent:'h5', type:'alt',   icon:'📄', label:'Guia remoto',       sub:'→ resolve sem visita',dy:+FL_LANE_H*0.60 },
   { id:'b5b', parent:'h5', type:'loop',  icon:'🔁', label:'Recusa / adia',     sub:'loop de follow-up',  dy:+FL_LANE_H*1.20 },
-  // h10 Recalibra → field, branches hang below
-  { id:'b10a',parent:'h10',type:'alt',   icon:'🔩', label:'Falta peça',        sub:'→ reagenda/escala',  dy:+FL_LANE_H*0.60 },
-  { id:'b10b',parent:'h10',type:'error', icon:'⚠️', label:'Pós-visita falha',  sub:'→ reabertura',       dy:+FL_LANE_H*1.20 },
+  // h10 Recalibra → field (last lane), branches hang below — smaller dy since no lanes below
+  { id:'b10a',parent:'h10',type:'alt',   icon:'🔩', label:'Falta peça',        sub:'→ reagenda/escala',  dy:+FL_LANE_H*0.55 },
+  { id:'b10b',parent:'h10',type:'error', icon:'⚠️', label:'Pós-visita falha',  sub:'→ reabertura',       dy:+FL_LANE_H*1.05 },
 ];
 
 const FL_EXITS = [
@@ -2612,7 +2614,7 @@ function Fluxo({ lang='pt' }) {
       </div>
 
       {/* ── Canvas ── */}
-      <div className="fluxo-map-area" style={{display:'flex',border:'1px solid '+C.line,borderRadius:8,overflow:'hidden',background:'#FAFAF9',boxShadow:'var(--shadow-sm)',flexShrink:0}}>
+      <div className="fluxo-map-area" style={{border:'1px solid '+C.line,borderRadius:8,background:'#FAFAF9',boxShadow:'var(--shadow-sm)'}}>
 
         {/* Fixed lane labels column */}
         <div style={{width:FL_LABEL_W+'px',flexShrink:0,background:'#F0EFED',borderRight:'1px solid '+C.line,display:'flex',flexDirection:'column'}}>
@@ -2636,8 +2638,8 @@ function Fluxo({ lang='pt' }) {
         </div>
 
         {/* Horizontal-scrolling SVG */}
-        <div style={{overflowX:'auto',flex:1,overflowY:'hidden'}}>
-          <svg width={FL_TOTAL_W} height={FL_TOTAL_H} viewBox={'0 0 '+FL_TOTAL_W+' '+FL_TOTAL_H} style={{display:'block',fontFamily:"Inter,system-ui,sans-serif"}}>
+        <div style={{overflowX:'auto',overflowY:'auto',flex:1}}>
+          <svg width={FL_TOTAL_W} height={FL_TOTAL_H} viewBox={'0 0 '+FL_TOTAL_W+' '+FL_TOTAL_H} style={{display:'block',fontFamily:"Inter,system-ui,sans-serif",minWidth:'100%'}}>
             <defs>
               <marker id="flArH" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                 <path d="M1,2 L8,5 L1,8" fill="none" stroke="#22C55E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
